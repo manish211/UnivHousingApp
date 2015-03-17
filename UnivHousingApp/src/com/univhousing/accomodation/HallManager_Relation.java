@@ -1,14 +1,15 @@
 package com.univhousing.accomodation;
 
-public class ResidenceHall {
+public class HallManager_Relation {
 	
 	private String hallName;
 	private int phoneNumber;
-	private String availableFor;
+	private String available_for;
 	private int hallNo;
 	private String streetName;
 	private String city;
-	private int postCode;
+	private int postcode;
+	private int staffNo;
 
 	public String getHallName() {
 		return hallName;
@@ -22,11 +23,11 @@ public class ResidenceHall {
 	public void setPhoneNumber(int phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
-	public String getAvailableFor() {
-		return availableFor;
+	public String getAvailable_for() {
+		return available_for;
 	}
-	public void setAvailableFor(String availableFor) {
-		this.availableFor = availableFor;
+	public void setAvailable_for(String available_for) {
+		this.available_for = available_for;
 	}
 	public int getHallNo() {
 		return hallNo;
@@ -46,12 +47,19 @@ public class ResidenceHall {
 	public void setCity(String city) {
 		this.city = city;
 	}
-	public int getPostCode() {
-		return postCode;
+	public int getPostcode() {
+		return postcode;
 	}
-	public void setPostCode(int postCode) {
-		this.postCode = postCode;
+	public void setPostcode(int postcode) {
+		this.postcode = postcode;
 	}
+	public int getStaffNo() {
+		return staffNo;
+	}
+	public void setStaffNo(int staffNo) {
+		this.staffNo = staffNo;
+	}
+	
 	
 
 }
