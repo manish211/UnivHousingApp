@@ -2,3 +2,4 @@
 .metadata/*
 .metadata/.plugins/*
 UnivHousingApp/bin/
+*.txt
