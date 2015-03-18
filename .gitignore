@@ -3,3 +3,8 @@
 .metadata/.plugins/*
 UnivHousingApp/bin/
 *.txt
+.plugins/org.eclipse.jdt.core/variablesAndContainers.dat
+.plugins/org.eclipse.core.resources/.projects/*/.location
+.plugins/org.eclipse.core.resources/.projects/*
+.metadata/.plugins/org.eclipse.core.resources/.projects/*
+.metadata/.plugins/org.eclipse.jdt.core/*
