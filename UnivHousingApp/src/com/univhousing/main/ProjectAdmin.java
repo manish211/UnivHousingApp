@@ -1,4 +1,4 @@
-package com.univhousing.users;
+package com.univhousing.main;
 
 public class ProjectAdmin {
 
