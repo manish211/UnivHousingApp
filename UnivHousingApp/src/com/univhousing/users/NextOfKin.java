@@ -2,12 +2,12 @@ package com.univhousing.users;
 
 public class NextOfKin {
 	
-	private int studentId;
-	private String firstName;
-	private String lastName;
-	private String streetName;
-	private String city;
-	private int postCode;
+	public int studentId;
+	public String firstName;
+	public String lastName;
+	public String streetName;
+	public String city;
+	public int postCode;
 
 	public int getStudentId() {
 		return studentId;

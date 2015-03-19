@@ -2,14 +2,14 @@ package com.univhousing.accomodation;
 
 public class HallManager_Relation {
 	
-	private String hallName;
-	private int phoneNumber;
-	private String available_for;
-	private int hallNo;
-	private String streetName;
-	private String city;
-	private int postcode;
-	private int staffNo;
+	public String hallName;
+	public int phoneNumber;
+	public String available_for;
+	public int hallNo;
+	public String streetName;
+	public String city;
+	public int postcode;
+	public int staffNo;
 
 	public String getHallName() {
 		return hallName;

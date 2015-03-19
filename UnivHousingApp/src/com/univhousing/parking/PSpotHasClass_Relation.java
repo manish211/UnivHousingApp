@@ -2,9 +2,9 @@ package com.univhousing.parking;
 
 public class PSpotHasClass_Relation {
 	
-	private String type;
-	private float fees;
-	private int spotNo;
+	public String type;
+	public float fees;
+	public int spotNo;
 
 	public String getType() {
 		return type;

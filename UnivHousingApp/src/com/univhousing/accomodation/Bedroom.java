@@ -2,11 +2,11 @@ package com.univhousing.accomodation;
 
 public class Bedroom {
 
-	private int bedroomPlaceNo;
-	private int accomodationId;
-	private int roomNo;
-	private float monthlyRent;
-	private int apartmentNo;
+	public int bedroomPlaceNo;
+	public int accomodationId;
+	public int roomNo;
+	public float monthlyRent;
+	public int apartmentNo;
 
 	public int getBedroomPlaceNo() {
 		return bedroomPlaceNo;

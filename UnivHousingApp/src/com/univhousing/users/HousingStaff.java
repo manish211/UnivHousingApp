@@ -2,16 +2,16 @@ package com.univhousing.users;
 
 public class HousingStaff {
 
-	private int ticketNo;
-	private int staffNo;
-	private String firstName;
-	private String lastName;
-	private String sex;
-	private String dob;
-	private String position;
-	private String streetName;
-	private String city;
-	private int postCode;
+	public int ticketNo;
+	public int staffNo;
+	public String firstName;
+	public String lastName;
+	public String sex;
+	public String dob;
+	public String position;
+	public String streetName;
+	public String city;
+	public int postCode;
 
 	public int getTicketNo() {
 		return ticketNo;

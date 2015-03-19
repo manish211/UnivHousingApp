@@ -2,7 +2,7 @@ package com.univhousing.parking;
 
 public class ParkingLot {
 	
-	private int lotNo;
+	public int lotNo;
 
 	public int getLotNo() {
 		return lotNo;

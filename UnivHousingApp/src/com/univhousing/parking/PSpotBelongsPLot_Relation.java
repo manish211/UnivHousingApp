@@ -2,8 +2,8 @@ package com.univhousing.parking;
 
 public class PSpotBelongsPLot_Relation {
 	
-	private int lotNo;
-	private int spotNo;
+	public int lotNo;
+	public int spotNo;
 
 	public int getLotNo() {
 		return lotNo;
