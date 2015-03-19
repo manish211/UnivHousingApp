@@ -4,11 +4,11 @@ import java.sql.Date;
 
 public class Lease {
 
-	private int leaseNo;
-	private float deposit;
-	private String modeOfPayment;
-	private int duration;
-	private Date cutOffDate;
+	public int leaseNo;
+	public float deposit;
+	public String modeOfPayment;
+	public int duration;
+	public Date cutOffDate;
 
 	public int getLeaseNo() {
 		return leaseNo;

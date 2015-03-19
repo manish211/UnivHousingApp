@@ -4,13 +4,13 @@ import java.sql.Date;
 
 public class TerminationRequest_Relation {
 	
-	private String reason;
-	private int terminationRequestNo;
-	private String status;
-	private Date terminationDate;
-	private Date inspectionDate;
-	private int personId;
-	private int staffNo;
+	public String reason;
+	public int terminationRequestNo;
+	public String status;
+	public Date terminationDate;
+	public Date inspectionDate;
+	public int personId;
+	public int staffNo;
 
 	public String getReason() {
 		return reason;

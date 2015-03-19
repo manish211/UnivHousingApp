@@ -2,13 +2,13 @@ package com.univhousing.accomodation;
 
 public class ResidenceHall {
 	
-	private String hallName;
-	private int phoneNumber;
-	private String availableFor;
-	private int hallNo;
-	private String streetName;
-	private String city;
-	private int postCode;
+	public String hallName;
+	public int phoneNumber;
+	public String availableFor;
+	public int hallNo;
+	public String streetName;
+	public String city;
+	public int postCode;
 
 	public String getHallName() {
 		return hallName;

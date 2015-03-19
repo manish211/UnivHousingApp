@@ -4,18 +4,18 @@ import java.sql.Date;
 
 public class InvoicePersonLease_Relation {
 
-	private float monthlyHousingRent;
-	private float monthlyPArkingRent;
-	private float lateFees;
-	private float incidentalCharges;
-	private int invoiceNo;
-	private Date paymentDate;
-	private String paymentMethod;
-	private int leaseNo;
-	private String paymentStatus;
-	private float paymentDue;
-	private float damageCharges;
-	private int personId;
+	public float monthlyHousingRent;
+	public float monthlyPArkingRent;
+	public float lateFees;
+	public float incidentalCharges;
+	public int invoiceNo;
+	public Date paymentDate;
+	public String paymentMethod;
+	public int leaseNo;
+	public String paymentStatus;
+	public float paymentDue;
+	public float damageCharges;
+	public int personId;
 
 	public float getMonthlyHousingRent() {
 		return monthlyHousingRent;

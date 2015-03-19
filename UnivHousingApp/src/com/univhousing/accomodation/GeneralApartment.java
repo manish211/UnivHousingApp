@@ -2,14 +2,14 @@ package com.univhousing.accomodation;
 
 public class GeneralApartment {
 	
-	private int apartmentNo;
-	private String apartmentType;
-	private int numberOfBedRooms;
-	private int numberOfBathRooms;
-	private int accomodationId;
-	private String streetName;
-	private String city;
-	private int postCode;
+	public int apartmentNo;
+	public String apartmentType;
+	public int numberOfBedRooms;
+	public int numberOfBathRooms;
+	public int accomodationId;
+	public String streetName;
+	public String city;
+	public int postCode;
 
 	public int getApartmentNo() {
 		return apartmentNo;

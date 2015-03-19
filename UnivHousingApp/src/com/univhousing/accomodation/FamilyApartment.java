@@ -2,13 +2,13 @@ package com.univhousing.accomodation;
 
 public class FamilyApartment {
 
-	private int apartmentNo;
-	private String apartmentType;
-	private int accomodationId;
-	private String streetName;
-	private String city;
-	private int postcode;
-	private float monthlyRent;
+	public int apartmentNo;
+	public String apartmentType;
+	public int accomodationId;
+	public String streetName;
+	public String city;
+	public int postcode;
+	public float monthlyRent;
 
 	public int getApartmentNo() {
 		return apartmentNo;

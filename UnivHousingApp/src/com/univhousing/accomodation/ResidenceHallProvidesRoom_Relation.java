@@ -2,11 +2,11 @@ package com.univhousing.accomodation;
 
 public class ResidenceHallProvidesRoom_Relation {
 	
-	private int residencePlaceNo;
-	private int accomodationId;
-	private int hallNo;
-	private int roomNo;
-	private float monthlyRent;
+	public int residencePlaceNo;
+	public int accomodationId;
+	public int hallNo;
+	public int roomNo;
+	public float monthlyRent;
 
 	public int getResidencePlaceNo() {
 		return residencePlaceNo;
