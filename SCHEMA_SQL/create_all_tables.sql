@@ -232,3 +232,12 @@ PRIMARY KEY(hall_number),
 FOREIGN KEY(staff_no) REFERENCES housing_staff);
 
 
+CREATE TABLE login_credentials(
+user_name VARCHAR2(10),
+password VARCHAR2(10),
+person_id INTEGER,
+designation VARCHAR2(10),
+PRIMARY KEY(user_name,password),
+FOREIGN KEY(person_id) REFERENCES Person);
+
+
