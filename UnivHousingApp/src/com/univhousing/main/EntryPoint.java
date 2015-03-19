@@ -49,7 +49,51 @@ public class EntryPoint {
 						{
 							if(credentialObj.designation.equalsIgnoreCase(Constants.STUDENT))
 							{
-								// Do something
+								// Show different menu items
+								System.out.println("1. Housing Option");
+								System.out.println("2. Parking Option");
+								System.out.println("3. Maintenance");
+								System.out.println("4. Profile");
+								System.out.println("5. Back");
+								
+								/*This input shows whether the student chooses Housing, Parking,Maintenance or Profile*/
+								choice = inputObj.nextInt();
+								
+								switch (choice) {
+								case 1:
+									System.out.println("View Invoices");
+									System.out.println("View Leases");
+									System.out.println("New Request");
+									System.out.println("View/Cancel Requests");
+									System.out.println("View Vacancy");
+									System.out.println("Back");
+									
+									/*This input shows the student chose Housing options and now his options are to choose from:
+									 * View Invoices, View Leases,New Request, View/Cancel Requests and View Vacancy*/ 
+									choice = inputObj.nextInt();
+									
+										switch (choice) {
+										case 1:
+											
+											break;
+
+										default:
+											break;
+										}
+									break;
+								case 2:
+									break;
+									
+								case 3:
+									break;
+									
+								case 4:
+									break;
+
+								default:
+									System.out.print("Invalid Choice");
+									break;
+								}
 							}
 							else if(credentialObj.designation.equalsIgnoreCase(Constants.SUPERVISOR))
 							{
@@ -60,6 +104,14 @@ public class EntryPoint {
 								// Do something
 							}
 						}
+						else
+						{
+							System.out.println("Login Incorrect");
+						}
+						break;
+					
+					case 2:
+						// Guest Login code will go here.	
 						break;
 
 					default: System.out.println("Invalid Choice");
