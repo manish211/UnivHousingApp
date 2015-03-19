@@ -2,8 +2,8 @@ package com.univhousing.users;
 
 public class Guest {
 	
-	private int approvalId;
-	private int personId;
+	public int approvalId;
+	public int personId;
 
 	public int getApprovalId() {
 		return approvalId;

@@ -2,12 +2,12 @@ package com.univhousing.users;
 
 public class Person {
 
-	private int personId;
-	private String firstName;
-	private String lastName;
-	private String streetName;
-	private String city;
-	private int postcode;
+	public int personId;
+	public String firstName;
+	public String lastName;
+	public String streetName;
+	public String city;
+	public int postcode;
 
 	public int getPersonId() {
 		return personId;

@@ -2,11 +2,11 @@ package com.univhousing.invoice;
 
 public class TicketPersonStaff_Relation {
 	
-	private int staffNo;
-	private int ticketNo;
-	private String ticketStatus;
-	private String ticketSeverity;
-	private int personId;
+	public int staffNo;
+	public int ticketNo;
+	public String ticketStatus;
+	public String ticketSeverity;
+	public int personId;
 
 	public int getStaffNo() {
 		return staffNo;

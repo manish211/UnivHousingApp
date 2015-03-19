@@ -2,9 +2,9 @@ package com.univhousing.users;
 
 public class Student {
 	
-	private int studentId;
-	private int personId;
-	private String studentType;
+	public int studentId;
+	public int personId;
+	public String studentType;
 
 	public int getStudentId() {
 		return studentId;

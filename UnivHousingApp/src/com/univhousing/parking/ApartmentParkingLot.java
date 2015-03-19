@@ -2,8 +2,8 @@ package com.univhousing.parking;
 
 public class ApartmentParkingLot {
 	
-	private int lotNo;
-	private int apartmentNo;
+	public int lotNo;
+	public int apartmentNo;
 
 	public int getLotNo() {
 		return lotNo;

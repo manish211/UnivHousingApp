@@ -2,11 +2,11 @@ package com.univhousing.accomodation;
 
 public class PersonAccomodationLease_Relation {
 	
-	private int accomodationId;
-	private int personId;
-	private int leaseNo;
-	private String accomodationType;
-	private int permitId;
+	public int accomodationId;
+	public int personId;
+	public int leaseNo;
+	public String accomodationType;
+	public int permitId;
 
 	public int getAccomodationId() {
 		return accomodationId;

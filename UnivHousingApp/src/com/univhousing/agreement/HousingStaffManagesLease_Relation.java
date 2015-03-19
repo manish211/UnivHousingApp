@@ -4,13 +4,13 @@ import java.sql.Date;
 
 public class HousingStaffManagesLease_Relation {
 
-	private int leaseNo;
-	private int duration;
-	private Date cutOffDate;
-	private String modeOfPayment;
-	private float depsoit;
-	private Date date;
-	private int staffNo;
+	public int leaseNo;
+	public int duration;
+	public Date cutOffDate;
+	public String modeOfPayment;
+	public float depsoit;
+	public Date date;
+	public int staffNo;
 
 	public int getLeaseNo() {
 		return leaseNo;
