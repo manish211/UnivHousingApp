@@ -45,7 +45,21 @@ public class EntryPoint {
 						System.out.print("Enter Password:");
 						credentialObj.password = inputObj.next();
 						
-						if(loginSuccessful(credentialObj.userName,credentialObj.password,statementObj))
+						if(authenticateUser(credentialObj.userName,credentialObj.password,statementObj,credentialObj))
+						{
+							if(credentialObj.designation.equalsIgnoreCase(Constants.STUDENT))
+							{
+								// Do something
+							}
+							else if(credentialObj.designation.equalsIgnoreCase(Constants.SUPERVISOR))
+							{
+								// Do something
+							}
+							else if(credentialObj.designation.equalsIgnoreCase(Constants.GUEST))
+							{
+								// Do something
+							}
+						}
 						break;
 
 					default: System.out.println("Invalid Choice");
@@ -62,23 +76,22 @@ public class EntryPoint {
 		{
 			e.printStackTrace();
 		}
-
-		
-		
 	}
 
-	private static boolean loginSuccessful(String userName, String password, Statement statement) throws SQLException {
-		int userID;
-		String designation;
-		// Write SQL query to check if userName and password match the Credentials Table in Database
-		// If matches retrieve designationa nd person_id
+	private static boolean authenticateUser(String userName, String password, Statement statement,Credentials object) throws SQLException 
+	{
+		/* Write SQL query to check if userName and password match the Credentials Table in Database
+		 If matches retrieve designation and person_id
+		 */		
 		ResultSet user = statement.executeQuery("SELECT .....");
 		while(user.next())
 		{
-			
+			object.personId = user.getInt("person_id");
+			object.designation = user.getString("designation");
+
+			// Returning true, because if the 
+			return true;
 		}
-		
 		return false;
 	}
-
 }
