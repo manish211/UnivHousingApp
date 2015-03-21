@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 public class ConnectionUtils {
 	
-	private Connection connectionObj;
+	private Connection connectionObj = null;
 	
 	public Connection getConnection(){
 		return connectionObj;
