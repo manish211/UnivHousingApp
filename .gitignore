@@ -1,9 +1,9 @@
 *.class
+UnivHousingApp/.metadata/*
 .metadata/*
 .metadata/.plugins/*
 UnivHousingApp/bin/
 *.txt
 .metadata/.plugins/org.eclipse.core.resources/.projects/UnivHousingApp/org.eclipse.jdt.core/state.dat
-.metadata/.plugins/org.eclipse.jdt.core/savedIndexNames.txt
 .classpath
 .project
