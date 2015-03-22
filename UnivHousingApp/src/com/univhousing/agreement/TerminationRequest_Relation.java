@@ -12,46 +12,12 @@ public class TerminationRequest_Relation {
 	public int personId;
 	public int staffNo;
 
-	public String getReason() {
-		return reason;
-	}
-	public void setReason(String reason) {
-		this.reason = reason;
-	}
-	public int getTerminationRequestNo() {
-		return terminationRequestNo;
-	}
-	public void setTerminationRequestNo(int terminationRequestNo) {
-		this.terminationRequestNo = terminationRequestNo;
-	}
-	public String getStatus() {
-		return status;
-	}
-	public void setStatus(String status) {
-		this.status = status;
-	}
-	public Date getTerminationDate() {
-		return terminationDate;
-	}
-	public void setTerminationDate(Date terminationDate) {
-		this.terminationDate = terminationDate;
-	}
-	public Date getInspectionDate() {
-		return inspectionDate;
-	}
-	public void setInspectionDate(Date inspectionDate) {
-		this.inspectionDate = inspectionDate;
-	}
-	public int getPersonId() {
-		return personId;
-	}
-	public void setPersonId(int personId) {
-		this.personId = personId;
-	}
-	public int getStaffNo() {
-		return staffNo;
-	}
-	public void setStaffNo(int staffNo) {
-		this.staffNo = staffNo;
+	/**
+	 * @param personId
+	 * @action Generates a new Termination request for a person id and Delete the related data entries from respective tables
+	 */
+	public void generateLeaseTerminationRequest(int personId) {
+
+		/*Write SQL Query to generate a termination request, delete data from the tables that relates to person id */
 	}
 }

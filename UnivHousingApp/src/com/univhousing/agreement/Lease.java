@@ -1,6 +1,9 @@
 package com.univhousing.agreement;
 
 import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class Lease {
 
@@ -10,35 +13,44 @@ public class Lease {
 	public int duration;
 	public Date cutOffDate;
 
-	public int getLeaseNo() {
-		return leaseNo;
+	
+
+	
+
+	public void displayLeaseDetails(int personId, Integer leaseNumber) {
+		/*Write SQL Query to display the details of a particular lease according to Project requirments*/
 	}
-	public void setLeaseNo(int leaseNo) {
-		this.leaseNo = leaseNo;
+
+	public void displayListOfLeasesForAPerson(int personId,ArrayList<Integer> leaseNumbers) throws SQLException {
+		
+		/*Write SQL Query to display a list of leases for a person id*/
+		
+		/*ResultSet listOfLeases = null;
+		leaseNumbers  = new ArrayList<Integer>();
+		while(listOfLeases.next())
+		{
+			leaseNumbers.add(listOfLeases.getInt("lease_no"));
+		}*/
+		leaseNumbers.clear();
+		for (int i = 10; i < 20; i++) {
+			leaseNumbers.add(i);
+		}
+		
 	}
-	public float getDeposit() {
-		return deposit;
-	}
-	public void setDeposit(float deposit) {
-		this.deposit = deposit;
-	}
-	public String getModeOfPayment() {
-		return modeOfPayment;
-	}
-	public void setModeOfPayment(String modeOfPayment) {
-		this.modeOfPayment = modeOfPayment;
-	}
-	public int getDuration() {
-		return duration;
-	}
-	public void setDuration(int duration) {
-		this.duration = duration;
-	}
-	public Date getCutOffDate() {
-		return cutOffDate;
-	}
-	public void setCutOffDate(Date cutOffDate) {
-		this.cutOffDate = cutOffDate;
+
+	/***********************************************************************************************
+	 * @param personId
+	 * @action Displays lease number, duration of the lease, name of student, matriculation number of student,
+	 * place number, room number, Hall address or Student apartment address, Date of moving in and if 
+	 * present date of leaving the room
+	 ***********************************************************************************************/
+	public void displayCurrentLease(int personId) {
+		ResultSet currentLease = null;
+		/*Write query for displaying :
+		 *ease number, duration of the lease, name of student, matriculation number of student,
+		 * place number, room number, Hall address or Student apartment address, Date of moving in and if 
+		 * present date of leaving the room */
+
 	}
 	
 	

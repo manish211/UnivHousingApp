@@ -9,6 +9,10 @@ import java.util.Scanner;
 
 import javax.xml.ws.Action;
 
+import com.univhousing.agreement.Lease;
+import com.univhousing.agreement.LeaseRequest_Relation;
+import com.univhousing.agreement.TerminationRequest_Relation;
+import com.univhousing.invoice.InvoicePersonLease_Relation;
 import com.univhousing.users.Student;
 
 public class EntryPoint {
@@ -23,6 +27,7 @@ public class EntryPoint {
 	private static boolean mLevelFour = true;
 	private static ArrayList<Integer> mInvoiceNumbers = null;
 	private static ArrayList<Integer> mLeaseNumbers = null;
+	private static Scanner inputObj = new Scanner(System.in);
 
 	public static void main(String[] args) {
 		Student studentOj = null; 
@@ -31,13 +36,15 @@ public class EntryPoint {
 			Connection connectionObj = null;
 			Statement statementObj = null;
 			ResultSet resultSetObj = null;
+			mInvoiceNumbers = new ArrayList<Integer>();
+			mLeaseNumbers = new ArrayList<Integer>();
 
 			try {
 				int choice;
 
 				System.out.println("Welcome to University Housing");
 				// Create scanner object for taking command line input
-				Scanner inputObj = new Scanner(System.in);
+				
 
 				// Going into infinite loop until exited
 				while(mLevelZero) {
@@ -87,7 +94,7 @@ public class EntryPoint {
 													System.out.println("5. View Vacancy");
 													System.out.println("6. Back");
 													choice = inputObj.nextInt();
-													
+													InvoicePersonLease_Relation invoicePersonObj = new InvoicePersonLease_Relation();
 													switch(choice)
 													{
 														case 1:
@@ -102,10 +109,10 @@ public class EntryPoint {
 																switch(choice)
 																{
 																	case 1:
-																		displayCurrentInvoice(credentialObj.personId);
+																		invoicePersonObj.displayCurrentInvoice(credentialObj.personId);
 																		break;
 																	case 2:
-																		displayListOfInvociesForAPerson(credentialObj.personId);
+																		invoicePersonObj.displayListOfInvociesForAPerson(credentialObj.personId, mInvoiceNumbers);
 																		int count = 1;
 																		
 																		while(mLevelFour)
@@ -127,7 +134,7 @@ public class EntryPoint {
 																				}
 																				else
 																				{
-																					displayInvoiceDetails(credentialObj.personId, mInvoiceNumbers.get(choice-1));
+																					invoicePersonObj.displayInvoiceDetails(credentialObj.personId, mInvoiceNumbers.get(choice-1));
 																				}
 																			}
 																			else
@@ -156,16 +163,16 @@ public class EntryPoint {
 																System.out.println("2. View Former Leases");
 																System.out.println("3. Back");
 																choice = inputObj.nextInt();
-																
+																Lease leaseObj = new Lease();
 																switch(choice)
 																{
 																	case 1:
-																		displayCurrentLease(credentialObj.personId);
+																		leaseObj.displayCurrentLease(credentialObj.personId);
 																		break;
 																	case 2:
-																		displayListOfLeasesForAPerson(credentialObj.personId);
+																		
+																		leaseObj.displayListOfLeasesForAPerson(credentialObj.personId,mLeaseNumbers);
 																		int count = 1;
-																		//asdasdas
 																		while(mLevelFour)
 																		{
 																			// Checking if the ArrayList indeed has some lease numbers in it else move out
@@ -185,7 +192,7 @@ public class EntryPoint {
 																				}
 																				else
 																				{
-																					displayLeaseDetails(credentialObj.personId, mLeaseNumbers.get(choice-1));
+																					leaseObj.displayLeaseDetails(credentialObj.personId, mLeaseNumbers.get(choice-1));
 																				}
 																			}
 																			else
@@ -207,6 +214,28 @@ public class EntryPoint {
 															mLevelThree = true;															break;
 														case 3:
 															System.out.println("Generating New Request");
+															while(mLevelFour)
+															{
+																System.out.println("1. New Lease Request");
+																System.out.println("2. Terminate Lease Request");
+																System.out.println("3. Back");
+																LeaseRequest_Relation leaseRequestObj = new LeaseRequest_Relation();
+																TerminationRequest_Relation terminationRequestObj = new TerminationRequest_Relation();
+																choice = inputObj.nextInt();
+																switch(choice)
+																{
+																	case 1:
+																		leaseRequestObj.generateNewLeaseRequest(credentialObj.personId);
+																		break;
+																	case 2:
+																		terminationRequestObj.generateLeaseTerminationRequest(credentialObj.personId);
+																		break;
+																	case 3:
+																		mLevelFour = false;
+																		break;
+																}
+															}
+															mLevelFour = true;
 															break;
 														case 4:
 															System.out.println("Showing/Viewing Cancel Invoices");
@@ -282,96 +311,6 @@ public class EntryPoint {
 		}
 	}
 
-	private static void displayLeaseDetails(int personId, Integer leaseNumber) {
-		System.out.println("The lease number for person ID "+personId+ " is "+leaseNumber);
-	}
-
-	private static void displayListOfLeasesForAPerson(int personId) {
-		mLeaseNumbers = new ArrayList<Integer>();
-		for (int i = 1; i < 11; i++) {
-			mLeaseNumbers.add(i);
-		}
-		
-	}
-
-	/***********************************************************************************************
-	 * @param personId
-	 * @action Displays lease number, duration of the lease, name of student, matriculation number of student,
-	 * place number, room number, Hall address or Student apartment address, Date of moving in and if 
-	 * present date of leaving the room
-	 ***********************************************************************************************/
-	private static void displayCurrentLease(int personId) {
-		ResultSet currentLease = null;
-		/*Write query for displaying :
-		 *ease number, duration of the lease, name of student, matriculation number of student,
-		 * place number, room number, Hall address or Student apartment address, Date of moving in and if 
-		 * present date of leaving the room */
-
-	}
-
-	/***********************************************************************************************
-	 * @param personId
-	 * @throws SQLException 
-	 * @action Displays list of invoices for a particular person_id, and stores the data from Result set into an ArrayList<Integer> 
-	 * Once the ArrayList is populated we then print all the invoices for a person and ask him to choose to print one particular invoice
-	 * Based on his input we get the invoice_no from the Array List and then use that to fetch details from that particular invoice_no
-	 *  
-	 *  @Tables 
-	 ***********************************************************************************************/
-	private static void displayListOfInvociesForAPerson(int personId) throws SQLException {
-		/*Write SQL query to fetch:
-		 * Invoice numbers for a particular person using his person_id*/
-	
-		/*ResultSet listOfInvoices = null;
-		mInvoiceNumbers = new ArrayList<Integer>();
-		while(listOfInvoices.next())
-		{
-			mInvoiceNumbers.add(listOfInvoices.getInt("invoice_no"));
-		}
-		*/
-		mInvoiceNumbers = new ArrayList<Integer>();
-		for (int i = 11; i < 21; i++) {
-			mInvoiceNumbers.add(i);
-		}
-		
-	}
-
-	/***********************************************************************************************
-	 * @param personId
-	 * @param invoiceNumber
-	 * @action Displays Lease number, Payment due, Due date, Student's Full name, Student Id, 
-	 *  Place number, Room number, Name of Hall, Apartment, Date of Invoice Paid, Method of Payment
-	 *  for a particular Invoice number 
-	 **********************************************************************************************/
-	private static void displayInvoiceDetails(int personId, Integer invoiceNumber) {
-		// TODO Auto-generated method stub
-		/*Write SQL Query to find above mentioned details in @action in method description
-		 *  for the given invoiceNumber*/
-		System.out.println("Invoice number for person id "+personId+" is "+invoiceNumber);
-
-	}
-
-	/***********************************************************************************************
-	 *  @param personId
-	 *  @action Displays Lease number, Payment due, Due date, Student's Full name, Student Id, 
-	 *  Place number, Room number, Name of Hall, Apartment, Date of Invoice Paid, Method of Payment
-	 *  
-	 *  @Tables 
-	 **********************************************************************************************/ 
-	private static void displayCurrentInvoice(int personId) {
-
-		/* Write SQL query to fetch:
-		 * Lease number, Payment due, Due date, Student's Full name, Student Id, 
-		 * Place number, Room number, Name of Hall, Apartment, Date of Invoice Paid, Method of Payment
-		 * 
-		 * Once the ResultSet is filled with data, depending upon how many ResultSets are used, we 
-		 * can go ahead with the logic	
-		 */	
-
-
-	}
-
-
 	/***********************************************************************************************
 	 * @param userId
 	 * @param password
@@ -394,7 +333,8 @@ public class EntryPoint {
 
 			// Returning true, because if the 
 			return true;
-		}*/
+		}
+		return false;*/
 		return true;
 	}
 }
