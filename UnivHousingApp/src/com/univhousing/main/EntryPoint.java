@@ -238,7 +238,25 @@ public class EntryPoint {
 															mLevelFour = true;
 															break;
 														case 4:
-															System.out.println("Showing/Viewing Cancel Invoices");
+															System.out.println("Showing/Viewing Cancel Requests");
+															while(mLevelFour)
+															{
+																System.out.println("1. View Request");	
+																System.out.println("2. Cancel Request");
+																choice = inputObj.nextInt();
+																
+																switch(choice)
+																{
+																	case 1:
+																		break;
+																	case 2:
+																		break;
+																	case 3:
+																		mLevelFour = false;
+																		break;
+																}
+															}
+															mLevelFour = true;
 															break;
 														case 5:
 															System.out.println("Showing Vacancy");

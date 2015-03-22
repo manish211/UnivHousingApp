@@ -13,10 +13,11 @@ public class Lease {
 	public int duration;
 	public Date cutOffDate;
 
-	
-
-	
-
+	/**
+	 * @param personId
+	 * @param leaseNumber
+	 * @action Display the lease details of a particular lease number corresponding to a person id
+	 */
 	public void displayLeaseDetails(int personId, Integer leaseNumber) {
 		/*Write SQL Query to display the details of a particular lease according to Project requirments*/
 	}
