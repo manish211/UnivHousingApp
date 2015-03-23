@@ -34,7 +34,6 @@ public class InvoicePersonLease_Relation {
 		 * Invoice numbers for a particular person using his person_id*/
 	
 		/*ResultSet listOfInvoices = null;
-		invoiceNumbers = new ArrayList<Integer>();
 		while(listOfInvoices.next())
 		{
 			invoiceNumbers.add(listOfInvoices.getInt("invoice_no"));

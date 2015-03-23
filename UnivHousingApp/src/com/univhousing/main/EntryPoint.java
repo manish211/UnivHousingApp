@@ -9,6 +9,7 @@ import java.util.Scanner;
 
 import javax.xml.ws.Action;
 
+import com.univhousing.agreement.HousingStaffManagesLease_Relation;
 import com.univhousing.agreement.Lease;
 import com.univhousing.agreement.LeaseRequest_Relation;
 import com.univhousing.agreement.TerminationRequest_Relation;
@@ -243,13 +244,16 @@ public class EntryPoint {
 															{
 																System.out.println("1. View Request");	
 																System.out.println("2. Cancel Request");
+																System.out.println("3. Back");
 																choice = inputObj.nextInt();
-																
+																HousingStaffManagesLease_Relation housingLeaseObj = new HousingStaffManagesLease_Relation();
 																switch(choice)
 																{
 																	case 1:
+																		housingLeaseObj.viewAllRequests(credentialObj.personId);
 																		break;
 																	case 2:
+																		//housingLeaseObj
 																		break;
 																	case 3:
 																		mLevelFour = false;
