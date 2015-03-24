@@ -15,6 +15,7 @@ import com.univhousing.agreement.Lease;
 import com.univhousing.agreement.LeaseRequest_Relation;
 import com.univhousing.agreement.TerminationRequest_Relation;
 import com.univhousing.invoice.InvoicePersonLease_Relation;
+import com.univhousing.invoice.TicketPersonStaff_Relation;
 import com.univhousing.parking.ParkingLot;
 import com.univhousing.parking.StudentParkingSpot_Relation;
 import com.univhousing.users.Student;
@@ -31,6 +32,7 @@ public class EntryPoint {
 	private static boolean mLevelFour = true;
 	private static ArrayList<Integer> mInvoiceNumbers = null;
 	private static ArrayList<Integer> mLeaseNumbers = null;
+	private static ArrayList<Integer> mTicketNumbers = null;
 	private static Scanner inputObj = new Scanner(System.in);
 
 	public static void main(String[] args) {
@@ -46,7 +48,7 @@ public class EntryPoint {
 			try {
 				int choice;
 
-				System.out.println("Welcome to University Housing");
+				System.out.println("Welcome to University Housing\n");
 				// Create scanner object for taking command line input
 				
 
@@ -55,20 +57,19 @@ public class EntryPoint {
 					studentOj = new Student();
 					credentialObj = new Credentials();
 
-					System.out.println("1. Login");
+					System.out.println("\n1. Login");
 					System.out.println("2. Guest Login");
-					System.out.println("3. Exit");
+					System.out.println("3. Exit\n");
 					choice = inputObj.nextInt();
 
 					switch (choice) 
 					{
 						case 1:
-							System.out.print("Enter University Id:");
+							System.out.print("\nEnter University Id:");
 							credentialObj.personId = inputObj.nextInt();
 	
-							System.out.print("Enter Password:");
+							System.out.print("\nEnter Password:");
 							credentialObj.password = inputObj.next();
-	
 							if(authenticateUser(credentialObj.personId,credentialObj.password,credentialObj))
 							{
 								//credentialObj.designation.equalsIgnoreCase(Constants.STUDENT)
@@ -78,11 +79,12 @@ public class EntryPoint {
 									while(mLevelOne)
 									{
 										// Show different menu items
-										System.out.println("1. Housing Option");
+										/*Runtime.getRuntime().exec("clear");*/
+										System.out.println("\n1. Housing Option");
 										System.out.println("2. Parking Option");
 										System.out.println("3. Maintenance");
 										System.out.println("4. Profile");
-										System.out.println("5. Back");
+										System.out.println("5. Back\n");
 										
 										choice = inputObj.nextInt();
 										switch (choice) 
@@ -92,12 +94,13 @@ public class EntryPoint {
 												// This is the second level of Student hierarchy where he is in Housing Options
 												while(mLevelTwo)
 												{
-													System.out.println("1. View Invoices");
+													/*Runtime.getRuntime().exec("clear");*/
+													System.out.println("\n1. View Invoices");
 													System.out.println("2. View Leases");
 													System.out.println("3. New Request");
 													System.out.println("4. View/Cancel Requests");
 													System.out.println("5. View Vacancy");
-													System.out.println("6. Back");
+													System.out.println("6. Back\n");
 													choice = inputObj.nextInt();
 													InvoicePersonLease_Relation invoicePersonObj = new InvoicePersonLease_Relation();
 													switch(choice)
@@ -106,9 +109,10 @@ public class EntryPoint {
 															// This is the third level of Student hierarchy where he is checking Invoices
 															while(mLevelThree)
 															{
-																System.out.println("1. View Current Invoice");
+																/*Runtime.getRuntime().exec("clear");*/
+																System.out.println("\n1. View Current Invoice");
 																System.out.println("2. View Former Invoices");
-																System.out.println("3. Back");
+																System.out.println("3. Back\n");
 																choice = inputObj.nextInt();
 																
 																switch(choice)
@@ -119,7 +123,7 @@ public class EntryPoint {
 																	case 2:
 																		invoicePersonObj.displayListOfInvociesForAPerson(credentialObj.personId, mInvoiceNumbers);
 																		int count = 1;
-																		
+																		/*Runtime.getRuntime().exec("clear");*/
 																		while(mLevelFour)
 																		{
 																			// Checking if the ArrayList indeed has some invoice numbers in it else move out
@@ -130,7 +134,9 @@ public class EntryPoint {
 																					System.out.println(count+". "+item.intValue());
 																					count++;
 																				}
+																				count = 0;
 																				System.out.println("0. Back");
+																				System.out.println("\n");
 																				choice = inputObj.nextInt();
 																				if(choice == 0)
 																				{
@@ -144,10 +150,10 @@ public class EntryPoint {
 																			}
 																			else
 																			{
-																				System.out.println("No previous invoices");
+																				System.out.println("No previous invoices\n");
 																			}
 																		}
-																		count = 0;
+																		
 																		// Setting true so that we can come back to Level Four
 																		mLevelFour = true;
 																		break;
@@ -161,12 +167,13 @@ public class EntryPoint {
 															mLevelThree = true;
 															break;
 														case 2:
+															/*Runtime.getRuntime().exec("clear");*/
 															System.out.println("Showing Leases");
 															while(mLevelThree)
 															{
-																System.out.println("1. View Current Lease");
+																System.out.println("\n1. View Current Lease");
 																System.out.println("2. View Former Leases");
-																System.out.println("3. Back");
+																System.out.println("3. Back\n");
 																choice = inputObj.nextInt();
 																Lease leaseObj = new Lease();
 																switch(choice)
@@ -178,6 +185,7 @@ public class EntryPoint {
 																		
 																		leaseObj.displayListOfLeasesForAPerson(credentialObj.personId,mLeaseNumbers);
 																		int count = 1;
+																		/*Runtime.getRuntime().exec("clear");*/
 																		while(mLevelFour)
 																		{
 																			// Checking if the ArrayList indeed has some lease numbers in it else move out
@@ -188,7 +196,8 @@ public class EntryPoint {
 																					System.out.println(count+". "+item.intValue());
 																					count++;
 																				}
-																				System.out.println("0. Back");
+																				count = 0;
+																				System.out.println("0. Back\n");
 																				choice = inputObj.nextInt();
 																				if(choice == 0)
 																				{
@@ -202,9 +211,8 @@ public class EntryPoint {
 																			}
 																			else
 																			{
-																				System.out.println("No previous leases");
+																				System.out.println("No previous leases\n");
 																			}
-																			count = 0;
 																		}
 																		// Setting true so that we can come back to Level Four
 																		mLevelFour = true;
@@ -219,14 +227,17 @@ public class EntryPoint {
 															mLevelThree = true;															break;
 														case 3:
 															System.out.println("Generating New Request");
+															/*Runtime.getRuntime().exec("clear");*/
 															while(mLevelFour)
 															{
-																System.out.println("1. New Lease Request");
+																System.out.println("\n1. New Lease Request");
 																System.out.println("2. Terminate Lease Request");
-																System.out.println("3. Back");
+																System.out.println("3. Back\n");
+
 																LeaseRequest_Relation leaseRequestObj = new LeaseRequest_Relation();
 																TerminationRequest_Relation terminationRequestObj = new TerminationRequest_Relation();
 																choice = inputObj.nextInt();
+
 																switch(choice)
 																{
 																	case 1:
@@ -244,20 +255,22 @@ public class EntryPoint {
 															break;
 														case 4:
 															System.out.println("Showing/Viewing Cancel Requests");
+															/*Runtime.getRuntime().exec("clear");*/
 															while(mLevelFour)
 															{
-																System.out.println("1. View Request");	
+																System.out.println("\n1. View Request");	
 																System.out.println("2. Cancel Request");
-																System.out.println("3. Back");
+																System.out.println("3. Back\n");
 																choice = inputObj.nextInt();
 																HousingStaffManagesLease_Relation housingLeaseObj = new HousingStaffManagesLease_Relation();
+																
 																switch(choice)
 																{
 																	case 1:
 																		housingLeaseObj.viewAllRequests(credentialObj.personId);
 																		break;
 																	case 2:
-																		System.out.println("Enter the Request Number to cancel: ");
+																		System.out.println("Enter the Request Number to cancel: \n");
 																		int requestNumber = inputObj.nextInt();
 																		housingLeaseObj.cancelRequest(credentialObj.personId, requestNumber);
 																		break;
@@ -269,7 +282,7 @@ public class EntryPoint {
 															mLevelFour = true;
 															break;
 														case 5:
-															System.out.println("Showing Vacancy");
+															System.out.println("Showing Vacancy\n");
 															HousingStaffManagesLease_Relation housingLeaseObj = new HousingStaffManagesLease_Relation();
 															housingLeaseObj.viewAccomodationVacancies();
 															break;
@@ -284,49 +297,50 @@ public class EntryPoint {
 												break;
 											case 2:
 												System.out.println("Showing Parking");
+												/*Runtime.getRuntime().exec("clear");*/
 												ParkingLot parkingLotObj = new ParkingLot();
 												while(mLevelTwo)
 												{
-													System.out.println("1. Request New Parking Spot");
+													System.out.println("\n1. Request New Parking Spot");
 													System.out.println("2. View Parking Lot Information");
 													System.out.println("3. View Current Parking Spot");
 													System.out.println("4. Renew Parking Spot");
 													System.out.println("5. Return Parking Spot");
 													System.out.println("6. View Request Status");
-													System.out.println("7. Back");
+													System.out.println("7. Back\n");
 													
 													choice = inputObj.nextInt();
 													switch (choice) 
 													{
-														case 1:System.out.println("Showing new Parking spot");
+														case 1:System.out.println("Showing new Parking spot\n");
 														
 															parkingLotObj.generateAParkingSpot(credentialObj.personId);
 															break;
 															
-														case 2:System.out.println("Showing View Parking Lot information");
+														case 2:System.out.println("Showing View Parking Lot information\n");
 															parkingLotObj.displayInfoForParkingLots(credentialObj.personId);
 															break;
 															
-														case 3:System.out.println("Showing View Current Parking Spot");
+														case 3:System.out.println("Showing View Current Parking Spot\n");
 															parkingLotObj.viewCurrentParkingSpot(credentialObj.personId);
 															break;
 															
-														case 4:System.out.println("Showing Renew Parking Spot");
+														case 4:System.out.println("Showing Renew Parking Spot\n");
 															parkingLotObj.renewParkingSpot(credentialObj.personId);
 															break;
 															
-														case 5: System.out.println("Showing Return Parking Spot");
+														case 5: System.out.println("Showing Return Parking Spot\n");
 															parkingLotObj.returnParkingSpot(credentialObj.personId);
 															break;
 
-														case 6: System.out.println("Showing View Request Status");
+														case 6: System.out.println("Showing View Request Status\n");
 															parkingLotObj.getRequestStatus(credentialObj.personId);
 															break;
 														case 7:
 															mLevelTwo = false;
 															break;
 	
-														default: System.out.println("Invalid Choice");
+														default: System.out.println("Invalid Choice\n");
 															break;
 													}
 												}
@@ -334,9 +348,49 @@ public class EntryPoint {
 												break;
 											case 3:
 												System.out.println("Showing Maintenance");
+												/*Runtime.getRuntime().exec("clear");*/
+												TicketPersonStaff_Relation ticketObj = new TicketPersonStaff_Relation();
+												while(mLevelTwo)
+												{
+													System.out.println("\n1. New Ticket");
+													System.out.println("2. View Ticket Status");
+													System.out.println("3. Back\n");
+													choice = inputObj.nextInt();
+													
+													switch (choice) 
+													{
+														case 1:
+															System.out.println("Showing New Ticket");
+															ticketObj.raiseNewTicket(credentialObj.personId);
+															break;
+	
+														case 2:
+															System.out.println("Showing View Ticket Status");
+															ticketObj.viewAllTicketStatuses(credentialObj.personId, mTicketNumbers);
+															break;
+
+														case 3:
+															System.out.println("Back\n");
+															mLevelTwo = false;
+															break;
+
+														default:
+															break;	
+													}
+												}
+												mLevelTwo = true;
 												break;
 											case 4:
-												System.out.println("Showing Profile");
+												System.out.println("Showing Profile\n");
+												while(mLevelTwo)
+												{
+													System.out.println("\n1. View Profile");
+													System.out.println("2. Update Profile");
+													System.out.println("3. Back\n");
+													choice = inputObj.nextInt();
+													
+												}
+												mLevelTwo = true;
 												break;
 											case 5: 
 												// Taking back to Level zero
@@ -358,7 +412,7 @@ public class EntryPoint {
 							}
 							else
 							{
-								System.out.println("Login Incorrect");
+								System.out.println("Login Incorrect\n");
 							}
 							// Setting true so that we can come back inside level one
 							mLevelOne = true;
@@ -372,7 +426,7 @@ public class EntryPoint {
 							mLevelZero = false;
 							break;
 	
-						default: System.out.println("Invalid Choice");
+						default: System.out.println("Invalid Choice\n");
 						break;
 					}	
 				}
