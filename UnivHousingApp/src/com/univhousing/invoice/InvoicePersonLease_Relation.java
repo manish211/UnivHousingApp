@@ -36,16 +36,62 @@ public class InvoicePersonLease_Relation {
 	public void displayListOfInvociesForAPerson(int personId, ArrayList<Integer> invoiceNumbers) throws SQLException {
 		/*Write SQL query to fetch:
 		 * Invoice numbers for a particular person using his person_id*/
+		
+		System.out.println("PERSON ID PASSED : "+personId);
 	
-		/*ResultSet listOfInvoices = null;
-		while(listOfInvoices.next())
-		{
-			invoiceNumbers.add(listOfInvoices.getInt("invoice_no"));
-		}*/
 		invoiceNumbers.clear();
-		for (int i = 0; i < 10; i++) {
-			invoiceNumbers.add(i);
+	
+		ResultSet rs = null;
+		Connection dbConnection = null;
+		PreparedStatement preparedStatement = null ;
+		
+		try{
+			dbConnection = ConnectionUtils.getConnection();
+			
+			String selectQuery = "SELECT * FROM invoice_person_lease WHERE person_id = ? " ;
+								
+			preparedStatement = dbConnection.prepareStatement(selectQuery);
+			
+			preparedStatement.setInt(1,personId);
+			
+			System.out.println("SELECT QUERY IS: "+selectQuery);
+			
+			rs = preparedStatement.executeQuery();
+
+			//If record exists , rs.next() will evaluate to true
+			if(rs.isBeforeFirst())
+			{
+				System.out.println("==============================================================================================");
+				System.out.println("INVOICE_NO");
+				System.out.println("==============================================================================================");
+				
+			}
+			
+			while(rs.next())
+				{
+					
+					invoiceNumbers.add(rs.getInt("invoice_no"));
+				}
+			
+		}catch(SQLException e1){
+			System.out.println("SQLException: "+ e1.getMessage());
+			System.out.println("VendorError: "+ e1.getErrorCode());
 		}
+		catch(Exception e3)
+		{
+			System.out.println("General Exception Case. Printing stack trace below:\n");
+			e3.printStackTrace();
+		}
+		finally{
+				try {
+			        rs.close();
+			        preparedStatement.close();
+			        dbConnection.close();
+			      } catch (SQLException e) {
+			        e.printStackTrace();
+			      }
+		}
+		
 	}
 
 	/***********************************************************************************************
@@ -109,10 +155,13 @@ public class InvoicePersonLease_Relation {
 			rs = preparedStatement.executeQuery();
 
 			//If record exists , rs.next() will evaluate to true
-			if(rs.next())
+			if(rs.isBeforeFirst())
 				{
+					rs.next();
+					System.out.println("==============================================================================================");
 					System.out.print("monthly_housing_rent\t\tmonthly_parking_rent\t\tlate_fees\t\tincidental_charges\t\tinvoice_no");
 					System.out.println("\t\tpayment_date\t\tpayment_method\t\tlease_no\t\tpayment_status\t\tpayment_due\t\tdamage_charges\t\tperson_id") ;
+					System.out.println("==============================================================================================");
 					
 					System.out.print(rs.getDouble("monthly_housing_rent")+"\t\t");
 					System.out.print(rs.getDouble("monthly_parking_rent")+"\t\t");
