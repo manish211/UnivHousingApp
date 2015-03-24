@@ -48,7 +48,7 @@ public class Utils {
 		return sqlDate;
 	}
 	
-	public static DateFormat getDateFormat()
+	private static DateFormat getDateFormat()
 	{
 		return new SimpleDateFormat("MM/dd/yyyy");
 	}

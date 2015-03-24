@@ -1,5 +1,12 @@
 package com.univhousing.invoice;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+import com.univhousing.users.Student;
+
 public class TicketPersonStaff_Relation {
 	
 	public int staffNo;
@@ -8,37 +15,96 @@ public class TicketPersonStaff_Relation {
 	public String ticketSeverity;
 	public int personId;
 
-	public int getStaffNo() {
-		return staffNo;
-	}
-	public void setStaffNo(int staffNo) {
-		this.staffNo = staffNo;
-	}
-	public int getTicketNo() {
-		return ticketNo;
-	}
-	public void setTicketNo(int ticketNo) {
-		this.ticketNo = ticketNo;
-	}
-	public String getTicketStatus() {
-		return ticketStatus;
-	}
-	public void setTicketStatus(String ticketStatus) {
-		this.ticketStatus = ticketStatus;
-	}
-	public String getTicketSeverity() {
-		return ticketSeverity;
-	}
-	public void setTicketSeverity(String ticketSeverity) {
-		this.ticketSeverity = ticketSeverity;
-	}
-	public int getPersonId() {
-		return personId;
-	}
-	public void setPersonId(int personId) {
-		this.personId = personId;
-	}
-	
-	
+	Scanner inputObj = new Scanner(System.in);
+	Student studentObj = new Student();
 
+	/**
+	 * @param personId
+	 * @action Raises a new ticket based on the information given by the user
+	 * @dataSeverity Water, Electricity – High severity
+					 Appliances, Internet – Medium severity
+					 Cleaning, Miscellaneous – Low severity
+	 */
+	public void raiseNewTicket(int personId) {
+
+		String severity, description, ticketType;
+		int ticketNo;
+		System.out.println("Select the ticket type:\n" +
+				"1. Water\n" +
+				"2. Electricity\n" +
+				"3. Applicance\n" +
+				"4. Internet\n" +
+				"5. Cleaning\n" +
+				"6. Miscellaneous\n");
+
+		ticketType = inputObj.next();
+		int type = Integer.parseInt(ticketType);
+
+		switch (type) 
+		{
+			case 1:
+			case 2:
+				severity = "High";
+				break;
+				
+			case 3:
+			case 4:
+				severity = "Medium";
+				break;
+				
+			case 5:
+			case 6:
+				severity = "Low";
+				break;
+	
+			default: System.out.println("Invalid Choice");
+				break;
+		}
+		
+		System.out.println("Enter the description for the issue:\n");
+		description = inputObj.next();
+		
+		/*Write SQL query to create a ticket with type, ticketNo, severity and description
+		 * Ticket has to be raised with a staff no who it will be assigned to, so 
+		 * we can do random generation of staff no. or we can write logic to choose staff no.*/
+	}
+
+	/**
+	 * @param personId
+	 * @throws SQLException 
+	 * @action Lists all the tickets for a particular student id for a person Id
+	 * and saves them in the ArrayList<Integer> ticketNumbers
+	 */
+	public void viewAllTicketStatuses(int personId, ArrayList<Integer> ticketNumbersList) throws SQLException 
+	{
+		int studentId;
+		// Fetch the student Id for a particular Person Id
+		studentId = studentObj.getSutdentIdForPersonId(personId);
+		
+		/*Write SQL Query to fetch all the tickets*/
+		ResultSet viewAllTickets = null;
+		
+		while(viewAllTickets.next())
+		{
+			ticketNumbersList.add(viewAllTickets.getInt("ticket_no"));
+		}
+		
+		System.out.println("\nBelow are the list of tickets:");
+		for (int i = 0; i < ticketNumbersList.size(); i++) 
+		{
+			System.out.println((i+1)+". "+ticketNumbersList.get(i));
+		}
+		System.out.println("\nSelect the ticket number you want to view details for:");
+		int choice = inputObj.nextInt();
+		
+		/* Getting the ticket number form the index, but have to substract 1 because ArrayList has values from 0 to n-1
+		 * but the options on screen are from 1 to n-1
+		*/
+		int ticketSelected = ticketNumbersList.get(choice-1);
+		
+		ResultSet getTicketDetails = null;
+		/*Write SQL query for fetching the details with status for the ticket number (ticketSelected) by student*/
+	}	
+	
+	
 }
