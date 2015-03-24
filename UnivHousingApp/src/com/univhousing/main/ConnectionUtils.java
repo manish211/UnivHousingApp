@@ -7,11 +7,11 @@ import java.sql.Statement;
 
 public class ConnectionUtils {
 	
-	private Connection connection = null;
+	private static Connection connection = null;
 	
-	Constants constParameters = new Constants();
+	static Constants constParameters = new Constants();
 	
-	public Statement getConnection(){
+	public static Connection getConnection(){
 		
 		try{
 			Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -20,7 +20,7 @@ public class ConnectionUtils {
 			
 			Statement stmt = connection.createStatement();
 			
-			return stmt;
+			return connection;
 			
 		}catch(SQLException e1){
 			System.out.println("SQLException: "+ e1.getMessage());
@@ -39,7 +39,7 @@ public class ConnectionUtils {
 		return null;
 	}
 	
-	public void closeConnection(Connection connection) throws SQLException
+	public static void closeConnection(Connection connection) throws SQLException
 	{
 		connection.close();
 	}

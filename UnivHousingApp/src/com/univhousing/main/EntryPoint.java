@@ -1,6 +1,7 @@
 package com.univhousing.main;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -347,6 +348,7 @@ public class EntryPoint {
 		 If matches retrieve designation and person_id
 		 */		
 		/*ResultSet user = null;
+		 * 
 		
 		while(user.next())
 		{
@@ -357,6 +359,60 @@ public class EntryPoint {
 			return true;
 		}
 		return false;*/
-		return true;
+		
+		
+		Boolean isUserAuthenticated = false;
+		
+		Connection dbConnection = ConnectionUtils.getConnection();
+		
+		String selectQuery = "SELECT * FROM login_credentials WHERE person_id = ? AND password = ?" ;
+		
+		PreparedStatement preparedStatement = dbConnection.prepareStatement(selectQuery);
+		
+		preparedStatement.setInt(1,userId);
+		preparedStatement.setString(2,password);
+		
+		ResultSet rs = preparedStatement.executeQuery();
+		
+		//If record exists , rs.next() will evaluate to true
+		if(rs.next())
+			isUserAuthenticated = true;
+		
+		return isUserAuthenticated;
+			
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
