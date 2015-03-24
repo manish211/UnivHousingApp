@@ -1,28 +1,39 @@
 package com.univhousing.users;
 
+import java.sql.ResultSet;
+
 public class Student {
 	
 	public int studentId;
 	public int personId;
 	public String studentType;
+	
+	/**
+	 * @param personId
+	 * @return
+	 */
+	public int getSutdentIdForPersonId(int personId)
+	{
+		ResultSet getStudentId = null;
+		/*Write SQL Query to fetch the student Id for personId
+		 * Use the instance Variable to save the student's ID and return it;*/
 
-	public int getStudentId() {
 		return studentId;
 	}
-	public void setStudentId(int studentId) {
-		this.studentId = studentId;
-	}
-	public int getPersonId() {
-		return personId;
-	}
-	public void setPersonId(int personId) {
-		this.personId = personId;
-	}
-	public String getStudentType() {
-		return studentType;
-	}
-	public void setStudentType(String studentType) {
-		this.studentType = studentType;
+	
+	
+	/**
+	 * @param studentId
+	 * @action Checks if the studentId s enrolled in University Housing
+	 * @return True is the studentId is enrolled in university housing else returns False
+	 */
+	public boolean checkStudentInUnivHosuing(int studentId)
+	{
+		ResultSet checkStudentAccomodation = null;
+		/*Write SQL Query to check if the studentId has an accommodation and only then
+		 * will the student be allowed parking spot
+		 * Then set isStudentAccomodated as true*/
+		return false;
 	}
 
 }

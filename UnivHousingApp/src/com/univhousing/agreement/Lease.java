@@ -27,11 +27,12 @@ public class Lease {
 		/*Write SQL Query to display a list of leases for a person id*/
 		
 		/*ResultSet listOfLeases = null;
+		 leaseNumbers.clear();
 		while(listOfLeases.next())
 		{
 			leaseNumbers.add(listOfLeases.getInt("lease_no"));
 		}*/
-		leaseNumbers.clear();
+		
 		for (int i = 10; i < 20; i++) {
 			leaseNumbers.add(i);
 		}

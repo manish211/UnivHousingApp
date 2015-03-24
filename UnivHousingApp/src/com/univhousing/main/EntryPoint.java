@@ -15,6 +15,8 @@ import com.univhousing.agreement.Lease;
 import com.univhousing.agreement.LeaseRequest_Relation;
 import com.univhousing.agreement.TerminationRequest_Relation;
 import com.univhousing.invoice.InvoicePersonLease_Relation;
+import com.univhousing.parking.ParkingLot;
+import com.univhousing.parking.StudentParkingSpot_Relation;
 import com.univhousing.users.Student;
 
 public class EntryPoint {
@@ -86,6 +88,7 @@ public class EntryPoint {
 										switch (choice) 
 										{
 											case 1:
+												System.out.println("Showing Housing Option");
 												// This is the second level of Student hierarchy where he is in Housing Options
 												while(mLevelTwo)
 												{
@@ -254,7 +257,9 @@ public class EntryPoint {
 																		housingLeaseObj.viewAllRequests(credentialObj.personId);
 																		break;
 																	case 2:
-																		//housingLeaseObj
+																		System.out.println("Enter the Request Number to cancel: ");
+																		int requestNumber = inputObj.nextInt();
+																		housingLeaseObj.cancelRequest(credentialObj.personId, requestNumber);
 																		break;
 																	case 3:
 																		mLevelFour = false;
@@ -265,6 +270,8 @@ public class EntryPoint {
 															break;
 														case 5:
 															System.out.println("Showing Vacancy");
+															HousingStaffManagesLease_Relation housingLeaseObj = new HousingStaffManagesLease_Relation();
+															housingLeaseObj.viewAccomodationVacancies();
 															break;
 														case 6:
 															// Taking back to Level One
@@ -277,6 +284,53 @@ public class EntryPoint {
 												break;
 											case 2:
 												System.out.println("Showing Parking");
+												ParkingLot parkingLotObj = new ParkingLot();
+												while(mLevelTwo)
+												{
+													System.out.println("1. Request New Parking Spot");
+													System.out.println("2. View Parking Lot Information");
+													System.out.println("3. View Current Parking Spot");
+													System.out.println("4. Renew Parking Spot");
+													System.out.println("5. Return Parking Spot");
+													System.out.println("6. View Request Status");
+													System.out.println("7. Back");
+													
+													choice = inputObj.nextInt();
+													switch (choice) 
+													{
+														case 1:System.out.println("Showing new Parking spot");
+														
+															parkingLotObj.generateAParkingSpot(credentialObj.personId);
+															break;
+															
+														case 2:System.out.println("Showing View Parking Lot information");
+															parkingLotObj.displayInfoForParkingLots(credentialObj.personId);
+															break;
+															
+														case 3:System.out.println("Showing View Current Parking Spot");
+															parkingLotObj.viewCurrentParkingSpot(credentialObj.personId);
+															break;
+															
+														case 4:System.out.println("Showing Renew Parking Spot");
+															parkingLotObj.renewParkingSpot(credentialObj.personId);
+															break;
+															
+														case 5: System.out.println("Showing Return Parking Spot");
+															parkingLotObj.returnParkingSpot(credentialObj.personId);
+															break;
+
+														case 6: System.out.println("Showing View Request Status");
+															parkingLotObj.getRequestStatus(credentialObj.personId);
+															break;
+														case 7:
+															mLevelTwo = false;
+															break;
+	
+														default: System.out.println("Invalid Choice");
+															break;
+													}
+												}
+												mLevelTwo = true;
 												break;
 											case 3:
 												System.out.println("Showing Maintenance");
