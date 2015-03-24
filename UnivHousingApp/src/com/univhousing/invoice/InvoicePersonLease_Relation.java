@@ -90,7 +90,7 @@ public class InvoicePersonLease_Relation {
 		
 		ResultSet rs = null;
 		Connection dbConnection = null;
-		PreparedStatement preparedStatement = null;
+		PreparedStatement preparedStatement = null ;
 		
 		try{
 			dbConnection = ConnectionUtils.getConnection();
