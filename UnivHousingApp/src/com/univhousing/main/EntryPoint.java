@@ -341,7 +341,7 @@ public class EntryPoint {
 	 * @return True if the user has been authenticated , False if the authentication failed
 	 * @throws SQLException
 	 ***********************************************************************************************/
-	private static boolean authenticateUser(int userId, String password, Credentials object) throws SQLException 
+	private static boolean authenticateUser(int userId, String password, Credentials credentials) throws SQLException 
 	{
 		/* Write SQL query to check if userName and password match the Credentials Table in Database
 		 If matches retrieve designation and person_id
@@ -350,8 +350,8 @@ public class EntryPoint {
 		
 		while(user.next())
 		{
-			object.personId = user.getInt("person_id");
-			object.designation = user.getString("designation");
+			credentials.personId = user.getInt("person_id");
+			credentials.designation = user.getString("designation");
 
 			// Returning true, because if the 
 			return true;
