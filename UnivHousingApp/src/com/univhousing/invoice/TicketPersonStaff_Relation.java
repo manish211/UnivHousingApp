@@ -83,7 +83,7 @@ public class TicketPersonStaff_Relation {
 		
 		/*Write SQL Query to fetch all the tickets*/
 		ResultSet viewAllTickets = null;
-		
+		ticketNumbersList.clear();
 		while(viewAllTickets.next())
 		{
 			ticketNumbersList.add(viewAllTickets.getInt("ticket_no"));

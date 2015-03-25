@@ -18,6 +18,7 @@ import com.univhousing.invoice.InvoicePersonLease_Relation;
 import com.univhousing.invoice.TicketPersonStaff_Relation;
 import com.univhousing.parking.ParkingLot;
 import com.univhousing.parking.StudentParkingSpot_Relation;
+import com.univhousing.users.Person;
 import com.univhousing.users.Student;
 
 public class EntryPoint {
@@ -36,7 +37,7 @@ public class EntryPoint {
 	private static Scanner inputObj = new Scanner(System.in);
 
 	public static void main(String[] args) {
-		Student studentOj = null; 
+		Student studentObj = null; 
 		Credentials credentialObj = null;
 		try {
 			Connection connectionObj = null;
@@ -54,7 +55,7 @@ public class EntryPoint {
 
 				// Going into infinite loop until exited
 				while(mLevelZero) {
-					studentOj = new Student();
+					studentObj = new Student();
 					credentialObj = new Credentials();
 
 					System.out.println("\n1. Login");
@@ -72,8 +73,15 @@ public class EntryPoint {
 							credentialObj.password = inputObj.next();
 							if(authenticateUser(credentialObj.personId,credentialObj.password,credentialObj))
 							{
-								//credentialObj.designation.equalsIgnoreCase(Constants.STUDENT)
-								if(true)
+								credentialObj.designation = studentObj.getStudentDesignation(credentialObj.personId);
+								/*P		E		N		D		I		N		G:
+								 * 
+								 * 
+								 * After Authenticating we have to fetch the designation of student
+								 * i.e. Student or Supervior/Admin or Guest
+								 * The method fo this is present in Student.java but no QUERY is written yet*/
+								
+								if(credentialObj.designation.equalsIgnoreCase(Constants.STUDENT))
 								{
 									// This is the first Level of Student Hierarchy
 									while(mLevelOne)
@@ -262,17 +270,17 @@ public class EntryPoint {
 																System.out.println("2. Cancel Request");
 																System.out.println("3. Back\n");
 																choice = inputObj.nextInt();
-																HousingStaffManagesLease_Relation housingLeaseObj = new HousingStaffManagesLease_Relation();
+																Lease leaseObj = new Lease();
 																
 																switch(choice)
 																{
 																	case 1:
-																		housingLeaseObj.viewAllRequests(credentialObj.personId);
+																		leaseObj.viewAllRequests(credentialObj.personId);
 																		break;
 																	case 2:
 																		System.out.println("Enter the Request Number to cancel: \n");
 																		int requestNumber = inputObj.nextInt();
-																		housingLeaseObj.cancelRequest(credentialObj.personId, requestNumber);
+																		leaseObj.cancelRequest(credentialObj.personId, requestNumber);
 																		break;
 																	case 3:
 																		mLevelFour = false;
@@ -283,8 +291,9 @@ public class EntryPoint {
 															break;
 														case 5:
 															System.out.println("Showing Vacancy\n");
-															HousingStaffManagesLease_Relation housingLeaseObj = new HousingStaffManagesLease_Relation();
-															housingLeaseObj.viewAccomodationVacancies();
+
+															Lease leaseObj = new Lease();
+															leaseObj.viewAccomodationVacancies();
 															break;
 														case 6:
 															// Taking back to Level One
@@ -382,12 +391,28 @@ public class EntryPoint {
 												break;
 											case 4:
 												System.out.println("Showing Profile\n");
+												Person personObj = new Person();
+
 												while(mLevelTwo)
 												{
 													System.out.println("\n1. View Profile");
 													System.out.println("2. Update Profile");
 													System.out.println("3. Back\n");
 													choice = inputObj.nextInt();
+													
+													switch (choice) 
+													{
+														case 1: System.out.println("Showing View Profile");
+															personObj.viewProfileDetails(credentialObj.personId);
+															break;
+	
+														case 2: System.out.println("Showing Update Profile");
+														personObj.updateProfile(credentialObj.personId);
+															break;
+															
+														default:
+															break;
+													}
 													
 												}
 												mLevelTwo = true;
@@ -403,7 +428,31 @@ public class EntryPoint {
 								}
 								else if(credentialObj.designation.equalsIgnoreCase(Constants.SUPERVISOR))
 								{
-									// Do something
+									// Supervior/Admin code goes here.
+
+									while(mLevelTwo)
+									{
+										System.out.println("\n1. View New Lease Requests");
+										System.out.println("2. View Terminate Lease Requests");
+										System.out.println("3. View Maintenance Tickets");
+										System.out.println("4. View Parking Requests");
+										System.out.println("5. Profile");
+										System.out.println("6. Back\n");
+										
+										choice = inputObj.nextInt();
+										
+										switch (choice) 
+										{
+											case 1:
+												HousingStaffManagesLease_Relation housingLeaseObj = new HousingStaffManagesLease_Relation();
+												housingLeaseObj.getAllNewLeaseRequests();
+												break;
+	
+											default: System.out.println("Invalid Choice");
+												break;
+										}
+										
+									}
 								}
 								else if(credentialObj.designation.equalsIgnoreCase(Constants.GUEST))
 								{

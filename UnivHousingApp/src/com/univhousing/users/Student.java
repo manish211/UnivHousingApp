@@ -8,6 +8,7 @@ public class Student {
 	public int personId;
 	public String studentType;
 	
+	public String studentDesignation = "";
 	/**
 	 * @param personId
 	 * @return
@@ -34,6 +35,17 @@ public class Student {
 		 * will the student be allowed parking spot
 		 * Then set isStudentAccomodated as true*/
 		return false;
+	}
+	
+	
+	/**
+	 * @param personId
+	 * @return
+	 */
+	public String getStudentDesignation(int personId)
+	{
+		/*Write SQL Query to get the student's designation from login_credentials table i think*/
+		return studentDesignation;
 	}
 
 }
