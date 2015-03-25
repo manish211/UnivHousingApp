@@ -34,6 +34,10 @@ public class EntryPoint {
 	private static ArrayList<Integer> mInvoiceNumbers = null;
 	private static ArrayList<Integer> mLeaseNumbers = null;
 	private static ArrayList<Integer> mTicketNumbers = null;
+	private static ArrayList<Integer> mAdminLevelLeaseRequests = null;
+	private static ArrayList<Integer> mAdminLevelTerminationRequests = null;
+	private static ArrayList<Integer> mAdminLevelMaintenanceRequests = null;
+	private static ArrayList<Integer> mAdminLevelParkingRequests = null;
 	private static Scanner inputObj = new Scanner(System.in);
 
 	public static void main(String[] args) {
@@ -45,6 +49,11 @@ public class EntryPoint {
 			ResultSet resultSetObj = null;
 			mInvoiceNumbers = new ArrayList<Integer>();
 			mLeaseNumbers = new ArrayList<Integer>();
+			mTicketNumbers = new ArrayList<Integer>();
+			mAdminLevelLeaseRequests = new ArrayList<Integer>();
+			mAdminLevelTerminationRequests = new ArrayList<Integer>();
+			mAdminLevelMaintenanceRequests = new ArrayList<Integer>();
+			mAdminLevelParkingRequests = new ArrayList<Integer>();
 
 			try {
 				int choice;
@@ -425,12 +434,16 @@ public class EntryPoint {
 												break;
 										}
 									}
+									mLevelOne =true;
 								}
 								else if(credentialObj.designation.equalsIgnoreCase(Constants.SUPERVISOR))
 								{
 									// Supervior/Admin code goes here.
-
-									while(mLevelTwo)
+									HousingStaffManagesLease_Relation housingLeaseObj = new HousingStaffManagesLease_Relation();
+									TicketPersonStaff_Relation ticketStaffObj = new TicketPersonStaff_Relation();
+									ParkingLot parkingObj = new ParkingLot();
+									
+									while(mLevelOne)
 									{
 										System.out.println("\n1. View New Lease Requests");
 										System.out.println("2. View Terminate Lease Requests");
@@ -444,19 +457,73 @@ public class EntryPoint {
 										switch (choice) 
 										{
 											case 1:
-												HousingStaffManagesLease_Relation housingLeaseObj = new HousingStaffManagesLease_Relation();
-												housingLeaseObj.getAllNewLeaseRequests();
+												System.out.println("Showing New Lease Requests");
+												housingLeaseObj.getAllNewLeaseRequests(mAdminLevelLeaseRequests);
+												break;
+											
+											case 2:
+												System.out.println("Showing Termination Lease Requests");
+												housingLeaseObj.getAllNewTerminationRequests(mAdminLevelTerminationRequests);
+												break;
+												
+											case 3:
+												System.out.println("Showing Maintenance Tickets");
+												ticketStaffObj.getAllMaintenanceTickets(mAdminLevelMaintenanceRequests);
+												break;
+											
+											case 4:
+												System.out.println("Showing Parking Requests");
+												parkingObj.getAllParkingRequests(mAdminLevelParkingRequests);
+												
+											case 5:
+												System.out.println("Showing Profile\n");
+												Person personObj = new Person();
+
+												while(mLevelTwo)
+												{
+													System.out.println("\n1. View Profile");
+													System.out.println("2. Update Profile");
+													System.out.println("3. Back\n");
+													choice = inputObj.nextInt();
+													
+													switch (choice) 
+													{
+														case 1: System.out.println("Showing View Profile");
+															personObj.viewProfileDetails(credentialObj.personId);
+															break;
+	
+														case 2: System.out.println("Showing Update Profile");
+														personObj.updateProfile(credentialObj.personId);
+															break;
+															
+														default:
+															break;
+													}
+													
+												}
+												mLevelTwo = true;
+												 break;
+												 
+											case 6:
+												mLevelOne = false;
 												break;
 	
 											default: System.out.println("Invalid Choice");
 												break;
 										}
-										
 									}
 								}
 								else if(credentialObj.designation.equalsIgnoreCase(Constants.GUEST))
 								{
 									// Do something
+									System.out.println("Enter Approval Id or Press 2 to go Back:");
+									int approvalId = inputObj.nextInt();
+									if(approvalId == 2)
+										return;
+									else
+									{
+										
+									}
 								}
 							}
 							else
@@ -539,37 +606,3 @@ public class EntryPoint {
 			
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

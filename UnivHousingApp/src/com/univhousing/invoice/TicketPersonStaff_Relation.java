@@ -104,7 +104,40 @@ public class TicketPersonStaff_Relation {
 		
 		ResultSet getTicketDetails = null;
 		/*Write SQL query for fetching the details with status for the ticket number (ticketSelected) by student*/
+	}
+
+	/**
+	 * @param ArrayList<Integer> adminLevelMaintenanceRequests
+	 * @throws SQLException 
+	 */
+	public void getAllMaintenanceTickets(ArrayList<Integer> maintenanceTicketsList) throws SQLException 
+	{
+		/*Write SQL Query to fetch all the maintenance tickets*/
+		ResultSet allTickets = null;
+		maintenanceTicketsList.clear();
+		
+		while(allTickets.next())
+		{
+			maintenanceTicketsList.add(allTickets.getInt("ticket_no"));
+		}
+		
+		System.out.println("Displaying all Maintenance Tickets");
+		for (int i = 0; i < maintenanceTicketsList.size(); i++) 
+		{
+			System.out.println((i+1)+". "+maintenanceTicketsList.get(i));
+		}
+		System.out.println("Select the ticket you want to: ");
+		int ticketSelected = inputObj.nextInt();
+		int ticketNumber = maintenanceTicketsList.get(ticketSelected-1);
+		
+		/*Write SQL Query to fetch all details for this ticket number 
+		 * and set it's status to Processing*/
+		
+		/*Write SQL Trigger to change ticket status to Complete after 30 mins*/
+		
 	}	
+	
+	
 	
 	
 }

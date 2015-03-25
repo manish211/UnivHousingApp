@@ -6,6 +6,13 @@ import java.util.Scanner;
 import com.univhousing.main.Utils;
 
 public class LeaseRequest_Relation {
+	
+	public int applicationRequestNo;
+	public String accomodationType;
+	public int personId;
+	public int staffNo;
+	
+
 	/**
 	 * @param personId
 	 * @throws ParseException 
