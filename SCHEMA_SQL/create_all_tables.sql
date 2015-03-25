@@ -201,11 +201,10 @@ FOREIGN KEY(lease_no) REFERENCES lease);
 
 CREATE TABLE PERSON_ACC_STAFF (
 application_request_no INTEGER,
-accomodation_id INTEGER,
+accomodation_type VARCHAR2(50),
 person_id INTEGER,
 staff_no INTEGER,
 PRIMARY KEY(application_request_no),
-FOREIGN KEY(accomodation_id) REFERENCES person_accomodation_lease,
 FOREIGN KEY (person_id) REFERENCES person);
 
 
