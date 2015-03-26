@@ -1,6 +1,8 @@
 package com.univhousing.parking;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import com.univhousing.users.Student;
@@ -173,5 +175,52 @@ public class ParkingLot {
 		
 		ResultSet checkSpotValidity = null;
 		/*Write SQL Query to check if SpotNumber entered by user is actually ssigned to him*/
+	}
+
+	/**
+	 * @param ArrayList<Integer> adminLevelParkingRequests
+	 * @throws SQLException 
+	 */
+	public void getAllParkingRequests(ArrayList<Integer> parkingTicketsList) throws SQLException 
+	{
+		/*Write SQL Query to fetch all the Parking requests*/
+		ResultSet allRequests = null;
+		
+		while(allRequests.next())
+		{
+			parkingTicketsList.add(allRequests.getInt("request_no"));
+		}
+		
+		System.out.println("Displaying all the parking requests made:");
+		for (int i = 0; i < parkingTicketsList.size(); i++) 
+		{
+			System.out.println((i+1)+". "+parkingTicketsList.get(i));
+		}
+		System.out.println("Please select the parking request:");
+		int requestSelected = inputObj.nextInt();
+		int requestNumber = parkingTicketsList.get(requestSelected-1);
+		
+		/*Write a SQL Query to fetch all details of the ticket number*/
+		System.out.println("Do you want to approve request: Y/N");
+		String requestApprovalStatus = inputObj.next();
+		
+		/* Note at this point of time, a request for parking has been generated only after
+		 * it has been validated that student is indeed enrolled in university housing.
+		 * The code to check this is present in this method: 
+		 * public boolean checkStudentInUnivHosuing(int studentId) in Student.java
+		 * 
+		 * 
+		 * NOTE: But the document states if all the criteria is verified then approve, so we have to 
+		 * look what other criteria are*/
+		
+		if(requestApprovalStatus.equalsIgnoreCase("Y"))
+		{
+			/*Write SQL Query to change status of request to approved and 
+			 * also generate a permit_id which will be updated in atleast two tables*/
+		}
+		else if(requestApprovalStatus.equalsIgnoreCase("N"))
+		{
+			/*Write SQL Query to change status of request to denied*/
+		}
 	}
 }
