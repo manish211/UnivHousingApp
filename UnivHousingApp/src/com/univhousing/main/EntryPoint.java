@@ -76,14 +76,15 @@ public class EntryPoint {
 					switch (choice) 
 					{
 						case 1:
-							System.out.print("\nEnter University Id:");
+							System.out.print("\nEnter University Id++:");
 							credentialObj.personId = inputObj.nextInt();
 	
 							System.out.print("\nEnter Password:");
 							credentialObj.password = inputObj.next();
 							if(authenticateUser(credentialObj.personId,credentialObj.password,credentialObj))
 							{
-								credentialObj.designation = studentObj.getStudentDesignation(credentialObj.personId);
+								
+								credentialObj.designation = "student";//studentObj.getStudentDesignation(credentialObj.personId);
 								//credentialObj.designation = "student";
 								/*P		E		N		D		I		N		G:
 								 * 
@@ -95,8 +96,11 @@ public class EntryPoint {
 								if(credentialObj.designation.equalsIgnoreCase(Constants.STUDENT))
 								{
 									// This is the first Level of Student Hierarchy
+									
+									System.out.println("mLevelOne:="+mLevelOne);
 									while(mLevelOne)
 									{
+										System.out.println("Inside");
 										// Show different menu items
 										/*Runtime.getRuntime().exec("clear");*/
 										System.out.println("\n1. Housing Option");
