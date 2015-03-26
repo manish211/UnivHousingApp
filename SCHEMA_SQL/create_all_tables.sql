@@ -147,6 +147,8 @@ hall_number INTEGER,
  PRIMARY KEY(lot_no,hall_number));
 
 
+
+
 CREATE TABLE parkingSpot_belongs_parkingLot(
 lot_no INTEGER,
 spot_no INTEGER,
