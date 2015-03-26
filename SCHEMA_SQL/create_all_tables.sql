@@ -147,9 +147,13 @@ hall_number INTEGER,
  PRIMARY KEY(lot_no,hall_number));
 
 
+
+
 CREATE TABLE parkingSpot_belongs_parkingLot(
 lot_no INTEGER,
 spot_no INTEGER,
+availability VARCHAR2(10),
+permit_id INTEGER NOT NULL UNIQUE,
 PRIMARY KEY(spot_no),
 FOREIGN KEY(lot_no) REFERENCES parking_lot);
 
@@ -201,9 +205,10 @@ FOREIGN KEY(lease_no) REFERENCES lease);
 
 CREATE TABLE PERSON_ACC_STAFF (
 application_request_no INTEGER,
-accomodation_type VARCHAR2(50),
 person_id INTEGER,
 staff_no INTEGER,
+accomodation_type VARCHAR2(50),
+request_status VARCHAR2(50),
 PRIMARY KEY(application_request_no),
 FOREIGN KEY (person_id) REFERENCES person);
 
@@ -238,4 +243,15 @@ designation VARCHAR2(10),
 PRIMARY KEY(person_id),
 FOREIGN KEY(person_id) REFERENCES Person);
 
-
+CREATE TABLE StudentParkingSpot_Relation (
+lot_no INTEGER,
+spot_no INTEGER,
+student_id INTEGER,
+request_status VARCHAR2(20),
+request_no INTEGER
+PRIMARY KEY(lot_no),
+PRIMARY KEY(spot_no),
+PRIMARY key(student_id),
+FOREIGN KEY(lot_no) REFERENCES parking_lot,
+FOREIGN KEY(spot_no) REFERENCES parkingSpot_parkingLot,
+FOREIGN KEY(student_id) REFERENCES Student);
