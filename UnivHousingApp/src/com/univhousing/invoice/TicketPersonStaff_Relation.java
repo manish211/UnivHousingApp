@@ -21,9 +21,9 @@ public class TicketPersonStaff_Relation {
 	/**
 	 * @param personId
 	 * @action Raises a new ticket based on the information given by the user
-	 * @dataSeverity Water, Electricity – High severity
-					 Appliances, Internet – Medium severity
-					 Cleaning, Miscellaneous – Low severity
+	 * @dataSeverity Water, Electricity ï¿½ High severity
+					 Appliances, Internet ï¿½ Medium severity
+					 Cleaning, Miscellaneous ï¿½ Low severity
 	 */
 	public void raiseNewTicket(int personId) {
 
@@ -79,7 +79,7 @@ public class TicketPersonStaff_Relation {
 	{
 		int studentId;
 		// Fetch the student Id for a particular Person Id
-		studentId = studentObj.getSutdentIdForPersonId(personId);
+		studentId = studentObj.getStudentIdForPersonId(personId);
 		
 		/*Write SQL Query to fetch all the tickets*/
 		ResultSet viewAllTickets = null;
