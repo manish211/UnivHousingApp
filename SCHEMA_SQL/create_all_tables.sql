@@ -130,6 +130,7 @@ FOREIGN KEY(accomodation_id) REFERENCES person_accomodation_lease);
 drop table parking_lot cascade constraints;
 Create table parking_lot(
 lot_no number(5) ,
+zip_code INTEGER,
 PRIMARY KEY(lot_no));
 
 drop table parking_lot_apt cascade constraints;
@@ -152,18 +153,18 @@ hall_number INTEGER,
 CREATE TABLE parkingSpot_belongs_parkingLot(
 lot_no INTEGER,
 spot_no INTEGER,
-availability VARCHAR2(10),
-permit_id INTEGER NOT NULL UNIQUE,
 PRIMARY KEY(spot_no),
+availability varcahr2(10),
+permit_id INTEGER NOT NULL UNIQUE,
 FOREIGN KEY(lot_no) REFERENCES parking_lot);
 
 
 Create table parking_spot_has_class(
-type varchar2(10),
- fees number(3),
+type varchar2(50),
+fees number(7,2),
 spot_no number(5), 
 PRIMARY KEY (spot_no,type),
- FOREIGN KEY (spot_no) REFERENCES parkingSpot_parkingLot);
+FOREIGN KEY (spot_no) REFERENCES parkingSpot_parkingLot);
 
 CREATE TABLE invoice_person_lease(
 monthly_housing_rent number(9,2),
@@ -205,10 +206,9 @@ FOREIGN KEY(lease_no) REFERENCES lease);
 
 CREATE TABLE PERSON_ACC_STAFF (
 application_request_no INTEGER,
+accomodation_type VARCHAR2(50),
 person_id INTEGER,
 staff_no INTEGER,
-accomodation_type VARCHAR2(50),
-request_status VARCHAR2(50),
 PRIMARY KEY(application_request_no),
 FOREIGN KEY (person_id) REFERENCES person);
 
@@ -248,10 +248,8 @@ lot_no INTEGER,
 spot_no INTEGER,
 student_id INTEGER,
 request_status VARCHAR2(20),
-request_no INTEGER
-PRIMARY KEY(lot_no),
-PRIMARY KEY(spot_no),
-PRIMARY key(student_id),
+request_no INTEGER,
+PRIMARY KEY(lot_no,spot_no,student_id),
 FOREIGN KEY(lot_no) REFERENCES parking_lot,
 FOREIGN KEY(spot_no) REFERENCES parkingSpot_parkingLot,
 FOREIGN KEY(student_id) REFERENCES Student);
