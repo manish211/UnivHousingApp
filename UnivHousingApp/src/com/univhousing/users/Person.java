@@ -24,7 +24,7 @@ public class Person {
 		
 		int studentId;
 		// Fetch the student Id for a particular Person Id
-		studentId = studentObj.getSutdentIdForPersonId(personId);
+		studentId = studentObj.getStudentIdForPersonId(personId);
 		
 		/*Write SQL Query for fetching:
 		 * name, number, address, dob, gender, category (freshman, sophomore, etc) family details (from NextOfKin)
@@ -43,7 +43,7 @@ public class Person {
 
 		int studentId;
 		// Fetch the student Id for a particular Person Id
-		studentId = studentObj.getSutdentIdForPersonId(personId);
+		studentId = studentObj.getStudentIdForPersonId(personId);
 		
 		/*Write SQL Query for fetching:
 		 * name, number, address, dob, gender, category (freshman, sophomore, etc) family details (from NextOfKin)

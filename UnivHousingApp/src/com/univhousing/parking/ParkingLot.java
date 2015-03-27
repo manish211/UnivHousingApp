@@ -1,10 +1,13 @@
 package com.univhousing.parking;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import com.univhousing.main.ConnectionUtils;
 import com.univhousing.users.Student;
 
 public class ParkingLot {
@@ -30,10 +33,10 @@ public class ParkingLot {
 		String vehicleType = inputObj.next();
 		
 		System.out.println("Handicapped? Y/N");
-		boolean handicappedInfo = inputObj.nextBoolean();
+		String handicappedInfo = inputObj.next();
 		
 		System.out.println("Do you want a nearby spot? Y/N");
-		boolean nearbySpot = inputObj.nextBoolean();
+		String nearbySpot = inputObj.next();
 		
 		System.out.println("1. Submit");
 		System.out.println("2. Back");
@@ -41,11 +44,13 @@ public class ParkingLot {
 		
 		if(flag == 1)
 		{			
+			System.out.println("marker1");
+			System.out.println("marker1");
 			// Fetch the student Id for a particular Person Id
-			studentId = studentObj.getSutdentIdForPersonId(personId);
+			studentObj.studentId = studentObj.getStudentIdForPersonId(personId);
 			
 			// Check if student is in University Housing
-			isStudentAccomodated = studentObj.checkStudentInUnivHosuing(studentId);
+			isStudentAccomodated = studentObj.checkStudentInUnivHousing(personId);
 			
 			if(isStudentAccomodated)
 			{
@@ -53,16 +58,105 @@ public class ParkingLot {
 				/*Write SQL Query to use vehicleType, handicappedInfo, nearbySpot and 
 				 * create a entry for the student Id by adding an entry in StudentParkingSpot_relation table
 				 * and if approved then fill the permit ID in PSpotBelongsPLot_Realtion*/
+				
+				/*select spot_no,lot_no
+				from(select p1.spot_no,plrh.hall_number,p1.lot_no,pl.zip_Code Parking_ZipCode,rh.zip_code as RESIDENCE_ZIPCODE,p1.availability
+				from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2,parking_lot_residence_hall plrh,residence_hall rh,parking_lot pl
+				where p2.type = 'handicapped'
+				and p1.availability = 'YES'
+				and p1.lot_no = plrh.lot_no
+				and plrh.hall_number = rh.hall_number
+				order by abs(rh.zip_code - pl.zip_code) asc)
+				where rownum<2;*/
+				
+				//----------------------------------------------------------------------------------------------------------------------------
+				ResultSet rs = null;
+				Connection dbConnection = null;
+				PreparedStatement preparedStatement = null ;
+				
+				try{
+					dbConnection = ConnectionUtils.getConnection();
+					
+					String selectQuery = "select spot_no,lot_no from(select p1.spot_no,plrh.hall_number,p1.lot_no,pl.zip_Code Parking_ZipCode,rh.zip_code as RESIDENCE_ZIPCODE,p1.availability " ;
+					selectQuery = selectQuery + " from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2,parking_lot_residence_hall plrh,residence_hall rh,parking_lot pl " ;
+					selectQuery = selectQuery + " where p2.type = ? and p1.availability = 'YES' and p1.lot_no = plrh.lot_no and plrh.hall_number = rh.hall_number" ;
+					selectQuery = selectQuery + " order by abs(rh.zip_code - pl.zip_code) asc) where rownum<2" ;
+							
+					preparedStatement = dbConnection.prepareStatement(selectQuery);
+					
+					String handicappedField ;
+					
+					if(handicappedInfo.equals("Y"))
+						handicappedField = "handicapped";
+					else
+						handicappedField = "normal";
+						
+					preparedStatement.setString(1,handicappedField);
+					
+					rs = preparedStatement.executeQuery();
+
+					//If record exists , rs.next() will evaluate to true
+					if(rs.isBeforeFirst())
+						{
+							rs.next();
+							String insertQuery = "INSERT INTO studentparkingspot_relation values(?,?,?,?,ParkingRequest_seq.nextval)";
+							preparedStatement = dbConnection.prepareStatement(insertQuery);
+							preparedStatement.setInt(1,rs.getInt("lot_no"));
+							preparedStatement.setInt(2,rs.getInt("spot_no"));
+							preparedStatement.setInt(3,studentObj.studentId);
+							preparedStatement.setString(4,"PENDING");
+							
+							int numOfRowsInserted = preparedStatement.executeUpdate();
+							
+							if(numOfRowsInserted == 0)
+							{
+								System.out.println("\n\n ==================================================================================================================\n");
+								System.out.println("\n Insert Failed For Some Reason. Please Contact Administrator");
+								System.out.println("==================================================================================================================\n");
+							}
+							else
+							{
+								System.out.println("\n\n ==================================================================================================================\n");
+								System.out.println("\nOne record inserted into studentparkingspot_relation successfully\n");
+								System.out.println("==================================================================================================================\n");
+							}
+						}
+					
+				}catch(SQLException e1){
+					
+					if(e1.getMessage().toLowerCase().contains("ORA-00001".toLowerCase()))
+					{
+						System.out.println("\n\n ==================================================================================================================\n");
+						System.out.println("Request for this student-"+studentObj.studentId+" already exists in the database. Try updating the existing request");
+						System.out.println("==================================================================================================================\n");
+					}
+					else
+					{
+						System.out.println("SQLException: "+ e1.getMessage());
+						System.out.println("VendorError: "+ e1.getErrorCode());
+					}
+				}
+				catch(Exception e3)
+				{
+					System.out.println("General Exception Case. Printing stack trace below:\n");
+					e3.printStackTrace();
+				}
+				finally{
+						try {
+						        rs.close();
+						        preparedStatement.close();
+						        dbConnection.close();
+					      	} catch (SQLException e) {
+					        e.printStackTrace();
+					      	}
+				}
+					//----------------------------------------------------------------------------------------------------------------------------
 			}
 			else
-			{
 				System.out.println("Sorry only students in University Housing can request parking spot");
-			}
 		}
 		else
-		{
 			return;
-		}
 	}
 	
 	/**
@@ -76,10 +170,10 @@ public class ParkingLot {
 		int studentId;
 		boolean isStudentAccomodated = false;
 		// Fetch the student Id for a particular Person Id
-		studentId = studentObj.getSutdentIdForPersonId(personId);
+		studentId = studentObj.getStudentIdForPersonId(personId);
 		
 		// Check if student is in University Housing
-		isStudentAccomodated = studentObj.checkStudentInUnivHosuing(studentId);
+		isStudentAccomodated = studentObj.checkStudentInUnivHousing(studentId);
 		
 		ResultSet showParkingLotInfo = null;
 		/*Write an SQL query to show:
@@ -99,10 +193,10 @@ public class ParkingLot {
 		int studentId;
 		boolean isStudentAccomodated = false;
 		// Fetch the student Id for a particular Person Id
-		studentId = studentObj.getSutdentIdForPersonId(personId);
+		studentId = studentObj.getStudentIdForPersonId(personId);
 		
 		// Check if student is in University Housing
-		isStudentAccomodated = studentObj.checkStudentInUnivHosuing(studentId);
+		isStudentAccomodated = studentObj.checkStudentInUnivHousing(studentId);
 		
 		ResultSet parkingSpotInfo = null;
 		/*Write SQL Query to show:
@@ -118,7 +212,7 @@ public class ParkingLot {
 	{
 		int studentId;
 		// Fetch the student Id for a particular Person Id
-		studentId = studentObj.getSutdentIdForPersonId(personId);
+		studentId = studentObj.getStudentIdForPersonId(personId);
 		
 		System.out.println("Enter your Parking Spot Number:");
 		int spotNumber = inputObj.nextInt();
@@ -139,7 +233,7 @@ public class ParkingLot {
 	{
 		int studentId;
 		// Fetch the student Id for a particular Person Id
-		studentId = studentObj.getSutdentIdForPersonId(personId);
+		studentId = studentObj.getStudentIdForPersonId(personId);
 		
 		System.out.println("Enter your Parking Spot Number:");
 		int spotNumber = inputObj.nextInt();
@@ -161,7 +255,7 @@ public class ParkingLot {
 
 		int studentId;
 		// Fetch the student Id for a particular Person Id
-		studentId = studentObj.getSutdentIdForPersonId(personId);
+		studentId = studentObj.getStudentIdForPersonId(personId);
 		
 		ResultSet fetchRequestStatus = null;
 		/*Write SQL query for fetching the status of Request for this student ID*/
