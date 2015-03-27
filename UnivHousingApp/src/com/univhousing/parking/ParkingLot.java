@@ -167,19 +167,82 @@ public class ParkingLot {
 	 */
 	public void displayInfoForParkingLots(int personId)
 	{
-		int studentId;
-		boolean isStudentAccomodated = false;
+//		int studentId;
+//		boolean isStudentAccomodated = false;
 		// Fetch the student Id for a particular Person Id
-		studentId = studentObj.getStudentIdForPersonId(personId);
+//		studentId = studentObj.getStudentIdForPersonId(personId);
 		
 		// Check if student is in University Housing
-		isStudentAccomodated = studentObj.checkStudentInUnivHousing(studentId);
+//		isStudentAccomodated = studentObj.checkStudentInUnivHousing(studentId);
 		
-		ResultSet showParkingLotInfo = null;
 		/*Write an SQL query to show:
 		 * 1. How many spots are vacant in each parking lot
 		 * 2. Which spots (if) allocated to a student
 		 * 3. Availability of Parking Spots*/
+		
+//		select lot_no,count(spot_no)
+//		from parkingSpot_belongs_parkingLot
+//		where availability = 'YES'
+//		group by lot_no;
+		
+		ResultSet rs = null;
+		Connection dbConnection = null;
+		PreparedStatement preparedStatement = null ;
+		
+		try{
+			dbConnection = ConnectionUtils.getConnection();
+			
+			String selectQuery = "select lot_no,count(spot_no) as total " ;
+			selectQuery = selectQuery + " from parkingSpot_belongs_parkingLot " ;
+			selectQuery = selectQuery + " where availability = ?" ;
+			selectQuery = selectQuery + " group by lot_no" ;
+					
+			preparedStatement = dbConnection.prepareStatement(selectQuery);
+			
+			preparedStatement.setString(1,"YES");
+			
+			rs = preparedStatement.executeQuery();
+
+			//If record exists , rs.next() will evaluate to true
+			if(!rs.isBeforeFirst())
+			{
+				System.out.println("No Parking Lot Information Found. Contact Administrator");
+			}
+			else
+			{
+				System.out.println("\n\n ==================================================================================================================");
+				System.out.println("LOT_NO"+"\t\t"+"SPOT_NO");
+				System.out.println(" ==================================================================================================================\n");
+				
+				while(rs.next())
+				{
+					System.out.print(rs.getInt("lot_no")+"\t\t");
+					System.out.println(rs.getInt("total")+"\t\t");
+				}
+				
+				System.out.println(" ==================================================================================================================\n");
+			}	
+			
+		}catch(SQLException e1){
+			{
+				System.out.println("SQLException: "+ e1.getMessage());
+				System.out.println("VendorError: "+ e1.getErrorCode());
+			}
+		}
+		catch(Exception e3)
+		{
+			System.out.println("General Exception Case. Printing stack trace below:\n");
+			e3.printStackTrace();
+		}
+		finally{
+				try {
+				        rs.close();
+				        preparedStatement.close();
+				        dbConnection.close();
+			      	} catch (SQLException e) {
+			        e.printStackTrace();
+			      	}
+		}
 	}
 	
 
