@@ -493,6 +493,74 @@ public class ParkingLot {
 		
 		ResultSet fetchRequestStatus = null;
 		/*Write SQL query for fetching the status of Request for this student ID*/
+		
+		/*select request_status
+		from studentParkingSpot_Relation s1,Student s2
+		where s1.person_id = s2.person_id
+		and s2.person_id = ? //can return multiple records . See the primary keys of both the tables.
+*/				
+		ResultSet rs = null;
+		Connection dbConnection = null;
+		PreparedStatement preparedStatement = null ;
+		
+		try{
+			dbConnection = ConnectionUtils.getConnection();
+			
+			String selectQuery = "select s1.student_id,s1.request_status,s1.lot_no,s1.spot_no from studentParkingSpot_Relation s1,Student s2" ;
+			selectQuery = selectQuery + " where s1.student_id = s2.student_id and s2.person_id = ?" ;
+					
+			preparedStatement = dbConnection.prepareStatement(selectQuery);
+			
+			preparedStatement.setInt(1,personId);
+			
+			rs = preparedStatement.executeQuery();
+
+			//If record exists , rs.next() will evaluate to true
+			if(!rs.isBeforeFirst())
+			{
+				System.out.println("No Records were found for that student");
+			}
+			else
+			{
+				System.out.println("\n\n ==================================================================================================================");
+				System.out.println("STUDENT_ID"+"\t\t"+"REQUEST_STATUS"+"\t\t"+"LOT_NO"+"\t\t"+"SPOT_NO");
+				System.out.println(" ==================================================================================================================\n");
+				
+				while(rs.next())
+				{
+					System.out.print(rs.getInt("student_id")+"\t\t\t");
+					System.out.print(rs.getString("request_status")+"\t\t\t");
+					System.out.print(rs.getInt("lot_no")+"\t\t");
+					System.out.println(rs.getInt("spot_no")+"\t\t\t");
+				}
+				
+				System.out.println(" ==================================================================================================================\n");
+			}	
+			
+		}catch(SQLException e1){
+			{
+				System.out.println("SQLException: "+ e1.getMessage());
+				System.out.println("VendorError: "+ e1.getErrorCode());
+			}
+		}
+		catch(Exception e3)
+		{
+			System.out.println("General Exception Case. Printing stack trace below:\n");
+			e3.printStackTrace();
+		}
+		finally{
+				try {
+				        rs.close();
+				        preparedStatement.close();
+				        dbConnection.close();
+			      	} catch (SQLException e) {
+			        e.printStackTrace();
+			      	}
+		}
+		
+				
+				
+		
 	}
 
 	/**
