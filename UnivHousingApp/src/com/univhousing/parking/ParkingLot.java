@@ -375,13 +375,110 @@ public class ParkingLot {
 		System.out.println("Enter your Parking Spot Number:");
 		int spotNumber = inputObj.nextInt();
 		
-		// Check if the student is actually the owner of this parking spot
-		checkSpotValidity(spotNumber);
+/*Update permit number to null in person_accomodation_lease_table
 		
-		ResultSet returnSpot = null;
-		/*Write SQL Query to return parking spot i.e.
-		 * 1. Delete information of Permit number for Person_accomodation_lease table
-		 * 2. Set availability of spot number as vacant in PSpotBelongsPLot_Relation*/
+		update person_accomodation_lease
+		set permit_id = null
+		where person_id = ? 
+				*/
+		
+		// Check if the student is actually the owner of this parking spot
+		if(!checkSpotValidity(spotNumber,personId))
+		{
+			System.out.println("The spot does not belong to this student. Please check");
+		}
+		else
+		{
+			//Update  permit number
+			
+			ResultSet rsPermit = null;
+			Connection dbConnectionPermit = null;
+			PreparedStatement preparedStatementPermit = null ;
+			
+			try{
+				dbConnectionPermit = ConnectionUtils.getConnection();
+				
+				String updatePermitQuery = "update person_accomodation_lease set permit_id = null" ;
+				updatePermitQuery = updatePermitQuery + " where person_id = ? " ;
+						
+				preparedStatementPermit = dbConnectionPermit.prepareStatement(updatePermitQuery);
+				
+				preparedStatementPermit.setInt(1,personId);
+				
+				int rowsUpdatedPermit = preparedStatementPermit.executeUpdate();
+
+				if(rowsUpdatedPermit == 0)
+				{
+					System.out.println("No rows updated. Please check the person id or contact Administrator");
+					return;
+				}
+				else
+				{
+					System.out.println("Permit Id successfully udpated to null. Now updating the availability...");
+					
+					ResultSet rsAvail = null;
+					Connection dbConnectionAvail = null;
+					PreparedStatement preparedStatementAvail = null ;
+					
+					try{
+						dbConnectionAvail = ConnectionUtils.getConnection();
+						
+						String updateAvailabilityQuery = "update parkingspot_belongs_parkinglot set availability = ? where spot_no = ? " ;
+						
+								
+						preparedStatementAvail = dbConnectionAvail.prepareStatement(updateAvailabilityQuery);
+						
+						preparedStatementAvail.setString(1,"YES");
+						preparedStatementAvail.setInt(2,spotNumber);
+						
+						int rowsUpdatedAvailability = preparedStatementAvail.executeUpdate();
+
+						if(rowsUpdatedAvailability == 0)
+							System.out.println("No rows updated in parkingspot_belongs_parkinglot. Please check the person id or contact Administrator"); //Pending - Update the message for the customer/end user
+						else
+							System.out.println("Availability set to YES for records in parkingspot_belongs_parkinglot table");
+					}catch(SQLException e1){
+							System.out.println("Error while updating the parkingspot_belongs_parkinglot table");
+							System.out.println("SQLException: "+ e1.getMessage());
+							System.out.println("VendorError: "+ e1.getErrorCode());
+					}
+					catch(Exception e3)
+					{
+						System.out.println("Error while updating the parkingspot_belongs_parkinglot table");
+						System.out.println("General Exception Case. Printing stack trace below:\n");
+						e3.printStackTrace();
+					}
+					finally{
+							try {
+							        preparedStatementAvail.close();
+							        dbConnectionAvail.close();
+						      	} catch (SQLException e) {
+						        e.printStackTrace();
+						      	}
+					}
+					
+				}
+			}catch(SQLException e1){
+				System.out.println("Error while updating the permit id in person_accomodation_lease table");
+				System.out.println("SQLException: "+ e1.getMessage());
+				System.out.println("VendorError: "+ e1.getErrorCode());
+		}
+		catch(Exception e3)
+		{
+			System.out.println("Error while updating the permit id in person_accomodation_lease table");
+			System.out.println("General Exception Case. Printing stack trace below:\n");
+			e3.printStackTrace();
+		}
+		finally{
+				try {
+				        preparedStatementPermit.close();
+				        dbConnectionPermit.close();
+			      	} catch (SQLException e) {
+			        e.printStackTrace();
+			      	}
+		}
+			
+		}
 	}
 	
 	/**
@@ -402,10 +499,70 @@ public class ParkingLot {
 	 * @param spotNumber
 	 * @action This is a local method, which checks if a student is actually assigned to this spot number
 	 */
-	private void checkSpotValidity(int spotNumber) {
+	private boolean checkSpotValidity(int spotNumber,int personId) {
 		
+		boolean isSpotValid = false;
 		ResultSet checkSpotValidity = null;
 		/*Write SQL Query to check if SpotNumber entered by user is actually ssigned to him*/
+		
+		/*select count(*) from person_accomodation_lease p1,parkingspot_belongs_parkinglot p2
+		where p1.person_id = 1001
+		and p1.permit_id = p2.permit_id;*/
+		
+		ResultSet rs = null;
+		Connection dbConnection = null;
+		PreparedStatement preparedStatement = null;
+
+		try {
+			dbConnection = ConnectionUtils.getConnection();
+
+			String selectQuery = "select count(*) as total from person_accomodation_lease p1,parkingspot_belongs_parkinglot p2";
+			selectQuery = selectQuery + " where p1.person_id = ?";
+			selectQuery = selectQuery + " and p1.permit_id = p2.permit_id";
+
+			preparedStatement = dbConnection.prepareStatement(selectQuery);
+
+			preparedStatement.setInt(1, personId);
+
+			rs = preparedStatement.executeQuery();
+			
+			// If record exists , rs.next() will evaluate to true
+			
+			if (rs.isBeforeFirst()) 
+			{
+					System.out.println("After execute!! MARKER checkSpotValidity");
+					isSpotValid = true;
+					System.out.println("IT IS TRUE:checkSpotValidity ");
+			}
+
+		} catch (SQLException e1) {
+			
+			System.out.println("SQLException: " + e1.getMessage());
+			
+			System.out.println("VendorError: " + e1.getErrorCode());
+			
+		} catch (Exception e3) {
+			
+			System.out.println("General Exception Case. Printing stack trace below:\n");
+			
+			e3.printStackTrace();
+			
+		} finally {
+			try {
+				
+				rs.close();
+				
+				preparedStatement.close();
+				
+				dbConnection.close();
+				
+			} catch (SQLException e) {
+				
+				e.printStackTrace();
+			}
+		}
+		
+		return isSpotValid;
 	}
 
 	/**
