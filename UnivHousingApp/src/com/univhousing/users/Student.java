@@ -110,6 +110,7 @@ public class Student {
 				if(requestStatus.equals("APPROVED"))
 				{
 					isStudentHavingAccomodation = true;
+//					System.out.println("IT IS TRUE: "+personId);
 				}
 			}
 

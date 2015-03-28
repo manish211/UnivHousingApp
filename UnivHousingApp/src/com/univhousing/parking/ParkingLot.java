@@ -256,14 +256,88 @@ public class ParkingLot {
 		int studentId;
 		boolean isStudentAccomodated = false;
 		// Fetch the student Id for a particular Person Id
-		studentId = studentObj.getStudentIdForPersonId(personId);
+//		studentId = studentObj.getStudentIdForPersonId(personId);
 		
 		// Check if student is in University Housing
-		isStudentAccomodated = studentObj.checkStudentInUnivHousing(studentId);
+		isStudentAccomodated = studentObj.checkStudentInUnivHousing(personId);
 		
-		ResultSet parkingSpotInfo = null;
+//		ResultSet parkingSpotInfo = null;
 		/*Write SQL Query to show:
 		 * Permit number, spot number and Lot number for a particular student id */
+		
+		if(!isStudentAccomodated)
+		{
+			System.out.println("Student is not in the university housing. Please check.");
+			return;
+		}
+		
+		/*select p1.permit_id,p2.spot_no,p2.lot_no
+		from person_accomodation_lease p1,parkingSpot_belongs_parkinglot p2
+		where p1.permit_id = p2.permit_id
+		and p1.person_id =1001;*/
+		
+		ResultSet rs = null;
+		Connection dbConnection = null;
+		PreparedStatement preparedStatement = null ;
+		
+		try{
+			dbConnection = ConnectionUtils.getConnection();
+			
+			String selectQuery = "select p1.permit_id,p2.spot_no,p2.lot_no " ;
+			selectQuery = selectQuery + " from person_accomodation_lease p1,parkingSpot_belongs_parkinglot p2 " ;
+			selectQuery = selectQuery + " where p1.permit_id = p2.permit_id" ;
+			selectQuery = selectQuery + " and p1.person_id =?" ;
+					
+			preparedStatement = dbConnection.prepareStatement(selectQuery);
+			
+			preparedStatement.setInt(1,personId);
+			
+			rs = preparedStatement.executeQuery();
+
+			//If record exists , rs.next() will evaluate to true
+			if(!rs.isBeforeFirst())
+			{
+				System.out.println("No Parking Lot Information Found. Contact Administrator");
+			}
+			else
+			{
+				System.out.println("\n\n ==================================================================================================================");
+				System.out.println("PERMIT_ID"+"\t\t"+"SPOT_NO"+"\t\t"+"LOT_NO");
+				System.out.println(" ==================================================================================================================\n");
+				
+				while(rs.next())
+				{
+					System.out.print(rs.getInt("permit_id")+"\t\t\t");
+					System.out.print(rs.getInt("spot_no")+"\t\t");
+					System.out.println(rs.getInt("lot_no")+"\t\t\t");
+				}
+				
+				System.out.println(" ==================================================================================================================\n");
+			}	
+			
+		}catch(SQLException e1){
+			{
+				System.out.println("SQLException: "+ e1.getMessage());
+				System.out.println("VendorError: "+ e1.getErrorCode());
+			}
+		}
+		catch(Exception e3)
+		{
+			System.out.println("General Exception Case. Printing stack trace below:\n");
+			e3.printStackTrace();
+		}
+		finally{
+				try {
+				        rs.close();
+				        preparedStatement.close();
+				        dbConnection.close();
+			      	} catch (SQLException e) {
+			        e.printStackTrace();
+			      	}
+		}
+		
+		
+		
 	}
 
 	/**
