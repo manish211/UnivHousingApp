@@ -7,3 +7,5 @@ UnivHousingApp/bin/
 .metadata/.plugins/org.eclipse.core.resources/.projects/UnivHousingApp/org.eclipse.jdt.core/state.dat
 .classpath
 .project
+UnivHousingApp/.project
+UnivHousingApp/.classpath
