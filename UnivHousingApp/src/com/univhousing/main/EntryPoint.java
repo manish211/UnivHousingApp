@@ -77,10 +77,12 @@ public class EntryPoint {
 					{
 						case 1:
 							System.out.print("\nEnter University Id++:");
-							credentialObj.personId = inputObj.nextInt();
+							int studentId = inputObj.nextInt();
 	
 							System.out.print("\nEnter Password:");
 							credentialObj.password = inputObj.next();
+							// Fetch the person id for the student id and use that for login
+							credentialObj.personId = studentObj.getPersonIdForStudentId(studentId);
 							if(authenticateUser(credentialObj.personId,credentialObj.password,credentialObj))
 							{
 								
