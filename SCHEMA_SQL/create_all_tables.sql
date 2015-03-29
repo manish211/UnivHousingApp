@@ -89,7 +89,7 @@ city_name VARCHAR2(50),
 zip_code INTEGER,
 monthly_rent NUMBER(9,2),
 PRIMARY KEY(apt_no),
-FOREIGN KEY(accomodation_id) REFERENCES person_accomodation_lease);
+FOREIGN KEY(accomodation_id) REFERENCES Accomodation);
 
 
 CREATE TABLE General_Apartment(
@@ -102,7 +102,7 @@ street_name VARCHAR2(40),
 city_name VARCHAR2(50),
 zip_code INTEGER,
 PRIMARY KEY(apt_no),
-FOREIGN KEY(accomodation_id) REFERENCES person_accomodation_lease);
+FOREIGN KEY(accomodation_id) REFERENCES Accomodation);
 
 CREATE TABLE residence_hall_provides_room(
 residence_place_no INTEGER,
@@ -112,7 +112,7 @@ room_no INTEGER,
 monthly_rent_rate NUMBER(9,2),
 PRIMARY KEY(residence_place_no),
 FOREIGN KEY(hall_number) REFERENCES residence_hall,
-FOREIGN KEY(accomodation_id) REFERENCES person_accomodation_lease);
+FOREIGN KEY(accomodation_id) REFERENCES Accomodation);
 
 
 
@@ -125,7 +125,7 @@ monthly_rent_rate NUMBER(10),
 apt_no INTEGER NOT NULL,
 apt_place_no INTEGER,
 PRIMARY KEY(apt_place_no),
-FOREIGN KEY(accomodation_id) REFERENCES person_accomodation_lease);
+FOREIGN KEY(accomodation_id) REFERENCES Accomodation);
 
 drop table parking_lot cascade constraints;
 Create table parking_lot(
@@ -200,7 +200,7 @@ lease_no INTEGER,
 accomodation_type VARCHAR2(40),
 permit_id INTEGER,
 lease_move_in_date date,
-PRIMARY KEY(accomodation_id),
+PRIMARY KEY(accomodation_id,person_id),
 FOREIGN KEY(person_id) REFERENCES person,
 FOREIGN KEY(lease_no) REFERENCES lease);
 
@@ -255,3 +255,9 @@ PRIMARY KEY(lot_no,spot_no,student_id),
 FOREIGN KEY(lot_no) REFERENCES parking_lot,
 FOREIGN KEY(spot_no) REFERENCES parkingSpot_parkingLot,
 FOREIGN KEY(student_id) REFERENCES Student);
+
+CREATE TABLE Accomodation (
+accomodation_id INTEGER,
+accomodation_type VARCHAR2(20),
+PRIMARY KEY(accomodation_id));
+
