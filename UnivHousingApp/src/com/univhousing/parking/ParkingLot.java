@@ -354,7 +354,7 @@ public class ParkingLot {
 		System.out.println("Enter your Parking Spot Number:");
 		int spotNumber = inputObj.nextInt();
 		
-		checkSpotValidity(spotNumber);
+		checkSpotValidity(spotNumber,personId);
 		
 		ResultSet renewSpot = null;
 		/*Write query to renew the parking spot and then update the permit id in Person_accomodation_Lease table and 

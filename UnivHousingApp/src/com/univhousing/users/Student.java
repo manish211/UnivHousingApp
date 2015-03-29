@@ -14,9 +14,42 @@ public class Student {
 	public String studentType;
 	
 	public String studentDesignation = "";
+	
 	/**
 	 * @param personId
-	 * @return
+	 * @return PersonID for the givenStudentID, used for authentication
+	 */
+	public int getPersonIdForStudentId(int studentId)
+	{
+		int personId = 0;
+		/*Write SQL Query to fetch the person Id for the corresponding Student id that the student enters.
+		 * This is done because our authentication is based on PersonId*/
+		
+		
+		try 
+		{
+			ResultSet getPersonId = null;
+			Connection dbConnection = null; 
+			String query = "SELECT person_id FROM Student WHERE student_id = ?";
+			PreparedStatement preparedStatement = dbConnection.prepareStatement(query);
+			
+			preparedStatement.setInt(1, studentId);
+			getPersonId = preparedStatement.executeQuery();
+			
+			while(getPersonId.next())
+			{
+				personId = getPersonId.getInt("person_id");
+			}
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+		return personId;
+	}
+	/**
+	 * @param personId
+	 * @return StudentId for the given personId
 	 */
 	public int getStudentIdForPersonId(int personId)
 	{
