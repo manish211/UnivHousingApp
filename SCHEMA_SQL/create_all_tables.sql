@@ -210,6 +210,7 @@ application_request_no INTEGER,
 accomodation_type VARCHAR2(50),
 person_id INTEGER,
 staff_no INTEGER,
+request_status VARCHAR2(50),
 PRIMARY KEY(application_request_no),
 FOREIGN KEY (person_id) REFERENCES person);
 
