@@ -29,7 +29,7 @@ public class Student {
 		try 
 		{
 			ResultSet getPersonId = null;
-			Connection dbConnection = null; 
+			Connection dbConnection = ConnectionUtils.getConnection(); 
 			String query = "SELECT person_id FROM Student WHERE student_id = ?";
 			PreparedStatement preparedStatement = dbConnection.prepareStatement(query);
 			
@@ -40,6 +40,7 @@ public class Student {
 			{
 				personId = getPersonId.getInt("person_id");
 			}
+			dbConnection.close();
 		} 
 		catch (SQLException e) 
 		{
@@ -174,7 +175,31 @@ public class Student {
 	 */
 	public String getStudentDesignation(int personId)
 	{
+		String studentDesignation = "";
 		/*Write SQL Query to get the student's designation from login_credentials table i think*/
+		try
+		{
+			ResultSet getStudentDesignation = null;
+			PreparedStatement preparedStatement = null;
+			Connection dbConnection = ConnectionUtils.getConnection();
+			
+			String query = "SELECT designation  FROM login_credentials WHERE person_id = ?";
+			preparedStatement = dbConnection.prepareStatement(query);
+			preparedStatement.setInt(1, personId);
+			
+			getStudentDesignation = preparedStatement.executeQuery();
+			while(getStudentDesignation.next())
+			{
+				studentDesignation = getStudentDesignation.getString("designation");
+			}
+			dbConnection.close();
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		
 		return studentDesignation;
 	}
 

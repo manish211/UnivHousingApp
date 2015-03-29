@@ -86,7 +86,7 @@ public class EntryPoint {
 							if(authenticateUser(credentialObj.personId,credentialObj.password,credentialObj))
 							{
 								
-								credentialObj.designation = "student";//studentObj.getStudentDesignation(credentialObj.personId);
+								credentialObj.designation = studentObj.getStudentDesignation(credentialObj.personId);
 								//credentialObj.designation = "student";
 								/*P		E		N		D		I		N		G:
 								 * 
