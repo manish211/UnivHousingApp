@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import com.univhousing.main.ConnectionUtils;
 
@@ -23,6 +24,7 @@ public class InvoicePersonLease_Relation {
 	public float paymentDue;
 	public float damageCharges;
 	public int personId;
+	Scanner inputObj = new Scanner(System.in);
 
 	/***********************************************************************************************
 	 * @param personId
@@ -33,13 +35,13 @@ public class InvoicePersonLease_Relation {
 	 *  
 	 *  @Tables 
 	 ***********************************************************************************************/
-	public void displayListOfInvociesForAPerson(int personId, ArrayList<Integer> invoiceNumbers) throws SQLException {
+	public void displayListOfInvociesForAPerson(int personId, ArrayList<Integer> invoiceNumbersList) throws SQLException {
 		/*Write SQL query to fetch:
 		 * Invoice numbers for a particular person using his person_id*/
 		
 		System.out.println("PERSON ID PASSED : "+personId);
 					
-		invoiceNumbers.clear();
+		invoiceNumbersList.clear();
 	
 		ResultSet rs = null;
 		Connection dbConnection = null;
@@ -70,9 +72,24 @@ public class InvoicePersonLease_Relation {
 			while(rs.next())
 				{
 					
-					invoiceNumbers.add(rs.getInt("invoice_no"));
+					invoiceNumbersList.add(rs.getInt("invoice_no"));
 				}
-			
+			int count = 1;
+			for(Integer item : invoiceNumbersList)
+			{
+				System.out.println(count+". "+item.intValue());
+				count++;
+			}
+			count = 0;
+			System.out.println("0. Back");
+			System.out.println("\n");
+			int choice = inputObj.nextInt();
+			if(choice == 0)
+				return;
+			else
+			{
+				displayInvoiceDetails(personId, invoiceNumbersList.get(choice-1));
+			}
 			System.out.println("==============================================================================================\n\n");
 			
 		}catch(SQLException e1){

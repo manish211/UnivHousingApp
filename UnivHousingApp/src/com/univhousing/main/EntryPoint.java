@@ -137,40 +137,6 @@ public class EntryPoint {
 																		break;
 																	case 2:
 																		invoicePersonObj.displayListOfInvociesForAPerson(credentialObj.personId, mInvoiceNumbers);
-																		int count = 1;
-																		/*Runtime.getRuntime().exec("clear");*/
-																		while(mLevelFour)
-																		{
-																			// Checking if the ArrayList indeed has some invoice numbers in it else move out
-																			if(!mInvoiceNumbers.isEmpty())
-																			{
-																				for(Integer item : mInvoiceNumbers)
-																				{
-																					System.out.println(count+". "+item.intValue());
-																					count++;
-																				}
-																				count = 0;
-																				System.out.println("0. Back");
-																				System.out.println("\n");
-																				choice = inputObj.nextInt();
-																				if(choice == 0)
-																				{
-																					// Taking back to Level Three
-																					mLevelFour = false;
-																				}
-																				else
-																				{
-																					invoicePersonObj.displayInvoiceDetails(credentialObj.personId, mInvoiceNumbers.get(choice-1));
-																				}
-																			}
-																			else
-																			{
-																				System.out.println("No previous invoices\n");
-																			}
-																		}
-																		
-																		// Setting true so that we can come back to Level Four
-																		mLevelFour = true;
 																		break;
 																	case 3:
 																		// Taking back to Level Two
