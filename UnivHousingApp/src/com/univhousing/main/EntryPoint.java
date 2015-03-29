@@ -59,9 +59,7 @@ public class EntryPoint {
 			try {
 				int choice;
 
-				System.out.println("Welcome to University Housing\n");
-				// Create scanner object for taking command line input
-				
+				System.out.println("Welcome to University Housing\n");				
 
 				// Going into infinite loop until exited
 				while(mLevelZero) {
@@ -87,13 +85,6 @@ public class EntryPoint {
 							{
 								
 								credentialObj.designation = studentObj.getStudentDesignation(credentialObj.personId);
-								//credentialObj.designation = "student";
-								/*P		E		N		D		I		N		G:
-								 * 
-								 * 
-								 * After Authenticating we have to fetch the designation of student
-								 * i.e. Student or Supervior/Admin or Guest
-								 * The method fo this is present in Student.java but no QUERY is written yet*/
 								
 								if(credentialObj.designation.equalsIgnoreCase(Constants.STUDENT))
 								{
@@ -104,7 +95,6 @@ public class EntryPoint {
 									{
 										System.out.println("Inside");
 										// Show different menu items
-										/*Runtime.getRuntime().exec("clear");*/
 										System.out.println("\n1. Housing Option");
 										System.out.println("2. Parking Option");
 										System.out.println("3. Maintenance");
