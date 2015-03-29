@@ -199,38 +199,6 @@ public class EntryPoint {
 																	case 2:
 																		
 																		leaseObj.displayListOfLeasesForAPerson(credentialObj.personId,mLeaseNumbers);
-																		int count = 1;
-																		/*Runtime.getRuntime().exec("clear");*/
-																		while(mLevelFour)
-																		{
-																			// Checking if the ArrayList indeed has some lease numbers in it else move out
-																			if(!mLeaseNumbers.isEmpty())
-																			{
-																				for(Integer item : mLeaseNumbers)
-																				{
-																					System.out.println(count+". "+item.intValue());
-																					count++;
-																				}
-																				count = 0;
-																				System.out.println("0. Back\n");
-																				choice = inputObj.nextInt();
-																				if(choice == 0)
-																				{
-																					// Taking back to Level Three
-																					mLevelFour = false;
-																				}
-																				else
-																				{
-																					leaseObj.displayLeaseDetails(credentialObj.personId, mLeaseNumbers.get(choice-1));
-																				}
-																			}
-																			else
-																			{
-																				System.out.println("No previous leases\n");
-																			}
-																		}
-																		// Setting true so that we can come back to Level Four
-																		mLevelFour = true;
 																		break;
 																	case 3:
 																		// Taking back to Level Two

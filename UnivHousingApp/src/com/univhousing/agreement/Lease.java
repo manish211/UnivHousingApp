@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import com.univhousing.main.ConnectionUtils;
 
@@ -16,7 +17,8 @@ public class Lease {
 	public String modeOfPayment;
 	public int duration;
 	public Date cutOffDate;
-
+	Scanner inputObj = new Scanner(System.in);
+	
 	/**
 	 * @param personId
 	 * @param leaseNumber
@@ -250,6 +252,21 @@ public class Lease {
 
 				leaseNumbers.add(rs.getInt("lease_no"));
 
+			}
+			int count = 1;
+			for(Integer item : leaseNumbers)
+			{
+				System.out.println(count+". "+item.intValue());
+				count++;
+			}
+			count = 0;
+			System.out.println("0. Back\n");
+			int choice = inputObj.nextInt();
+			if(choice == 0)
+				return;
+			else
+			{
+				displayLeaseDetails(personId, leaseNumbers.get(choice-1));
 			}
 
 		} catch (SQLException e1) {
