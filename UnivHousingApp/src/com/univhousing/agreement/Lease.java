@@ -485,9 +485,9 @@ public class Lease {
 					+ "FROM termination_requests T "
 					+ "WHERE T.person_id = ? ";
 			
-			String selectQuery1 = "SELECT S.request_no, S.request_status "
-					+ "FROM StudentParkingSpot_Relation S, Student S1 "
-					+ "WHERE (S1.student_id=S.student_id AND s1.person_id = ?)";
+			String selectQuery1 = "SELECT P.application_request_no, P.request_status "
+					+ "FROM PERSON_ACC_STAFF P "
+					+ "WHERE P.person_id = ?";
 			
 			preparedStatement = dbConnection.prepareStatement(selectQuery);
 			preparedStatement.setInt(1, personId);
@@ -515,8 +515,8 @@ public class Lease {
 			viewRequestsSet = preparedStatement.executeQuery();
 			//System.out.println("Request Number" + "\t Status");
 			while (viewRequestsSet.next()) {
-				System.out.print(String.format("%-15s%-20s%-15s","Parking"
-						,viewRequestsSet.getInt("request_no")
+				System.out.print(String.format("%-15s%-20s%-15s","Lease"
+						,viewRequestsSet.getInt("application_request_no")
 						,viewRequestsSet.getString("request_status")));
 				System.out.println("");
 			}
@@ -595,15 +595,14 @@ public class Lease {
 				
 				/*
 				 * Since the entry is not in the termination table,
-				 * it must be in the termination_request_number table
+				 * it must be in the PERSON_ACC_STAFF table
 				 */
 				preparedStatement.close();
 				rs.close();
 				
-				String selectQuery1 = "SELECT S.request_no, S1.student_id "
-						+ "FROM StudentParkingSpot_Relation S, Student S1 "
-						+ "WHERE (S1.student_id=S.student_id AND s1.person_id = ? "
-						+ "AND S.request_no = ?)";
+				String selectQuery1 = "SELECT * "
+						+ "FROM PERSON_ACC_STAFF P "
+						+ "WHERE P.person_id = ? AND p.application_request_no = ?";
 				preparedStatement = dbConnection.prepareStatement(selectQuery1);
 				preparedStatement.setInt(1, personId);
 				preparedStatement.setInt(2, requestNumber);
@@ -614,15 +613,14 @@ public class Lease {
 				if (rs.next()) {
 					
 					/*
-					 * If the request id is in the parking table, 
-					 * get the student id and update the table.
-					 * Get the student id first
+					 * If the request id is in the PERSON_ACC_STAFF table 
+					 * update the status in this table to CANCELED
 					 */
 					//System.out.println("Executed with values: " + personId + " and " + requestNumber);
 					preparedStatement.close();
 					rs.close();
 					
-					String getStudentId = "SELECT S.student_id "
+					/*String getStudentId = "SELECT S.student_id "
 							+ "FROM Student S, Person P "
 							+ "WHERE S.person_id = P.person_id "
 							+ "AND P.person_id = ?";
@@ -631,19 +629,19 @@ public class Lease {
 					
 					rs = preparedStatement.executeQuery();
 					rs.next();
-					int student_id = rs.getInt("student_id");
+					int student_id = rs.getInt("student_id");*/
 					
 					/*
 					 * Update the status with CANCELED
 					 */
-					String updateQuery1 = "UPDATE StudentParkingSpot_Relation "
+					String updateQuery1 = "UPDATE PERSON_ACC_STAFF "
 							+ "SET request_status = ? "
-							+ "WHERE student_id = ? AND request_no = ?";
+							+ "WHERE person_id = ? AND application_request_no = ?";
 					
 					preparedStatement.close();
 					preparedStatement = dbConnection.prepareStatement(updateQuery1);
 					preparedStatement.setString(1, "CANCELED");
-					preparedStatement.setInt(2, student_id);
+					preparedStatement.setInt(2, personId);
 					preparedStatement.setInt(3, requestNumber);
 					int update = preparedStatement.executeUpdate();
 				} else {
