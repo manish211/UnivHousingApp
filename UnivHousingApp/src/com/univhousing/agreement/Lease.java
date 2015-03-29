@@ -20,34 +20,263 @@ public class Lease {
 	/**
 	 * @param personId
 	 * @param leaseNumber
-	 * @action Display the lease details of a particular lease number corresponding to a person id
-	 */ 
+	 * @action Display the lease details of a particular lease number
+	 *         corresponding to a person id
+	 */
 	public void displayLeaseDetails(int personId, Integer leaseNumber) {
-		/*Write SQL Query to display the details of a particular lease according to Project requirments*/
+		/*
+		 * Write SQL Query to display the details of a particular lease
+		 * according to Project requirments
+		 */
+
+	/*
+	 * 
+	 * Issue 28th March ==>> There is some  issue with  displayLeaseDetails() function. Whenever I iterate through the list
+	 * I cannot print the details of the second,thrid etc Leases. I think there is some issue with the way Arraylist is being handled
+	 * To be discussed with .
+	 * 
+	 * SUDHANSHU = Discuss about the arraylist problem. Once clarified, make the necesarry changes
+	 * 
+	 * 
+	 * */	
+		
+		
+		ResultSet rs = null;
+		Connection dbConnection = null;
+		PreparedStatement preparedStatement = null;
+
+		try {
+
+			dbConnection = ConnectionUtils.getConnection();
+
+			String selectQuery = "SELECT T1_person.first_name, T2_lease_person.lease_no, T3_lease.duration, T4_Student.Student_Type, "
+					+ " T2_lease_person.Lease_Move_In_Date, T2_lease_person.accomodation_type, T2_lease_person.accomodation_id "
+					+ "FROM PERSON T1_person, PERSON_ACCOMODATION_LEASE T2_lease_person,LEASE T3_lease, STUDENT T4_Student "
+					+ "WHERE T1_person.person_id = ? AND T2_lease_person.lease_no=? AND"
+					+ " LEASE_MOVE_IN_DATE=(SELECT MAX(LEASE_MOVE_IN_DATE) "
+					+ "FROM PERSON_ACCOMODATION_LEASE inner_P WHERE T2_lease_person.person_id = inner_P.person_id) "
+					+ "AND T1_person.person_id = T2_lease_person.person_id "
+					+ "AND	T3_lease.lease_no = T2_lease_person.lease_no "
+					+ "AND T1_person.person_id = T4_Student.person_id";
+
+			preparedStatement = dbConnection.prepareStatement(selectQuery);
+			preparedStatement.setInt(1, personId);
+			preparedStatement.setInt(2, leaseNumber);
+			rs = preparedStatement.executeQuery();
+			/**********************************************************************************************************/
+			System.out.println(String.format(
+					"%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s",
+					"NAME", "LEASE NO", "Duration", "Student Type",
+					"Move in Date", "Place No", "Room No", "Street Name",
+					"City", "Postcode"));
+
+			System.out
+					.println("------------------------------------------------------------------------------------------------"
+							+ "-------------------------------------------------------");
+
+			if (rs.isBeforeFirst()) {
+
+				rs.next();
+
+				System.out.print(String.format("%-15s",
+						rs.getString("first_name")));
+				System.out.print(String.format("%-15s",
+						rs.getString("lease_no")));
+				System.out.print(String.format("%-15s",
+						rs.getString("duration")));
+				System.out.print(String.format("%-15s",
+						rs.getString("student_type")));
+				System.out.print(String.format("%-15s",
+						rs.getDate("Lease_Move_In_Date")));
+
+				/*
+				 * System.out.print(rs.getString("first_name")+"\t ");
+				 * System.out.print(rs.getString("lease_no")+"\t\t");
+				 * System.out.print(rs.getString("duration")+"\t\t");
+				 * System.out.print(rs.getString("student_type")+ "\t");
+				 * System.out.print(rs.getDate("Lease_Move_In_Date")+"\t");
+				 */
+
+			}
+
+			/*
+			 * Get Accommodation type from Resultstatement and Compare it with
+			 * HArdcoded "Apartment"/ "Family apartment"/"Residence Hall "
+			 * Strings. This way get into one of the three If loops and print
+			 * the relevant pa=lace# room # information about them.
+			 */
+
+			String accomodationType = rs.getString("accomodation_type");
+			int accomodationId = rs.getInt("accomodation_id");
+
+			/*
+			 * Closing RS and Preparedstatement -- because --> I want to reuse
+			 * the rs for next queries in the same module
+			 */
+
+			rs.close();
+			preparedStatement.close();
+
+			if (accomodationType.equals("Apartment")) {
+
+				/*
+				 * Go to General Apartment Table( and from there to the bedroom
+				 * table to fetch room #) and fetch Place # Room # and Address
+				 * atributes
+				 */
+
+				String selectQuery1 = "SELECT B.bedroom_place_no,B.room_no, GA.street_name,GA.city_name,GA.zip_code "
+						+ "FROM General_Apartment GA, bedroom B "
+						+ "WHERE GA.accomodation_id = ? AND GA.accomodation_id = B.accomodation_id ";
+
+				preparedStatement = dbConnection.prepareStatement(selectQuery1);
+				preparedStatement.setInt(1, accomodationId);
+				rs = preparedStatement.executeQuery();
+
+				if (rs.isBeforeFirst()) {
+					rs.next();
+
+					System.out.println(String.format(
+							"%-15s%-10s%-20s%-15s%-15s",
+							rs.getInt("bedroom_place_no"),
+							rs.getInt("room_no"), rs.getString("street_name"),
+							rs.getString("city_name"), rs.getInt("zip_code")));
+
+				}
+
+			} else if (accomodationType.equals("Family Apartment")) {
+
+				/*
+				 * Go to Family Apartment Table and fetch Place # Room # and
+				 * Address atributes (no need to go to bedroom/room table as we
+				 * are not concerned) as to what goes on inside a FAMILY
+				 * APARTMENT
+				 */
+
+				String selectQuery1 = "SELECT F.apt_no,F.street_name,F.city_name,F.zip_code "
+						+ "FROM Family_Apartment F WHERE F.accomodation_id=?";
+
+				preparedStatement = dbConnection.prepareStatement(selectQuery1);
+				preparedStatement.setInt(1, accomodationId);
+				rs = preparedStatement.executeQuery();
+
+				if (rs.isBeforeFirst()) {
+
+					rs.next();
+					System.out.println(String.format(
+							"%-15s%-15s%-15s%-15s%-15s", rs.getInt("apt_no"),
+							"-NA-", rs.getString("street_name"),
+							rs.getString("city_name"), rs.getInt("zip_code")));
+
+				}
+
+			} else if (accomodationType.equals("Residence Hall")) {
+
+				/*
+				 * Go to Residence Hall Table[FOllow like 1st i condition] and
+				 * fetch Place # Room # and Address atributes
+				 */
+				String selectQuery1 = "SELECT RHPM.residence_place_no,RHPM.room_no, HR.street_name,HR.city_name,HR.zip_code "
+						+ "FROM residence_hall HR, residence_hall_provides_room RHPM "
+						+ "WHERE RHPM.accomodation_id = ? AND HR.hall_number = RHPM.hall_number ";
+
+				preparedStatement = dbConnection.prepareStatement(selectQuery1);
+				preparedStatement.setInt(1, accomodationId);
+				rs = preparedStatement.executeQuery();
+
+				if (rs.isBeforeFirst()) {
+					rs.next();
+
+					System.out.println(String.format(
+							"%-15s%-15s%-15s%-15s%-15s",
+							rs.getInt("residence_place_no"),
+							rs.getInt("room_no"), rs.getString("street_name"),
+							rs.getString("city_name"), rs.getInt("zip_code")));
+
+				}
+
+			} else {
+				System.out
+						.println("Error fetching the Residence Related Details. Please Contact the Admin");
+			}
+
+			/****************************************************************************************************************/
+		} catch (SQLException e1) {
+			System.out.println("SQLException: " + e1.getMessage());
+			System.out.println("VendorError: " + e1.getErrorCode());
+		} catch (Exception e3) {
+			System.out
+					.println("General Exception Case. Printing stack trace below:\n");
+			e3.printStackTrace();
+		} finally {
+			try {
+				rs.close();
+				preparedStatement.close();
+				dbConnection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
 	}
 
-	public void displayListOfLeasesForAPerson(int personId,ArrayList<Integer> leaseNumbers) throws SQLException {
+	public void displayListOfLeasesForAPerson(int personId,
+			ArrayList<Integer> leaseNumbers) throws SQLException {
 
-		/*Write SQL Query to display a list of leases for a person id*/
+		/* Write SQL Query to display a list of leases for a person id */
 
-		/*ResultSet listOfLeases = null;
-		 leaseNumbers.clear();
-		while(listOfLeases.next())
-		{
-			leaseNumbers.add(listOfLeases.getInt("lease_no"));
-		}*/
+		/*
+		 * ResultSet listOfLeases = null; leaseNumbers.clear();
+		 * while(listOfLeases.next()) {
+		 * leaseNumbers.add(listOfLeases.getInt("lease_no")); }
+		 */
 
-		for (int i = 10; i < 20; i++) {
-			leaseNumbers.add(i);
+		ResultSet rs = null;
+		Connection dbConnection = null;
+		PreparedStatement preparedStatement = null;
+
+		try {
+
+			dbConnection = ConnectionUtils.getConnection();
+
+			String selectQuery = "SELECT * FROM person_accomodation_lease P  WHERE P.person_id=?";
+
+			preparedStatement = dbConnection.prepareStatement(selectQuery);
+			preparedStatement.setInt(1, personId);
+			rs = preparedStatement.executeQuery();
+
+			System.out.println("Sr# Lease#");
+			while (rs.next()) {
+
+				leaseNumbers.add(rs.getInt("lease_no"));
+
+			}
+
+		} catch (SQLException e1) {
+			System.out.println("SQLException: " + e1.getMessage());
+			System.out.println("VendorError: " + e1.getErrorCode());
+		} catch (Exception e3) {
+			System.out
+					.println("General Exception Case. Printing stack trace below:\n");
+			e3.printStackTrace();
+		} finally {
+			try {
+				rs.close();
+				preparedStatement.close();
+				dbConnection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 
 	}
 
 	/***********************************************************************************************
 	 * @param personId
-	 * @action Displays lease number, duration of the lease, name of student, matriculation number of student,
-	 * place number, room number, Hall address or Student apartment address, Date of moving in and if 
-	 * present date of leaving the room
+	 * @action Displays lease number, duration of the lease, name of student,
+	 *         matriculation number of student, place number, room number, Hall
+	 *         address or Student apartment address, Date of moving in and if
+	 *         present date of leaving the room
 	 ***********************************************************************************************/
 	public void displayCurrentLease(int personId) {
 
@@ -58,44 +287,164 @@ public class Lease {
 		try {
 			dbConnection = ConnectionUtils.getConnection();
 
-			String selectQuery = "SELECT T2_lease_person.accomodation_type,T1_person.first_name, T2_lease_person.lease_no, T3_lease.duration "
-					+ "FROM PERSON T1_person, PERSON_ACCOMODATION_LEASE T2_lease_person,LEASE T3_lease "
-					+ "WHERE T1_person.person_id = ? AND T1_person.person_id = T2_lease_person.person_id "
-					+ "AND	T3_lease.lease_no = T2_lease_person.lease_no ";
+			String selectQuery = "SELECT T1_person.first_name, T2_lease_person.lease_no, T3_lease.duration, T4_Student.Student_Type, "
+					+ " T2_lease_person.Lease_Move_In_Date, T2_lease_person.accomodation_type, T2_lease_person.accomodation_id "
+					+ "FROM PERSON T1_person, PERSON_ACCOMODATION_LEASE T2_lease_person,LEASE T3_lease, STUDENT T4_Student "
+					+ "WHERE T1_person.person_id = ? AND LEASE_MOVE_IN_DATE=(SELECT MAX(LEASE_MOVE_IN_DATE) "
+					+ "FROM PERSON_ACCOMODATION_LEASE inner_P WHERE T2_lease_person.person_id = inner_P.person_id) "
+					+ "AND T1_person.person_id = T2_lease_person.person_id "
+					+ "AND	T3_lease.lease_no = T2_lease_person.lease_no "
+					+ "AND T1_person.person_id = T4_Student.person_id";
 
-//Issue 1- There is no date to compare which is the latest record?? -- Schema change required!!!
-//Issue 2- No Matriculation number provided
-//Issue- As there is no date, we can'tget the latest lease number and hence we can;t reach the other table
-	
-			
-			
 			preparedStatement = dbConnection.prepareStatement(selectQuery);
 			preparedStatement.setInt(1, personId);
-			rs = preparedStatement.executeQuery();
-			
-		
-			if(rs.isBeforeFirst()){
-					
-				rs.next();
-				System.out.println("Name\tLease #\tDuration");
 
-				System.out.print(rs.getString("first_name")+"\t");
-				System.out.print(rs.getString("lease_no")+"\t");
-				System.out.print(rs.getString("duration")+"\t");
-				
+			rs = preparedStatement.executeQuery();
+
+			System.out.println(String.format(
+					"%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s",
+					"NAME", "LEASE NO", "Duration", "Student Type",
+					"Move in Date", "Place No", "Room No", "Street Name",
+					"City", "Postcode"));
+
+			System.out
+					.println("------------------------------------------------------------------------------------------------"
+							+ "-------------------------------------------------------");
+
+			if (rs.isBeforeFirst()) {
+
+				rs.next();
+
+				System.out.print(String.format("%-15s",
+						rs.getString("first_name")));
+				System.out.print(String.format("%-15s",
+						rs.getString("lease_no")));
+				System.out.print(String.format("%-15s",
+						rs.getString("duration")));
+				System.out.print(String.format("%-15s",
+						rs.getString("student_type")));
+				System.out.print(String.format("%-15s",
+						rs.getDate("Lease_Move_In_Date")));
+
+				/*
+				 * System.out.print(rs.getString("first_name")+"\t ");
+				 * System.out.print(rs.getString("lease_no")+"\t\t");
+				 * System.out.print(rs.getString("duration")+"\t\t");
+				 * System.out.print(rs.getString("student_type")+ "\t");
+				 * System.out.print(rs.getDate("Lease_Move_In_Date")+"\t");
+				 */
+
 			}
 
+			/*
+			 * Get Accommodation type from Resultstatement and Compare it with
+			 * HArdcoded "Apartment"/ "Family apartment"/"Residence Hall "
+			 * Strings. This way get into one of the three If loops and print
+			 * the relevant pa=lace# room # information about them.
+			 */
 
-		} catch(SQLException e1){
-			System.out.println("SQLException: "+ e1.getMessage());
-			System.out.println("VendorError: "+ e1.getErrorCode());
-		}
-		catch(Exception e3)
-		{
-			System.out.println("General Exception Case. Printing stack trace below:\n");
+			String accomodationType = rs.getString("accomodation_type");
+			int accomodationId = rs.getInt("accomodation_id");
+
+			/*
+			 * Closing RS and Preparedstatement -- because --> I want to reuse
+			 * the rs for next queries in the same module
+			 */
+
+			rs.close();
+			preparedStatement.close();
+
+			if (accomodationType.equals("Apartment")) {
+
+				/*
+				 * Go to General Apartment Table( and from there to the bedroom
+				 * table to fetch room #) and fetch Place # Room # and Address
+				 * atributes
+				 */
+
+				String selectQuery1 = "SELECT B.bedroom_place_no,B.room_no, GA.street_name,GA.city_name,GA.zip_code "
+						+ "FROM General_Apartment GA, bedroom B "
+						+ "WHERE GA.accomodation_id = ? AND GA.accomodation_id = B.accomodation_id ";
+
+				preparedStatement = dbConnection.prepareStatement(selectQuery1);
+				preparedStatement.setInt(1, accomodationId);
+				rs = preparedStatement.executeQuery();
+
+				if (rs.isBeforeFirst()) {
+					rs.next();
+
+					System.out.println(String.format(
+							"%-15s%-10s%-20s%-15s%-15s",
+							rs.getInt("bedroom_place_no"),
+							rs.getInt("room_no"), rs.getString("street_name"),
+							rs.getString("city_name"), rs.getInt("zip_code")));
+
+				}
+
+			} else if (accomodationType.equals("Family Apartment")) {
+
+				/*
+				 * Go to Family Apartment Table and fetch Place # Room # and
+				 * Address atributes (no need to go to bedroom/room table as we
+				 * are not concerned) as to what goes on inside a FAMILY
+				 * APARTMENT
+				 */
+
+				String selectQuery1 = "SELECT F.apt_no,F.street_name,F.city_name,F.zip_code "
+						+ "FROM Family_Apartment F WHERE F.accomodation_id=?";
+
+				preparedStatement = dbConnection.prepareStatement(selectQuery1);
+				preparedStatement.setInt(1, accomodationId);
+				rs = preparedStatement.executeQuery();
+
+				if (rs.isBeforeFirst()) {
+
+					rs.next();
+					System.out.println(String.format(
+							"%-15s%-15s%-15s%-15s%-15s", rs.getInt("apt_no"),
+							"-NA-", rs.getString("street_name"),
+							rs.getString("city_name"), rs.getInt("zip_code")));
+
+				}
+
+			} else if (accomodationType.equals("Residence Hall")) {
+
+				/*
+				 * Go to Residence Hall Table[FOllow like 1st i condition] and
+				 * fetch Place # Room # and Address atributes
+				 */
+				String selectQuery1 = "SELECT RHPM.residence_place_no,RHPM.room_no, HR.street_name,HR.city_name,HR.zip_code "
+						+ "FROM residence_hall HR, residence_hall_provides_room RHPM "
+						+ "WHERE RHPM.accomodation_id = ? AND HR.hall_number = RHPM.hall_number ";
+
+				preparedStatement = dbConnection.prepareStatement(selectQuery1);
+				preparedStatement.setInt(1, accomodationId);
+				rs = preparedStatement.executeQuery();
+
+				if (rs.isBeforeFirst()) {
+					rs.next();
+
+					System.out.println(String.format(
+							"%-15s%-15s%-15s%-15s%-15s",
+							rs.getInt("residence_place_no"),
+							rs.getInt("room_no"), rs.getString("street_name"),
+							rs.getString("city_name"), rs.getInt("zip_code")));
+
+				}
+
+			} else {
+				System.out
+						.println("Error fetching the Residence Related Details. Please Contact the Admin");
+			}
+
+		} catch (SQLException e1) {
+			System.out.println("SQLException: " + e1.getMessage());
+			System.out.println("VendorError: " + e1.getErrorCode());
+		} catch (Exception e3) {
+			System.out
+					.println("General Exception Case. Printing stack trace below:\n");
 			e3.printStackTrace();
-		}
-		finally{
+		} finally {
 			try {
 				rs.close();
 				preparedStatement.close();
@@ -105,24 +454,26 @@ public class Lease {
 			}
 		}
 
-
-		/*Write query for displaying :
-		 *lease number, duration of the lease, name of student, matriculation number of student,
-		 * place number, room number, Hall address or Student apartment address, Date of moving in and if 
-		 * present date of leaving the room */
+		/*
+		 * Write query for displaying :lease number, duration of the lease, name
+		 * of student, matriculation number of student, place number, room
+		 * number, Hall address or Student apartment address, Date of moving in
+		 * and if present date of leaving the room
+		 */
 
 	}
 
 	/**
 	 * @param personId
-	 * @throws SQLException 
-	 * @action Displays all the requests made by the student along with their status and request number
+	 * @throws SQLException
+	 * @action Displays all the requests made by the student along with their
+	 *         status and request number
 	 */
-	public void viewAllRequests(int personId) throws SQLException
-	{
+	public void viewAllRequests(int personId) throws SQLException {
 		ResultSet viewRequestsSet = null;
 		Connection dbConnection = null;
 		PreparedStatement preparedStatement = null;
+
 
 		try {
 			//System.out.println("Inside try. Breakpoint");
@@ -190,6 +541,7 @@ public class Lease {
 	/**
 	 * @param personId
 	 * @param requestNumber
+<<<<<<< HEAD
 	 * @throws SQLException 
 	 * @action Deletes the requestNumber for the personID  
 	 */
@@ -318,13 +670,15 @@ public class Lease {
 				e.printStackTrace();
 			}
 		}
+
 	}
 
 	/**
-	 * @action Pulls up all the accommodations that are vacant right now i.e. not occupied by any student or family
+	 * @action Pulls up all the accommodations that are vacant right now i.e.
+	 *         not occupied by any student or family
 	 */
 	public void viewAccomodationVacancies() {
-		/*Write SQL Query to pull up all the vacancies to display the student*/
+		/* Write SQL Query to pull up all the vacancies to display the student */
 		ResultSet displayAllVancancies = null;
 	}
 
