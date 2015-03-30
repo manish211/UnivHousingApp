@@ -15,6 +15,9 @@ public class NextOfKin {
 	public String streetName;
 	public String city;
 	public int postCode;
+	public int phoneNumber;
+	public java.sql.Date DOB;
+	public String gender;
 	
 	
 	/**
@@ -36,7 +39,7 @@ public class NextOfKin {
 		
 		try
 		{
-			queryNextOfKin = "SELECT K.first_name, K.last_name, K.street_no, K.city_name, K.zip_code FROM KIN_STUDENT K WHERE K.student_id = ?";
+			queryNextOfKin = "SELECT K.first_name, K.last_name, K.street_no, K.city_name, K.zip_code, K.phone_number, K.gender, K.DOB FROM KIN_STUDENT K WHERE K.student_id = ?";
 			preparedStatement1 = dbConnection.prepareStatement(queryNextOfKin);
 			preparedStatement1.setInt(1, studentId);
 			studentKin = preparedStatement1.executeQuery();
@@ -48,8 +51,12 @@ public class NextOfKin {
 				streetName = studentKin.getString("street_no");
 				city = studentKin.getString("city_name");
 				postCode = studentKin.getInt("zip_code");
+				phoneNumber = studentKin.getInt("phone_number");
+				gender = studentKin.getString("gender");
+				DOB = studentKin.getDate("DOB");
 				
 				System.out.println("Next of Kin's Name: "+firstName+lastName+"\n"+"Address: "+streetName+","+city+","+postCode+"\t");
+				System.out.println("Phone Number: "+phoneNumber+"\n"+"Gender: "+gender+"\n"+"DOB: "+DOB+"\t");
 			}
 		}
 		catch(SQLException e)

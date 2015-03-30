@@ -1,12 +1,15 @@
 package com.univhousing.users;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.Scanner;
 
 import com.univhousing.main.ConnectionUtils;
+import com.univhousing.main.Utils;
 
 public class Person {
 
@@ -15,7 +18,11 @@ public class Person {
 	public String lastName;
 	public String streetName;
 	public String city;
-	public int postcode;
+	public int postCode;
+	public int phoneNumber;
+	public String gender;
+	public java.sql.Date DOB;
+	
 	
 	Student studentObj = new Student();
 	Scanner inputObj = new Scanner(System.in);
@@ -43,7 +50,8 @@ public class Person {
 		
 		try
 		{
-			queryPersonProfile = "SELECT P.first_name, P.last_name, P.street_no, P.city, P.postcode FROM Person P WHERE P.person_id = ?";
+			queryPersonProfile = "SELECT P.first_name, P.last_name, P.street_no, P.city, P.postcode, P.phone_number, P.gender" +
+					"P.DOB FROM Person P WHERE P.person_id = ?";
 			queryStudentType = "SELECT S.student_type FROM Student S WHERE S.student_id = ?";
 			preparedStatement1 = dbConnection.prepareStatement(queryPersonProfile);
 			preparedStatement1.setInt(1, personId);
@@ -55,9 +63,13 @@ public class Person {
 				lastName = studentProfile.getString("last_name");
 				streetName = studentProfile.getString("street_no");
 				city = studentProfile.getString("city");
-				postcode = studentProfile.getInt("postcode");
+				postCode = studentProfile.getInt("postcode");
+				phoneNumber = studentProfile.getInt("phone_number");
+				gender = studentProfile.getString("gender");
+				DOB = studentProfile.getDate("phone_number");
 				
-				System.out.println("Name: "+firstName+lastName+"\n"+"Address: "+streetName+","+city+","+postcode+"\t");
+				System.out.println("Name: "+firstName+lastName+"\n"+"Address: "+streetName+","+city+","+postCode+"\t");
+				System.out.println("Phone Number: "+phoneNumber+"\n"+"Gender: "+gender+"\n"+"DOB: "+DOB+"\t");
 			}
 			
 			preparedStatement2 = dbConnection.prepareStatement(queryStudentType);
@@ -84,9 +96,10 @@ public class Person {
 
 	/**
 	 * @param personId
+	 * @throws ParseException 
 	 * @action First fetches all the profile details and then asks new values for all of them.
 	 */
-	public void updateProfile(int personId) 
+	public void updateProfile(int personId) throws ParseException 
 	{
 
 		int studentId;
@@ -96,10 +109,7 @@ public class Person {
 		/*Write SQL Query for fetching:
 		 * name, number, address, dob, gender, category (freshman, sophomore, etc) family details (from NextOfKin)
 		 * if needed, special needs for a student.
-		 * There might be more than these please check the project document for this*/
-		
-		ResultSet getStudentProfile = null;
-		
+		 * There might be more than these please check the project document for this*/		
 		
 		System.out.println("Enter new values for the fields you want," +
 				" and leave the fields you don't want changes as Blank");
@@ -114,7 +124,7 @@ public class Person {
 		int newPhone = inputObj.nextInt();
 		
 		System.out.println("Street Name.: ");
-		String newStreetName = inputObj.next();
+		String newStreetNo = inputObj.next();
 		
 		System.out.println("City: ");
 		String newCity = inputObj.next();
@@ -122,8 +132,9 @@ public class Person {
 		System.out.println("ZipCode: ");
 		int newZipCode = inputObj.nextInt();
 		
-		System.out.println("DOB: ");
-		String newDOB = inputObj.next();
+		System.out.println("DOB in MM/dd/yyyy format: ");
+		String newDOBString = inputObj.next();
+		java.sql.Date newDOB = Utils.convertStringToSQLDateFormat(newDOBString);
 		
 		System.out.println("Gender: ");
 		String newGender = inputObj.next();
@@ -133,6 +144,31 @@ public class Person {
 		
 		System.out.println("Special Needs");
 		String newSpecialNeeds = inputObj.next();
+		
+		try
+		{
+			PreparedStatement preparedStatement1 = null;
+			Connection dbConnection1 = ConnectionUtils.getConnection();
+			
+			String query1 = "INERT INTO Person " +
+					"(first_name, last_name, street_no, city, postcode, phone_number, gender, DOB)" +
+					" VALUES (?,?,?,?,?,?,?,?) ";
+			preparedStatement1 = dbConnection1.prepareStatement(query1);
+			preparedStatement1.setString(1, newFirstName);
+			preparedStatement1.setString(2, newLastName);
+			preparedStatement1.setString(3, newStreetNo);
+			preparedStatement1.setString(4, newCity);
+			preparedStatement1.setInt(5, newZipCode);
+			preparedStatement1.setInt(6, newPhone);
+			preparedStatement1.setString(7, newGender);
+			preparedStatement1.setDate(8, newDOB);
+			
+			preparedStatement1.executeUpdate();
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
 		
 		System.out.println("Please enter Family Details now: ");
 		
@@ -146,7 +182,7 @@ public class Person {
 		int newNOKPhone = inputObj.nextInt();
 		
 		System.out.println("Next of Kin Street Name.: ");
-		String newNOKStreetName = inputObj.next();
+		String newNOKStreetNo = inputObj.next();
 		
 		System.out.println("Next of Kin City: ");
 		String newNOKCity = inputObj.next();
@@ -154,10 +190,40 @@ public class Person {
 		System.out.println("Next of Kin ZipCode: ");
 		int newNOKZipCode = inputObj.nextInt();
 		
-		/*Write SQL Query to to update the above information for the retrieved Student ID
-		 * Students and NextOfKin(NOK) both detials ahve to be updated.*/
+		System.out.println("Next of Kin Gender: ");
+		String newNOKGender = inputObj.next();
 		
-		ResultSet updateProfile = null;
+		System.out.println("Next of Kin DOB in MM/dd/yyyy format: ");
+		String newStringNOKDOB = inputObj.next();
+		java.sql.Date newNOKDOB = Utils.convertStringToSQLDateFormat(newStringNOKDOB);
+		
+		/*Write SQL Query to to update the above information for the retrieved Student ID
+		 * Students and NextOfKin(NOK) both details have to be updated.*/
+		
+		try
+		{
+			PreparedStatement preparedStatement2 = null;
+			Connection dbConnection2 = ConnectionUtils.getConnection();
+			
+			String query1 = "INERT INTO KIN_STUDENT " +
+					"(first_name, last_name, street_no, city, postcode, phone_number, gender, DOB)" +
+					" VALUES (?,?,?,?,?,?,?,?) ";
+			preparedStatement2 = dbConnection2.prepareStatement(query1);
+			preparedStatement2.setString(1, newNOKFirstName);
+			preparedStatement2.setString(2, newNOKLastName);
+			preparedStatement2.setString(3, newNOKStreetNo);
+			preparedStatement2.setString(4, newNOKCity);
+			preparedStatement2.setInt(5, newNOKZipCode);
+			preparedStatement2.setInt(6, newNOKPhone);
+			preparedStatement2.setString(7, newNOKGender);
+			preparedStatement2.setDate(8, newNOKDOB);
+			
+			preparedStatement2.executeUpdate();
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
 		
 	}
 

@@ -10,6 +10,8 @@ CREATE TABLE  Person(person_id INTEGER,
  city  varchar2(20),
  postcode  varchar2(5),
  phone_number INTEGER,
+ gender varchar2(10),
+ DOB date,
 PRIMARY KEY(person_id));
 
 CREATE TABLE  Student(student_id INTEGER,
@@ -223,6 +225,9 @@ last_name VARCHAR2(40),
 street_no INTEGER,
 city_name VARCHAR2(40),
 zip_code INTEGER,
+phone_number INTEGER,
+gender varchar2(10),
+DOB date,
 PRIMARY KEY(student_id,first_name),
 FOREIGN KEY(student_id) REFERENCES student);
 
