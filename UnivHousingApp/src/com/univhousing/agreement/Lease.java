@@ -667,10 +667,63 @@ public class Lease {
 	/**
 	 * @action Pulls up all the accommodations that are vacant right now i.e.
 	 *         not occupied by any student or family
+	 * @throws SQLException
 	 */
-	public void viewAccomodationVacancies() {
+	public void viewAccomodationVacancies() throws SQLException {
 		/* Write SQL Query to pull up all the vacancies to display the student */
-		ResultSet displayAllVancancies = null;
+		ResultSet rs = null;
+		Connection dbConnection = null;
+		PreparedStatement preparedStatement = null;
+		
+		try {
+			dbConnection = ConnectionUtils.getConnection();
+			
+			/*
+			 * Query for getting count of free bedrooms
+			 * Assuming that accommodation_id is unique
+			 */
+			String selectQueryBedroom = "SELECT COUNT (B.apt_place_no) AS rooms "
+					+ "FROM bedroom B "
+					+ "WHERE B.accomodation_id  NOT IN "
+					+ "(SELECT accomodation_id "
+					+ "FROM person_accomodation_lease)";
+			preparedStatement = dbConnection.prepareStatement(selectQueryBedroom);
+			rs = preparedStatement.executeQuery();
+			
+			while (rs.next()) {
+				System.out.println("Available vacancies in General "
+						+ "Apartments: 	" + rs.getInt("rooms") + " rooms");
+			}
+			preparedStatement.close();
+			rs.close();
+			
+			/*
+			 * Query for getting count of free family apartments. 
+			 * Assuming accommodation_id is unique.
+			 */
+			String selectQueryFamilyApt = "SELECT COUNT (F.apt_no) AS apartments "
+					+ "FROM Family_Apartment F "
+					+ "WHERE F.accomodation_id NOT IN "
+					+ "(SELECT accomodation_id "
+					+ "FROM person_accomodation_lease)";
+			preparedStatement = dbConnection.prepareStatement(selectQueryFamilyApt);
+			rs = preparedStatement.executeQuery();
+			
+			while (rs.next()) {
+				System.out.println("Available vacancies in Family "
+						+ "Apartments: " + rs.getShort("apartments") + " apartments");
+			}
+			
+		} catch (SQLException s) {
+			System.out.println("SQLException: " + s.getMessage());
+			System.out.println("Vendor Error: " + s.getErrorCode());
+		} catch (Exception e) {
+			System.out.println("General exception case. Please see stack trace");
+			e.printStackTrace();
+		} finally {
+			rs.close();
+			dbConnection.close();
+			preparedStatement.close();
+		}
 	}
-
 }
