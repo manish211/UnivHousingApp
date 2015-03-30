@@ -34,8 +34,10 @@ public class Person {
 		int personId = studentObj.getPersonIdForStudentId(studentId);
 
 		ResultSet studentProfile = null;
+		ResultSet studentType = null;
 		Connection dbConnection = ConnectionUtils.getConnection();
-		PreparedStatement preparedStatement = null;
+		PreparedStatement preparedStatement1 = null;
+		PreparedStatement preparedStatement2 = null;
 		String queryPersonProfile = "";
 		String queryStudentType = "";
 		
@@ -43,9 +45,9 @@ public class Person {
 		{
 			queryPersonProfile = "SELECT P.first_name, P.last_name, P.street_no, P.city, P.postcode FROM Person P WHERE P.person_id = ?";
 			queryStudentType = "SELECT S.student_type FROM Student S WHERE S.student_id = ?";
-			preparedStatement = dbConnection.prepareStatement(queryPersonProfile);
-			preparedStatement.setInt(1, personId);
-			studentProfile = preparedStatement.executeQuery();
+			preparedStatement1 = dbConnection.prepareStatement(queryPersonProfile);
+			preparedStatement1.setInt(1, personId);
+			studentProfile = preparedStatement1.executeQuery();
 			
 			while(studentProfile.next())
 			{
@@ -57,7 +59,21 @@ public class Person {
 				
 				System.out.println("Name: "+firstName+lastName+"\n"+"Address: "+streetName+","+city+","+postcode+"\t");
 			}
+			
+			preparedStatement2 = dbConnection.prepareStatement(queryStudentType);
+			preparedStatement2.setInt(1, studentId);
+			studentType = preparedStatement2.executeQuery();
+			String studentCategory = "";
+
+			while(studentType.next())
+			{
+				studentCategory = studentType.getString("student_type");
+			}
+			System.out.println("Category: "+ studentCategory);
 			dbConnection.close();
+			System.out.println("/nNow displaying your Next of Kin details:");
+			NextOfKin nokObj = new NextOfKin();
+			nokObj.getNextOfKinDetails(studentId);
 		}
 		catch(SQLException e)
 		{
