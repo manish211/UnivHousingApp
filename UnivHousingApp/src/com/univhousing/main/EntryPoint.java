@@ -43,6 +43,7 @@ public class EntryPoint {
 	private static ArrayList<Integer> mAdminLevelMaintenanceRequests = null;
 	private static ArrayList<Integer> mAdminLevelParkingRequests = null;
 	private static Scanner inputObj = new Scanner(System.in);
+	private static int studentId;
 
 	public static void main(String[] args) {
 		Student studentObj = null; 
@@ -78,7 +79,7 @@ public class EntryPoint {
 					{
 						case 1:
 							System.out.print("\nEnter University Id++:");
-							int studentId = inputObj.nextInt();
+							studentId = inputObj.nextInt();
 	
 							System.out.print("\nEnter Password:");
 							credentialObj.password = inputObj.next();
@@ -347,7 +348,7 @@ public class EntryPoint {
 													switch (choice) 
 													{
 														case 1: System.out.println("Showing View Profile");
-															personObj.viewProfileDetails(credentialObj.personId);
+															personObj.viewProfileDetails(studentId);
 															break;
 	
 														case 2: System.out.println("Showing Update Profile");

@@ -1,7 +1,12 @@
 package com.univhousing.users;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Scanner;
+
+import com.univhousing.main.ConnectionUtils;
 
 public class Person {
 
@@ -20,18 +25,44 @@ public class Person {
 	 * @action Displays name, number, address, dob, gender, category (freshman, sophomore, etc) family details
 	 *  if needed, special needs etc (refer the description for a comprehensive list)
 	 */
-	public void viewProfileDetails(int personId) {
-		
-		int studentId;
-		// Fetch the student Id for a particular Person Id
-		studentId = studentObj.getStudentIdForPersonId(personId);
+	public void viewProfileDetails(int studentId) {
 		
 		/*Write SQL Query for fetching:
 		 * name, number, address, dob, gender, category (freshman, sophomore, etc) family details (from NextOfKin)
 		 * if needed, special needs for a student.
 		 * There might be more than these please check the project document for this*/
+		int personId = studentObj.getPersonIdForStudentId(studentId);
+
+		ResultSet studentProfile = null;
+		Connection dbConnection = ConnectionUtils.getConnection();
+		PreparedStatement preparedStatement = null;
+		String queryPersonProfile = "";
+		String queryStudentType = "";
 		
-		ResultSet getStudentProfile = null;
+		try
+		{
+			queryPersonProfile = "SELECT P.first_name, P.last_name, P.street_no, P.city, P.postcode FROM Person P WHERE P.person_id = ?";
+			queryStudentType = "SELECT S.student_type FROM Student S WHERE S.student_id = ?";
+			preparedStatement = dbConnection.prepareStatement(queryPersonProfile);
+			studentProfile = preparedStatement.executeQuery();
+			
+			while(studentProfile.next())
+			{
+				firstName = studentProfile.getString("first_name");
+				lastName = studentProfile.getString("last_name");
+				streetName = studentProfile.getString("street_no");
+				city = studentProfile.getString("city");
+				postcode = studentProfile.getInt("postcode");
+				
+				System.out.println("Name: "+firstName+lastName+"\n"+"Address: "+streetName+","+city+","+postcode+"\t");
+			}
+			dbConnection.close();
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
 	}
 
 	/**
