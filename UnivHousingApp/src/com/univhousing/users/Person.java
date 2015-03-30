@@ -44,6 +44,7 @@ public class Person {
 			queryPersonProfile = "SELECT P.first_name, P.last_name, P.street_no, P.city, P.postcode FROM Person P WHERE P.person_id = ?";
 			queryStudentType = "SELECT S.student_type FROM Student S WHERE S.student_id = ?";
 			preparedStatement = dbConnection.prepareStatement(queryPersonProfile);
+			preparedStatement.setInt(1, personId);
 			studentProfile = preparedStatement.executeQuery();
 			
 			while(studentProfile.next())
