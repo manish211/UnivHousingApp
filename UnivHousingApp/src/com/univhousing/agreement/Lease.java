@@ -109,7 +109,7 @@ public class Lease {
 
 				String selectQuery1 = "SELECT B.bedroom_place_no,B.room_no, GA.street_name,GA.city_name,GA.zip_code "
 						+ "FROM General_Apartment GA, bedroom B "
-						+ "WHERE GA.accomodation_id = ? AND GA.accomodation_id = B.accomodation_id ";
+						+ "WHERE GA.accomodation_id = ? AND GA.apt_no = B.apt_no ";
 
 				preparedStatement = dbConnection.prepareStatement(selectQuery1);
 				preparedStatement.setInt(1, accomodationId);
@@ -353,7 +353,7 @@ public class Lease {
 
 				String selectQuery1 = "SELECT B.bedroom_place_no,B.room_no, GA.street_name,GA.city_name,GA.zip_code "
 						+ "FROM General_Apartment GA, bedroom B "
-						+ "WHERE GA.accomodation_id = ? AND GA.accomodation_id = B.accomodation_id ";
+						+ "WHERE GA.accomodation_id = ? AND GA.apt_no = B.apt_no";
 
 				preparedStatement = dbConnection.prepareStatement(selectQuery1);
 				preparedStatement.setInt(1, accomodationId);
