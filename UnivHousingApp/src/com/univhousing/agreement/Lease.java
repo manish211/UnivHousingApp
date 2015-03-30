@@ -671,6 +671,15 @@ public class Lease {
 	 */
 	public void viewAccomodationVacancies() throws SQLException {
 		/* Write SQL Query to pull up all the vacancies to display the student */
+		
+		/*
+		 * Method for viewing all the vacancies.
+		 * I am assuming that the accommodation ID is unique 
+		 * for bedroom, residence hall room and Family Apartment.
+		 * Using the person_id, we can index into person_acc_lease table 
+		 * and get the accommodation id, and query the three tables
+		 * to find entries that are not present in lease.
+		 */
 		ResultSet rs = null;
 		Connection dbConnection = null;
 		PreparedStatement preparedStatement = null;
@@ -692,11 +701,10 @@ public class Lease {
 			
 			while (rs.next()) {
 				System.out.println("Available vacancies in General "
-						+ "Apartments: 	" + rs.getInt("rooms") + " rooms");
+						+ "Apartments: " + rs.getInt("rooms") + " rooms");
 			}
-			preparedStatement.close();
 			rs.close();
-			
+			preparedStatement.close();
 			/*
 			 * Query for getting count of free family apartments. 
 			 * Assuming accommodation_id is unique.
@@ -711,9 +719,25 @@ public class Lease {
 			
 			while (rs.next()) {
 				System.out.println("Available vacancies in Family "
-						+ "Apartments: " + rs.getShort("apartments") + " apartments");
+						+ "Apartments: " + rs.getInt("apartments") + " apartments");
 			}
 			
+			/*
+			 * Query for getting count of free residence halls.
+			 * Exactly same as the previous two queries.
+			 */
+			String selectQueryResidence = "SELECT COUNT (R.residence_place_no) AS residence "
+					+ "FROM residence_hall_provides_room R "
+					+ "WHERE R.accomodation_id NOT IN "
+					+ "(SELECT accomodation_id "
+					+ "FROM person_accomodation_lease)";
+			preparedStatement = dbConnection.prepareStatement(selectQueryResidence);
+			rs = preparedStatement.executeQuery();
+			
+			while (rs.next()) {
+				System.out.println("Available rooms in Residence Hall: "
+						+ rs.getInt("residence") + " rooms");
+			}
 		} catch (SQLException s) {
 			System.out.println("SQLException: " + s.getMessage());
 			System.out.println("Vendor Error: " + s.getErrorCode());
