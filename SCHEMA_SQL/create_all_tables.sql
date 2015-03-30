@@ -9,6 +9,7 @@ CREATE TABLE  Person(person_id INTEGER,
  street_no  varchar2(20),
  city  varchar2(20),
  postcode  varchar2(5),
+ phone_number INTEGER,
 PRIMARY KEY(person_id));
 
 CREATE TABLE  Student(student_id INTEGER,
