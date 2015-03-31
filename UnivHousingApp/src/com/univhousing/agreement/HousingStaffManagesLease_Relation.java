@@ -108,29 +108,56 @@ public class HousingStaffManagesLease_Relation {
 			
 			System.out.println("Do you want to approve this request? Y/N");
 			String approvalStatus = inputObj.next();
-			
-			/*Now we look whether the accomodation_type provided by the student is available or not
-			 * If YES: Assign it to him and update the respective tables
-			 * If NO: Request will already be approved, but the request status will be changed to PENDING
-			 * NOTE: accomodationType has to be taken from the request details*/
-			
-			boolean accAvailability = checkIfAccomodationTypeAvailable(preferences);
-			if(accAvailability)
-			{
-				// Now we will give him the accommodation he wanted
-				/*Write SQL Query to update his records in the tables necessary
-				 * Student should be alloted a room number and a palce number*/
-				ResultSet approveAndAssignAccomodation = null;
-			}
-			else
-			{
-				/* First we will write a query to approve the status, irrespective of whether
-				   there is accommodation available for that accommodation type	*/
+			if (approvalStatus.equalsIgnoreCase("Y")) {
+				/*
+				 * You want to approve the request. There may or may 
+				 * not be accommodation available. 
+				 */
+				
+				/*Now we look whether the accomodation_type provided by the student is available or not
+				 * If YES: Assign it to him and update the respective tables
+				 * If NO: Request will already be approved, but the request status will be changed to PENDING
+				 * NOTE: accomodationType has to be taken from the request details*/
+				
+				//boolean accAvailability = checkIfAccomodationTypeAvailable(preferences);
+				ArrayList<String> availableAcco = checkIfAccomodationTypeAvailable(preferences);
+				//if(accAvailability)
+				if (availableAcco.get(0).equalsIgnoreCase("RESIDENCE HALL"))
+				{
+					System.out.println("Availability in: " + availableAcco.get(1));
+					// Now we will give him the accommodation he wanted
+					/*Write SQL Query to update his records in the tables necessary
+					 * Student should be alloted a room number and a palce number*/
+					ResultSet approveAndAssignAccomodation = null;
+				} else if (availableAcco.get(0).equalsIgnoreCase("Apartment")) {
+					/*
+					 * Write SQL query to approve the general apartment request 
+					 * and allocate a room to the applicant
+					 */
+					
+				} else if (availableAcco.get(0).equalsIgnoreCase("Family Apartment")) {
+					/*
+					 * Write an SQL query to approve the family apartment request 
+					 * and allocate an apartment to the applicant
+					 */
+				}
+				else
+				{
+					/* First we will write a query to approve the status, irrespective of whether
+					   there is accommodation available for that accommodation type	*/
 
-				/*Write SQL Query to change the status of the request to waiting list,
-				 * this can be done from table PERSON_ACC_STAFF (not sure)*/
-				ResultSet changeRequestStatus = null;
+					/*Write SQL Query to change the status of the request to waiting list,
+					 * this can be done from table PERSON_ACC_STAFF (not sure)*/
+					ResultSet changeRequestStatus = null;
+				}
+			} else {
+				/*
+				 * You DO NOT want to approve the request.
+				 * Put the student's request in the waiting list.
+				 */
 			}
+			
+			
 		} catch (SQLException e1) {
 			System.out.println("SQLException: " + e1.getMessage());
 			System.out.println("VendorError: " + e1.getErrorCode());
@@ -153,7 +180,7 @@ public class HousingStaffManagesLease_Relation {
 	 * @param accomodationType
 	 * @return True if accomodationType is present else False
 	 */
-	private boolean checkIfAccomodationTypeAvailable(ArrayList<String> preferences) {
+	private ArrayList<String> checkIfAccomodationTypeAvailable(ArrayList<String> preferences) {
 		/* Write SQL Query to check if the accommodation type student selected is actually available
 		 * If YES: return True
 		 * If NO: return False*/
@@ -161,6 +188,7 @@ public class HousingStaffManagesLease_Relation {
 		ResultSet rs = null;
 		PreparedStatement preparedStatement = null;
 		Connection dbConnection = null;
+		ArrayList<String> availableAcco = new ArrayList<>();
 		try {
 			dbConnection = ConnectionUtils.getConnection();
 			
@@ -180,8 +208,10 @@ public class HousingStaffManagesLease_Relation {
 
 					while (rs.next()) {
 						if (rs.getInt("count") > 0) {
+							availableAcco.add("RESIDENCE HALL");
+							availableAcco.add(preferences.get(i+1));
 							dbConnection.close();
-							return true;
+							return availableAcco;
 						}
 					}
 					preparedStatement.close();
@@ -199,8 +229,10 @@ public class HousingStaffManagesLease_Relation {
 				
 				while (rs.next()){
 					if (rs.getInt("rooms") > 0) {
+						availableAcco.add("APARTMENT");
+						availableAcco.add("NA");
 						dbConnection.close();
-						return true;
+						return availableAcco;
 					}
 					preparedStatement.close();
 					rs.close();
@@ -217,14 +249,17 @@ public class HousingStaffManagesLease_Relation {
 				
 				while (rs.next()){
 					if (rs.getInt("apartments") > 0) {
+						availableAcco.add("FAMILY APARTMENT");
+						availableAcco.add("NA");
 						dbConnection.close();
-						return true;
+						return availableAcco;
 					}
 					preparedStatement.close();
 					rs.close();
 				}
 			} else {
-				return false;
+				availableAcco.add("Nothing Available");
+				return availableAcco;
 			}
 		} catch (SQLException e1) {
 			System.out.println("SQLException: " + e1.getMessage());
@@ -241,8 +276,8 @@ public class HousingStaffManagesLease_Relation {
 				e.printStackTrace();
 			}
 		}
-		
-		return false;
+		availableAcco.add("NA");
+		return availableAcco;
 	}
 
 	/**
