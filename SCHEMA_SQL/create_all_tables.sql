@@ -211,6 +211,12 @@ accomodation_type VARCHAR2(50),
 person_id INTEGER,
 staff_no INTEGER,
 request_status VARCHAR2(50),
+mode_of_payment VARCHAR2(20),
+lease_move_in_date DATE,
+duration VARCHAR2(10),
+PREFERENCE1 VARCHAR2(20),
+PREFERENCE2 VARCHAR2(20),
+PREFERENCE3 VARCHAR2(20),
 PRIMARY KEY(application_request_no),
 FOREIGN KEY (person_id) REFERENCES person);
 
