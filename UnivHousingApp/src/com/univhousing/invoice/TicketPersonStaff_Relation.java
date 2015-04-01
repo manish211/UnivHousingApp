@@ -1,10 +1,14 @@
 package com.univhousing.invoice;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import com.univhousing.main.ConnectionUtils;
+import com.univhousing.main.Constants;
 import com.univhousing.users.Student;
 
 public class TicketPersonStaff_Relation {
@@ -27,8 +31,9 @@ public class TicketPersonStaff_Relation {
 	 */
 	public void raiseNewTicket(int personId) {
 
-		String severity, description, ticketType;
-		int ticketNo;
+		String severity = "", description = "";
+		String ticketType = "";
+		int ticketNo = 0, staffNo = 0;
 		System.out.println("Select the ticket type:\n" +
 				"1. Water\n" +
 				"2. Electricity\n" +
@@ -37,36 +42,114 @@ public class TicketPersonStaff_Relation {
 				"5. Cleaning\n" +
 				"6. Miscellaneous\n");
 
-		ticketType = inputObj.next();
-		int type = Integer.parseInt(ticketType);
+		int type = inputObj.nextInt();
 
 		switch (type) 
 		{
 			case 1:
+				ticketType = Constants.WATER;
+				severity = Constants.HIGH_SEVERITY;
+				staffNo = Constants.HIGH_SEVERITY_STAFF;
+				break;
 			case 2:
-				severity = "High";
+				ticketType = Constants.ELECTRICITY;
+				severity = Constants.HIGH_SEVERITY;
+				staffNo = Constants.HIGH_SEVERITY_STAFF;
 				break;
 				
 			case 3:
+				ticketType = Constants.APPLIANCE;
+				severity = Constants.MEDIUM_SEVERITY;
+				staffNo = Constants.MEDIUM_SEVERITY_STAFF;
+				break;
 			case 4:
-				severity = "Medium";
+				ticketType = Constants.INTERNET;
+				severity = Constants.MEDIUM_SEVERITY;
+				staffNo = Constants.MEDIUM_SEVERITY_STAFF;
 				break;
 				
 			case 5:
-			case 6:
-				severity = "Low";
+				ticketType = Constants.CLEANING;
+				severity = Constants.LOW_SEVERITY;
+				staffNo = Constants.LOW_SEVERITY_STAFF;
 				break;
-	
-			default: System.out.println("Invalid Choice");
+			case 6:
+				ticketType = Constants.MISCELLANEOUS;
+				severity = Constants.LOW_SEVERITY;
+				staffNo = Constants.LOW_SEVERITY_STAFF;
 				break;
 		}
 		
-		System.out.println("Enter the description for the issue:\n");
-		description = inputObj.next();
+		// Consuming the  /n after previous input as nextInt(), doesn't consume the \n i.e. enter
+		inputObj.nextLine();
+		
+		System.out.println("Enter the description for the issue:");
+		description = inputObj.nextLine();
+		
+		
+		/*Write SQL Query to fetch the maximum value of the ticket number so that we can continue from there
+		 * If the value is null then we will just assign value as default ticket number value*/
+		
+		PreparedStatement preparedStatement = null;
+		Connection dbConnection = ConnectionUtils.getConnection();
+		String query = "SELECT MAX(ticket_no) AS HighestTicket FROM ticket_person_staff";
+		
+		try 
+		{
+			preparedStatement = dbConnection.prepareStatement(query);
+			ResultSet maxTicketNo = preparedStatement.executeQuery();
+			
+			while(maxTicketNo.next())
+			{
+				ticketNo = maxTicketNo.getInt("HighestTicket");
+				if(ticketNo == 0)
+				{
+					ticketNo = Constants.TICKET_DEFAULT_VALUE;
+				}
+				else
+				{
+					ticketNo++;
+				}
+			}
+
+			ConnectionUtils.closeConnection(dbConnection);
+		} 
+		catch (SQLException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		
 		/*Write SQL query to create a ticket with type, ticketNo, severity and description
 		 * Ticket has to be raised with a staff no who it will be assigned to, so 
 		 * we can do random generation of staff no. or we can write logic to choose staff no.*/
+		
+		PreparedStatement preparedStatement1 = null;
+		Connection dbConnection1 = ConnectionUtils.getConnection();
+		String query1 = "INSERT INTO ticket_person_staff (staff_no,ticket_no,ticket_status,ticket_severity,person_id,description,ticket_type) VALUES (?,?,?,?,?,?,?)";
+		
+		try 
+		{
+			preparedStatement1 = dbConnection1.prepareStatement(query1);
+			preparedStatement1.setInt(1, staffNo);
+			preparedStatement1.setInt(2, ticketNo);
+			preparedStatement1.setString(3, Constants.DEFAULT_TICKET_STATUS);
+			preparedStatement1.setString(4, severity);
+			preparedStatement1.setInt(5, personId);
+			preparedStatement1.setString(6, description);
+			preparedStatement1.setString(7, ticketType);
+			
+			preparedStatement1.executeUpdate();
+			ConnectionUtils.closeConnection(dbConnection1);
+		} 
+		catch (SQLException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 	}
 
 	/**

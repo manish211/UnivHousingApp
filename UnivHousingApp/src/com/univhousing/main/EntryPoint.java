@@ -328,8 +328,8 @@ public class EntryPoint {
 															mLevelTwo = false;
 															break;
 
-														default:
-															break;	
+														default: System.out.println("Invalid Choice");
+														break;
 													}
 												}
 												mLevelTwo = true;

@@ -38,7 +38,7 @@ public class HousingStaffManagesLease_Relation {
 		String accomodationType = "";
 		allLeaseRequestsToMonitor.clear();
 		String status = "PENDING";
-		ArrayList<String> preferences = new ArrayList<>();
+		ArrayList<String> preferences = new ArrayList<String>();
 		
 		try {
 			
@@ -188,7 +188,7 @@ public class HousingStaffManagesLease_Relation {
 		ResultSet rs = null;
 		PreparedStatement preparedStatement = null;
 		Connection dbConnection = null;
-		ArrayList<String> availableAcco = new ArrayList<>();
+		ArrayList<String> availableAcco = new ArrayList<String>();
 		try {
 			dbConnection = ConnectionUtils.getConnection();
 			

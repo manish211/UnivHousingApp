@@ -42,6 +42,7 @@ public class Person {
 
 		ResultSet studentProfile = null;
 		ResultSet studentType = null;
+		Connection dbConnection1 = ConnectionUtils.getConnection();
 		Connection dbConnection = ConnectionUtils.getConnection();
 		PreparedStatement preparedStatement1 = null;
 		PreparedStatement preparedStatement2 = null;
@@ -50,13 +51,13 @@ public class Person {
 		
 		try
 		{
-			queryPersonProfile = "SELECT P.first_name, P.last_name, P.street_no, P.city, P.postcode, P.phone_number, P.gender" +
+			queryPersonProfile = "SELECT P.first_name, P.last_name, P.street_no, P.city, P.postcode, P.phone_number, P.gender," +
 					"P.DOB FROM Person P WHERE P.person_id = ?";
 			queryStudentType = "SELECT S.student_type FROM Student S WHERE S.student_id = ?";
-			preparedStatement1 = dbConnection.prepareStatement(queryPersonProfile);
+			preparedStatement1 = dbConnection1.prepareStatement(queryPersonProfile);
 			preparedStatement1.setInt(1, personId);
 			studentProfile = preparedStatement1.executeQuery();
-			
+
 			while(studentProfile.next())
 			{
 				firstName = studentProfile.getString("first_name");
@@ -66,10 +67,10 @@ public class Person {
 				postCode = studentProfile.getInt("postcode");
 				phoneNumber = studentProfile.getInt("phone_number");
 				gender = studentProfile.getString("gender");
-				DOB = studentProfile.getDate("phone_number");
+				DOB = studentProfile.getDate("DOB");
 				
 				System.out.println("Name: "+firstName+lastName+"\n"+"Address: "+streetName+","+city+","+postCode+"\t");
-				System.out.println("Phone Number: "+phoneNumber+"\n"+"Gender: "+gender+"\n"+"DOB: "+DOB+"\t");
+				System.out.println("Phone Number: "+phoneNumber+"\n"+"Gender: "+gender+"\nDOB: "+DOB);
 			}
 			
 			preparedStatement2 = dbConnection.prepareStatement(queryStudentType);
@@ -83,7 +84,7 @@ public class Person {
 			}
 			System.out.println("Category: "+ studentCategory);
 			dbConnection.close();
-			System.out.println("/nNow displaying your Next of Kin details:");
+			System.out.println("Now displaying your Next of Kin details:\n");
 			NextOfKin nokObj = new NextOfKin();
 			nokObj.getNextOfKinDetails(studentId);
 		}
@@ -164,6 +165,19 @@ public class Person {
 			preparedStatement1.setDate(8, newDOB);
 			
 			preparedStatement1.executeUpdate();
+			
+			
+			
+			PreparedStatement preparedStatement2 = null;
+			Connection dbConnection2 = ConnectionUtils.getConnection();
+			
+			String query2 = "INERT INTO Student " +
+					"(student_type)" +
+					" VALUES (?) WHERE student_id = ?";
+			preparedStatement2 = dbConnection2.prepareStatement(query2);
+			preparedStatement2.setString(1, newStudentType);
+			preparedStatement2.setInt(2, studentId);
+			preparedStatement2.executeUpdate();
 		}
 		catch(SQLException e)
 		{
