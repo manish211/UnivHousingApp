@@ -10,6 +10,7 @@ import java.util.Scanner;
 import com.univhousing.main.ConnectionUtils;
 import com.univhousing.users.Student;
 import com.univhousing.main.Constants;
+import com.univhousing.users.Guest;
 
 public class ParkingLot {
 	
@@ -21,6 +22,7 @@ public class ParkingLot {
 	 */
 	Student studentObj = new Student();
 	Scanner inputObj = new Scanner(System.in);
+	Guest   guestObj = new Guest();
 
 	public void generateAParkingSpot(int personId)
 	{
@@ -59,7 +61,13 @@ public class ParkingLot {
 			// Check if student is in University Housing
 			isStudentAccomodated = studentObj.checkStudentInUnivHousing(personId);
 			
-			if(isStudentAccomodated)
+			boolean isPersonGuest = guestObj.checkPersonIsGuest(personId);
+			
+			System.out.println("Person id: "+personId);
+			
+			System.out.println("isPersonGuest:"+isPersonGuest);
+			
+			if(isStudentAccomodated || isPersonGuest)
 			{
 				ResultSet createParkingSpot = null;
 				/*Write SQL Query to use vehicleType, handicappedInfo, nearbySpot and 

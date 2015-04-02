@@ -15,6 +15,48 @@ public class Guest {
 	PreparedStatement preparedStatement = null;
 	Connection dbConnection = null;
 	
+	
+	
+	public boolean checkPersonIsGuest(int personId){
+		
+		try 
+		{
+			dbConnection = ConnectionUtils.getConnection();
+			String query = "SELECT person_id FROM Guest WHERE person_id = ?";
+			preparedStatement = dbConnection.prepareStatement(query);
+			preparedStatement.setInt(1, personId);
+			
+			getPersonId = preparedStatement.executeQuery();
+			
+			if(getPersonId.isBeforeFirst())
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+			
+		}
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+			return false;
+		}
+		finally
+		{
+			try {
+				dbConnection.close();
+				getPersonId.close();
+				preparedStatement.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	
 	/**
 	 * @param approvalId
 	 * @return PersonId for a given Approval Id
