@@ -39,7 +39,7 @@ public class NextOfKin {
 		
 		try
 		{
-			queryNextOfKin = "SELECT K.first_name, K.last_name, K.street_no, K.city_name, K.zip_code, K.phone_number, K.gender, K.DOB FROM KIN_STUDENT K WHERE K.student_id = ?";
+			queryNextOfKin = "SELECT K.first_name, K.last_name, K.street_name, K.city_name, K.zip_code, K.phone_number, K.gender, K.DOB FROM KIN_STUDENT K WHERE K.student_id = ?";
 			preparedStatement1 = dbConnection.prepareStatement(queryNextOfKin);
 			preparedStatement1.setInt(1, studentId);
 			studentKin = preparedStatement1.executeQuery();
@@ -48,7 +48,7 @@ public class NextOfKin {
 			{
 				firstName = studentKin.getString("first_name");
 				lastName = studentKin.getString("last_name");
-				streetName = studentKin.getString("street_no");
+				streetName = studentKin.getString("street_name");
 				city = studentKin.getString("city_name");
 				postCode = studentKin.getInt("zip_code");
 				phoneNumber = studentKin.getInt("phone_number");

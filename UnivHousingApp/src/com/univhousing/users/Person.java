@@ -116,44 +116,43 @@ public class Person {
 				" and leave the fields you don't want changes as Blank");
 		
 		System.out.println("First Name: ");
-		String newFirstName = inputObj.next();
+		String newFirstName = inputObj.nextLine();
 		
 		System.out.println("Last Name: ");
-		String newLastName = inputObj.next();
-		
-		System.out.println("Phone Number: ");
-		int newPhone = inputObj.nextInt();
+		String newLastName = inputObj.nextLine();
 		
 		System.out.println("Street Name.: ");
-		String newStreetNo = inputObj.next();
+		String newStreetNo = inputObj.nextLine();
 		
 		System.out.println("City: ");
-		String newCity = inputObj.next();
+		String newCity = inputObj.nextLine();
+		
+		System.out.println("DOB in MM/dd/yyyy format: ");
+		String newDOBString = inputObj.nextLine();
+		java.sql.Date newDOB = Utils.convertStringToSQLDateFormat(newDOBString);
+		
+		System.out.println("Gender: ");
+		String newGender = inputObj.nextLine();
+
+		System.out.println("Student Category: ");
+		String newStudentType = inputObj.nextLine();
+		
+		System.out.println("Special Needs");
+		String newSpecialNeeds = inputObj.nextLine();
 		
 		System.out.println("ZipCode: ");
 		int newZipCode = inputObj.nextInt();
 		
-		System.out.println("DOB in MM/dd/yyyy format: ");
-		String newDOBString = inputObj.next();
-		java.sql.Date newDOB = Utils.convertStringToSQLDateFormat(newDOBString);
-		
-		System.out.println("Gender: ");
-		String newGender = inputObj.next();
-
-		System.out.println("Student Category: ");
-		String newStudentType = inputObj.next();
-		
-		System.out.println("Special Needs");
-		String newSpecialNeeds = inputObj.next();
+		System.out.println("Phone Number: ");
+		int newPhone = inputObj.nextInt();
 		
 		try
 		{
 			PreparedStatement preparedStatement1 = null;
 			Connection dbConnection1 = ConnectionUtils.getConnection();
 			
-			String query1 = "INERT INTO Person " +
-					"(first_name, last_name, street_no, city, postcode, phone_number, gender, DOB)" +
-					" VALUES (?,?,?,?,?,?,?,?) ";
+			String query1 = "UPDATE Person SET first_name = ?, last_name = ?, street_no = ?, city = ?," +
+					" postcode = ?, phone_number = ?, gender = ?, DOB = ?";
 			preparedStatement1 = dbConnection1.prepareStatement(query1);
 			preparedStatement1.setString(1, newFirstName);
 			preparedStatement1.setString(2, newLastName);
@@ -171,9 +170,7 @@ public class Person {
 			PreparedStatement preparedStatement2 = null;
 			Connection dbConnection2 = ConnectionUtils.getConnection();
 			
-			String query2 = "INERT INTO Student " +
-					"(student_type)" +
-					" VALUES (?) WHERE student_id = ?";
+			String query2 = "UPDATE Student SET student_type = ? WHERE student_id = ? ";
 			preparedStatement2 = dbConnection2.prepareStatement(query2);
 			preparedStatement2.setString(1, newStudentType);
 			preparedStatement2.setInt(2, studentId);
@@ -186,53 +183,57 @@ public class Person {
 		
 		System.out.println("Please enter Family Details now: ");
 		
+		// Consuming the enter after last input 
+		inputObj.nextLine();
+		
 		System.out.println("Next of Kin First Name:");
-		String newNOKFirstName = inputObj.next();
+		String newNOKFirstName = inputObj.nextLine();
 		
 		System.out.println("Next of Kin Last Name: ");
-		String newNOKLastName = inputObj.next();
-		
-		System.out.println("Next of Kin Phone Number: ");
-		int newNOKPhone = inputObj.nextInt();
+		String newNOKLastName = inputObj.nextLine();
 		
 		System.out.println("Next of Kin Street Name.: ");
-		String newNOKStreetNo = inputObj.next();
+		String newNOKStreetNo = inputObj.nextLine();
 		
 		System.out.println("Next of Kin City: ");
-		String newNOKCity = inputObj.next();
+		String newNOKCity = inputObj.nextLine();
+		
+		System.out.println("Next of Kin Gender: ");
+		String newNOKGender = inputObj.nextLine();
+		
+		System.out.println("Next of Kin DOB in MM/dd/yyyy format: ");
+		String newStringNOKDOB = inputObj.nextLine();
+		java.sql.Date newNOKDOB = Utils.convertStringToSQLDateFormat(newStringNOKDOB);
 		
 		System.out.println("Next of Kin ZipCode: ");
 		int newNOKZipCode = inputObj.nextInt();
 		
-		System.out.println("Next of Kin Gender: ");
-		String newNOKGender = inputObj.next();
+		System.out.println("Next of Kin Phone Number: ");
+		int newNOKPhone = inputObj.nextInt();
 		
-		System.out.println("Next of Kin DOB in MM/dd/yyyy format: ");
-		String newStringNOKDOB = inputObj.next();
-		java.sql.Date newNOKDOB = Utils.convertStringToSQLDateFormat(newStringNOKDOB);
+		// Consuming the enter after last input 
+		inputObj.nextLine();
 		
 		/*Write SQL Query to to update the above information for the retrieved Student ID
 		 * Students and NextOfKin(NOK) both details have to be updated.*/
 		
 		try
 		{
-			PreparedStatement preparedStatement2 = null;
-			Connection dbConnection2 = ConnectionUtils.getConnection();
+			PreparedStatement preparedStatement3 = null;
+			Connection dbConnection3 = ConnectionUtils.getConnection();
 			
-			String query1 = "INERT INTO KIN_STUDENT " +
-					"(first_name, last_name, street_no, city, postcode, phone_number, gender, DOB)" +
-					" VALUES (?,?,?,?,?,?,?,?) ";
-			preparedStatement2 = dbConnection2.prepareStatement(query1);
-			preparedStatement2.setString(1, newNOKFirstName);
-			preparedStatement2.setString(2, newNOKLastName);
-			preparedStatement2.setString(3, newNOKStreetNo);
-			preparedStatement2.setString(4, newNOKCity);
-			preparedStatement2.setInt(5, newNOKZipCode);
-			preparedStatement2.setInt(6, newNOKPhone);
-			preparedStatement2.setString(7, newNOKGender);
-			preparedStatement2.setDate(8, newNOKDOB);
-			
-			preparedStatement2.executeUpdate();
+			String query3 = "UPDATE KIN_STUDENT SET first_name = ?, last_name = ?, street_name = ?," +
+					" city_name = ?, zip_code = ?, phone_number = ?, gender = ?, DOB = ?";
+			preparedStatement3 = dbConnection3.prepareStatement(query3);
+			preparedStatement3.setString(1, newNOKFirstName);
+			preparedStatement3.setString(2, newNOKLastName);
+			preparedStatement3.setString(3, newNOKStreetNo);
+			preparedStatement3.setString(4, newNOKCity);
+			preparedStatement3.setInt(5, newNOKZipCode);
+			preparedStatement3.setInt(6, newNOKPhone);
+			preparedStatement3.setString(7, newNOKGender);
+			preparedStatement3.setDate(8, newNOKDOB);
+			preparedStatement3.executeUpdate();
 		}
 		catch(SQLException e)
 		{
