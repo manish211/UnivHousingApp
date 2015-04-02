@@ -25,15 +25,21 @@ public class ParkingLot {
 	{
 		int studentId;
 		boolean isStudentAccomodated = false;
+		String vehicleType="";
 
 		System.out.println("Showing Request New Parking Spot\n");
 		System.out.println("Enter the following information\n");
-		System.out.println("Please enter your vehicle type:\n" +
-				"Bike, Compact Cars, Standard Cars, Large Cars");
-		String vehicleType = inputObj.next();
+		
 		
 		System.out.println("Handicapped? Y/N");
 		String handicappedInfo = inputObj.next();
+		
+		if(handicappedInfo.equals("N"))
+		{
+			System.out.println("Please enter your vehicle type:\n" +
+					"Bike, Compact Cars, Standard Cars, Large Cars");
+			vehicleType = inputObj.next();
+		}
 		
 		System.out.println("Do you want a nearby spot? Y/N");
 		String nearbySpot = inputObj.next();
@@ -79,7 +85,7 @@ public class ParkingLot {
 					
 					String selectQuery = "select spot_no,lot_no from(select p1.spot_no,plrh.hall_number,p1.lot_no,pl.zip_Code Parking_ZipCode,rh.zip_code as RESIDENCE_ZIPCODE,p1.availability " ;
 					selectQuery = selectQuery + " from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2,parking_lot_residence_hall plrh,residence_hall rh,parking_lot pl " ;
-					selectQuery = selectQuery + " where p2.type = ? and p1.availability = 'YES' and p1.lot_no = plrh.lot_no and plrh.hall_number = rh.hall_number" ;
+					selectQuery = selectQuery + " where p2.vehicle_type = ? and p1.availability = 'YES' and p1.lot_no = plrh.lot_no and plrh.hall_number = rh.hall_number" ;
 					selectQuery = selectQuery + " order by abs(rh.zip_code - pl.zip_code) asc) where rownum<2" ;
 							
 					preparedStatement = dbConnection.prepareStatement(selectQuery);
@@ -87,11 +93,10 @@ public class ParkingLot {
 					String handicappedField ;
 					
 					if(handicappedInfo.equals("Y"))
-						handicappedField = "handicapped";
+						preparedStatement.setString(1,"handicapped");
 					else
-						handicappedField = "normal";
+						preparedStatement.setString(1,vehicleType);
 						
-					preparedStatement.setString(1,handicappedField);
 					
 					rs = preparedStatement.executeQuery();
 
