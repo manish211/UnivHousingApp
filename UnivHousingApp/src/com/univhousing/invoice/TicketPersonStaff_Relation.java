@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import oracle.jdbc.driver.DBConversion;
+
 import com.univhousing.main.ConnectionUtils;
 import com.univhousing.main.Constants;
 import com.univhousing.main.Utils;
@@ -237,30 +239,100 @@ public class TicketPersonStaff_Relation {
 	/**
 	 * @param ArrayList<Integer> adminLevelMaintenanceRequests
 	 * @throws SQLException 
+	 * @action Shows all the requests that have to be handled by the Supervisor
 	 */
 	public void getAllMaintenanceTickets(ArrayList<Integer> maintenanceTicketsList) throws SQLException 
 	{
-		/*Write SQL Query to fetch all the maintenance tickets*/
+		int ticketNumber = 0;
+		/*Write SQL Query to fetch all the maintenance tickets with status Pending*/
 		ResultSet allTickets = null;
+		PreparedStatement ps = null;
+		Connection conn = ConnectionUtils.getConnection();
+		String query = "SELECT ticket_no FROM ticket_person_staff WHERE ticket_status = ? ORDER BY decode(ticket_severity,'High',1 ,'Medium',2,'Low',3) ASC, ticket_no DESC";
 		maintenanceTicketsList.clear();
 		
-		while(allTickets.next())
+		try
 		{
-			maintenanceTicketsList.add(allTickets.getInt("ticket_no"));
+			ps = conn.prepareStatement(query);
+			ps.setString(1, Constants.DEFAULT_TICKET_STATUS);
+			System.out.println(ps);
+			allTickets = ps.executeQuery();
+			
+			while(allTickets.next())
+			{
+				maintenanceTicketsList.add(allTickets.getInt("ticket_no"));
+			}
+			System.out.println("Total tickets retrieved : "+maintenanceTicketsList.size());
+			
+			System.out.println("Displaying all Maintenance Tickets");
+			for (int i = 0; i < maintenanceTicketsList.size(); i++) 
+			{
+				System.out.println((i+1)+". "+maintenanceTicketsList.get(i));
+			}
+			System.out.println("Select the ticket you want to: ");
+			int ticketSelected = inputObj.nextInt();
+			ticketNumber = maintenanceTicketsList.get(ticketSelected-1);
+			
+			/*Write SQL Query to fetch the details for one particular ticket and set it's ticket_Status to Processing*/
+			
 		}
-		
-		System.out.println("Displaying all Maintenance Tickets");
-		for (int i = 0; i < maintenanceTicketsList.size(); i++) 
+		catch(SQLException e)
 		{
-			System.out.println((i+1)+". "+maintenanceTicketsList.get(i));
+			System.out.println(e.toString());
 		}
-		System.out.println("Select the ticket you want to: ");
-		int ticketSelected = inputObj.nextInt();
-		int ticketNumber = maintenanceTicketsList.get(ticketSelected-1);
 		
 		/*Write SQL Query to fetch all details for this ticket number 
 		 * and set it's status to Processing*/
+		ResultSet getTicketInfo = null;
+		PreparedStatement ps1 = null;
+		Connection conn1 = ConnectionUtils.getConnection();
+		String query1 = "SELECT * FROM ticket_person_staff WHERE ticket_no = ?";
 		
+		try
+		{
+			ps1 = conn1.prepareStatement(query1);
+			ps1.setInt(1, ticketNumber);
+			getTicketInfo = ps1.executeQuery();
+			
+			while(getTicketInfo.next())
+			{
+				int staffNo = getTicketInfo.getInt("staff_no");
+				int ticket_no = getTicketInfo.getInt("ticket_no");
+				String ticket_status = getTicketInfo.getString("ticket_status");
+				String ticket_severity = getTicketInfo.getString("ticket_severity");
+				int person_id = getTicketInfo.getInt("person_id");
+				String description = getTicketInfo.getString("description");
+				String ticket_type = getTicketInfo.getString("ticket_type");
+
+				System.out.println("Staff Handling : "+staffNo);
+				System.out.println("Ticket No      : "+ticket_no);
+				System.out.println("Ticket Status  : "+ticket_status+"\n");
+				System.out.println("Ticket Severity: "+ticket_severity);
+				System.out.println("Person ID      : "+person_id);
+				System.out.println("Ticket Type    : "+ticket_type);
+				System.out.println("Description    : "+description+"\n");
+				break;
+			}
+			ConnectionUtils.closeConnection(conn1);
+			
+			/*Write SQL Query to set the status of the ticket as Processing*/
+			String query3 = "UPDATE ticket_person_staff SET ticket_status = ? WHERE ticket_no = ?";
+			PreparedStatement ps3 = null;
+			Connection conn3 = ConnectionUtils.getConnection();
+			
+			System.out.println("Updating ticket "+ticketNumber+ " ticket_status to Processing");
+			ps3 = conn3.prepareStatement(query3);
+			ps3.setString(1, Constants.PROCESSING_TICKET_STATUS);
+			ps3.setInt(2, ticketNumber);
+			ps3.executeUpdate();
+			
+			ConnectionUtils.closeConnection(conn3);
+			
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
 		/*Write SQL Trigger to change ticket status to Complete after 30 mins*/
 		
 	}	
