@@ -279,10 +279,18 @@ public class ParkingLot {
 		/*Write SQL Query to show:
 		 * Permit number, spot number and Lot number for a particular student id */
 		
+		
+		
 		if(!isStudentAccomodated)
 		{
-			System.out.println("Student is not in the university housing. Please check.");
-			return;
+			boolean isPersonGuest = guestObj.checkPersonIsGuest(personId);
+			
+			if(!isPersonGuest)
+			{
+				System.out.println("Person is neither a guest nor a student who has an accomodation");
+				return;
+			}
+			
 		}
 		
 		/*select p1.permit_id,p2.spot_no,p2.lot_no
