@@ -26,7 +26,7 @@ public class Guest {
 		try 
 		{
 			dbConnection = ConnectionUtils.getConnection();
-			String query = "SELECT person_id FROM Guest WHERE approval_id - ?";
+			String query = "SELECT person_id FROM Guest WHERE approval_id = ?";
 			preparedStatement = dbConnection.prepareStatement(query);
 			preparedStatement.setInt(1, approvalId);
 			

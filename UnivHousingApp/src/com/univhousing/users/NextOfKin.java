@@ -15,7 +15,7 @@ public class NextOfKin {
 	public String streetName;
 	public String city;
 	public int postCode;
-	public int phoneNumber;
+	public long phoneNumber;
 	public java.sql.Date DOB;
 	public String gender;
 	
@@ -51,7 +51,7 @@ public class NextOfKin {
 				streetName = studentKin.getString("street_name");
 				city = studentKin.getString("city_name");
 				postCode = studentKin.getInt("zip_code");
-				phoneNumber = studentKin.getInt("phone_number");
+				phoneNumber = studentKin.getLong("phone_number");
 				gender = studentKin.getString("gender");
 				DOB = studentKin.getDate("DOB");
 				

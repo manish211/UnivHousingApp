@@ -19,7 +19,7 @@ public class Person {
 	public String streetName;
 	public String city;
 	public int postCode;
-	public int phoneNumber;
+	public long phoneNumber;
 	public String gender;
 	public java.sql.Date DOB;
 	
@@ -65,7 +65,7 @@ public class Person {
 				streetName = studentProfile.getString("street_no");
 				city = studentProfile.getString("city");
 				postCode = studentProfile.getInt("postcode");
-				phoneNumber = studentProfile.getInt("phone_number");
+				phoneNumber = studentProfile.getLong("phone_number");
 				gender = studentProfile.getString("gender");
 				DOB = studentProfile.getDate("DOB");
 				
@@ -144,7 +144,7 @@ public class Person {
 		int newZipCode = inputObj.nextInt();
 		
 		System.out.println("Phone Number: ");
-		int newPhone = inputObj.nextInt();
+		long newPhone = inputObj.nextLong();
 		
 		try
 		{
@@ -159,7 +159,7 @@ public class Person {
 			preparedStatement1.setString(3, newStreetNo);
 			preparedStatement1.setString(4, newCity);
 			preparedStatement1.setInt(5, newZipCode);
-			preparedStatement1.setInt(6, newPhone);
+			preparedStatement1.setLong(6, newPhone);
 			preparedStatement1.setString(7, newGender);
 			preparedStatement1.setDate(8, newDOB);
 			
@@ -209,7 +209,7 @@ public class Person {
 		int newNOKZipCode = inputObj.nextInt();
 		
 		System.out.println("Next of Kin Phone Number: ");
-		int newNOKPhone = inputObj.nextInt();
+		long newNOKPhone = inputObj.nextLong();
 		
 		// Consuming the enter after last input 
 		inputObj.nextLine();
@@ -230,7 +230,7 @@ public class Person {
 			preparedStatement3.setString(3, newNOKStreetNo);
 			preparedStatement3.setString(4, newNOKCity);
 			preparedStatement3.setInt(5, newNOKZipCode);
-			preparedStatement3.setInt(6, newNOKPhone);
+			preparedStatement3.setLong(6, newNOKPhone);
 			preparedStatement3.setString(7, newNOKGender);
 			preparedStatement3.setDate(8, newNOKDOB);
 			preparedStatement3.executeUpdate();

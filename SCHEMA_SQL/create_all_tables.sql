@@ -8,7 +8,7 @@ CREATE TABLE  Person(person_id INTEGER,
  last_name varchar2(20),  
  street_no  varchar2(20),
  city  varchar2(20),
- postcode  varchar2(5),
+ postcode  INTEGER,
  phone_number INTEGER,
  gender varchar2(10),
  DOB date,
@@ -36,7 +36,7 @@ CREATE TABLE Housing_Staff (ticket_no  varchar2(10),
  position varchar2(15),
  Street  varchar2(20),
  city  varchar2(20),
- postcode  varchar2(5),
+ postcode  INTEGER,
  PRIMARY KEY (staff_no));
 
 drop table lease cascade constraints;
