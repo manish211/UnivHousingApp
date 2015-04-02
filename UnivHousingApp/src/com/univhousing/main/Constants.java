@@ -23,6 +23,6 @@ public class Constants {
 	public static final String MISCELLANEOUS = "Miscellaneous";
 	public static final String DEFAULT_TICKET_STATUS = "Pending";
 	public static final String PROCESSING_TICKET_STATUS = "Processing";
-	
+	public static final int PERMIT_ID_START = 1000;
 	
 }

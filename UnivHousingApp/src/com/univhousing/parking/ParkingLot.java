@@ -9,6 +9,7 @@ import java.util.Scanner;
 
 import com.univhousing.main.ConnectionUtils;
 import com.univhousing.users.Student;
+import com.univhousing.main.Constants;
 
 public class ParkingLot {
 	
@@ -359,11 +360,106 @@ public class ParkingLot {
 		System.out.println("Enter your Parking Spot Number:");
 		int spotNumber = inputObj.nextInt();
 		
-		checkSpotValidity(spotNumber,personId);
+		if(checkSpotValidity(spotNumber,personId) == false)
+			return;
+		
+		System.out.println("Spot was valid ++++++");
 		
 		ResultSet renewSpot = null;
 		/*Write query to renew the parking spot and then update the permit id in Person_accomodation_Lease table and 
 		 *  PSpotBelongsPLot_Relation*/
+		
+		ResultSet rs = null;
+		Connection dbConnection = null;
+		PreparedStatement preparedStatement = null ;
+		int newPermitId;
+		
+		try{
+			
+			dbConnection = ConnectionUtils.getConnection();
+			
+			String selectQuery = "select permit_id from person_accomodation_lease where person_id = ?" ;
+					
+			preparedStatement = dbConnection.prepareStatement(selectQuery);
+			
+			preparedStatement.setInt(1,personId);
+			
+			rs = preparedStatement.executeQuery();
+
+			//If record exists , rs.next() will evaluate to true
+			if(!rs.isBeforeFirst())
+			{
+				System.out.println("This person does not have any parking permit. Please generate a new permit by using appropriate menu");
+				rs.close();
+				preparedStatement.close();
+				return;
+			}
+			
+			rs.next();
+			int oldPermitId = rs.getInt("permit_id");
+			
+			//Get the max permit id and use it to generate new permit id
+			String selectQueryMaxPermitId = "select max(permit_id) as max_permit_id from person_accomodation_lease " ;
+					
+			preparedStatement = dbConnection.prepareStatement(selectQueryMaxPermitId);
+			
+//			preparedStatement.setInt(1,personId);
+			
+			rs = preparedStatement.executeQuery();
+
+			//If record exists , rs.next() will evaluate to true
+			if(!rs.isBeforeFirst())
+			{
+				newPermitId = Constants.PERMIT_ID_START;
+			}
+			else
+			{
+				rs.next();
+				newPermitId = rs.getInt("max_permit_id") + 1;
+			}	
+			
+			//Update query to update existing record in parkingSpot_belongs_parkinglot with new permit id
+			
+			String updateSql2 = "update parkingSpot_belongs_parkinglot set permit_id = ? where permit_id = ? ";
+			
+			preparedStatement = dbConnection.prepareStatement(updateSql2);
+			
+			preparedStatement.setInt(1,newPermitId);
+			preparedStatement.setInt(2,oldPermitId);
+			
+			preparedStatement.executeUpdate();
+			
+			//Update query to update existing record in person_accomodation_lease with new permit id
+			
+			String updateSql1 = "Update person_accomodation_lease set permit_id = ? where person_id = ? ";
+			
+			preparedStatement = dbConnection.prepareStatement(updateSql1);
+			
+			preparedStatement.setInt(1,newPermitId);
+			preparedStatement.setInt(2,personId);
+			
+			preparedStatement.executeUpdate();
+			
+		}catch(SQLException e1){
+			{
+				System.out.println("SQLException: "+ e1.getMessage());
+				System.out.println("VendorError: "+ e1.getErrorCode());
+			}
+		}
+		catch(Exception e3)
+		{
+			System.out.println("General Exception Case. Printing stack trace below:\n");
+			e3.printStackTrace();
+		}
+		finally{
+				try {
+				        rs.close();
+				        preparedStatement.close();
+				        dbConnection.close();
+			      	} catch (SQLException e) {
+			        e.printStackTrace();
+			      	}
+		}
 	}
 
 	/**
