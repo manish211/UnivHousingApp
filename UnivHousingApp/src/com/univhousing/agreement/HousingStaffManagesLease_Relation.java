@@ -286,35 +286,110 @@ public class HousingStaffManagesLease_Relation {
 	 */
 	public void getAllNewTerminationRequests(ArrayList<Integer> allTerminationRequestsToMonitor) throws SQLException {
 		/* Write SQL Query to fetch all the termination requests  */
-		ResultSet allRequests = null;
+		ResultSet rs = null;
+		PreparedStatement preparedStatement = null;
+		Connection dbConnection = null;
 		allTerminationRequestsToMonitor.clear();
-		while(allRequests.next())
-		{
-			allTerminationRequestsToMonitor.add(allRequests.getInt("termination_request_number"));
+		String status = "PENDING";
+		
+		try {
+			
+			/*
+			 * Query for getting termination request numbers whose 
+			 * status is PENDING
+			 */
+			dbConnection = ConnectionUtils.getConnection();
+			String selectQuery = "SELECT termination_request_number "
+					+ "FROM TERMINATION_REQUESTS "
+					+ "WHERE UPPER(STATUS) = ?";
+		
+			preparedStatement = dbConnection.prepareStatement(selectQuery);
+			preparedStatement.setString(1, status);
+			
+			rs = preparedStatement.executeQuery();
+			while(rs.next())
+			{
+				allTerminationRequestsToMonitor.add(rs.getInt("termination_request_number"));
+			}
+			
+			System.out.println("Displaying all the requests to approve: ");
+			for (int i = 0; i < allTerminationRequestsToMonitor.size(); i++) 
+			{
+				System.out.println((i+1)+". "+allTerminationRequestsToMonitor.get(i));
+			}
+			int requestChosen = inputObj.nextInt();
+			int requestNumber = allTerminationRequestsToMonitor.get(requestChosen-1);
+			
+			/*Write SQL Query to fetch all the details of the requestNumber*/
+			String selectQueryDetails = "SELECT reason, termination_request_number,"
+					+ "status, termination_date, inspection_date, person_id, staff_no "
+					+ "FROM Termination_Requests "
+					+ "WHERE termination_request_number = ?";
+			preparedStatement.close();
+			rs.close();
+			
+			preparedStatement = dbConnection.prepareStatement(selectQueryDetails);
+			preparedStatement.setInt(1, requestNumber);
+			rs = preparedStatement.executeQuery();
+			
+			System.out.println(String.format("%-50s%-13s%-11s%-15s%-18s%-5s%-10s", "Reason"
+					,"Term_req_no","Status","Term Date","Inspection Date"
+					,"P_ID","Staff No."));
+			System.out.println("-----------------------------------------------"
+					+ "---------------------------------------------------------"
+					+ "--------------------");
+			
+			while (rs.next()) {
+				System.out.println(String.format("%-50s%-13s%-11s%-15s%-18s%-5s%-10s"
+						,rs.getString("reason"),rs.getInt("termination_request_number")
+						,rs.getString("status"),rs.getDate("termination_date")
+						,rs.getDate("inspection_date"),rs.getInt("person_id")
+						,rs.getInt("staff_no")));
+			}
+			
+			int damageFees = 0;
+			System.out.println("Please enter the damage fees:");
+			damageFees = inputObj.nextInt();
+			
+			/*Write SQL Trigger to change the status of request to Complete after the inspection date*/
+			
+			
+			/*Write SQL Query to fetch the latest unpaid invoice and add the damageFees to already existing payment_due*/
+			
+			String selectQueryFees = "SELECT MAX(payment_date) as \"date\""
+					+ "FROM invoice_person_lease "
+					+ "WHERE payment_status <> ? "
+					+ "AND person_id = (SELECT person_id "
+					+ "FROM termination_requests "
+					+ "WHERE termination_request_number = ?)";
+			rs.close();
+			preparedStatement.close();
+			
+			preparedStatement = dbConnection.prepareStatement(selectQueryFees);
+			preparedStatement.setString(1, "'Paid'");
+			preparedStatement.setInt(2, requestNumber);
+			rs = preparedStatement.executeQuery();
+			
+			while (rs.next()) {
+				System.out.println("Maximum date: " + rs.getDate("date"));
+			}
+		} catch (SQLException e1) {
+			System.out.println("SQLException: " + e1.getMessage());
+			System.out.println("VendorError: " + e1.getErrorCode());
+		} catch (Exception e3) {
+			System.out.println("General Exception Case. Printing stack trace below:\n");
+			e3.printStackTrace();
+		} finally {
+			try {
+				rs.close();
+				preparedStatement.close();
+				dbConnection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		
-		System.out.println("Displaying all the requests to approve: ");
-		for (int i = 0; i < allTerminationRequestsToMonitor.size(); i++) 
-		{
-			System.out.println((i+1)+". "+allTerminationRequestsToMonitor.get(i));
-		}
-		int requestChosen = inputObj.nextInt();
-		int requestNumber = allTerminationRequestsToMonitor.get(requestChosen-1);
-		
-		/*Write SQL Query to fetch all the details of the requestNumber*/
-		ResultSet requestDetails = null;
-		
-		int damageFees = 0;
-		System.out.println("Please enter the damage fees:");
-		damageFees = inputObj.nextInt();
-		
-		/*Write SQL Trigger to change the status of request to Complete after the inspection date*/
-		
-		
-		/*Write SQL Query to fetch the latest unpaid invoice and add the damageFees to already existing payment_due*/
 		
 	}	
-	
-	
-	
+		
 }
