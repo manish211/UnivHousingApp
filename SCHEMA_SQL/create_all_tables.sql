@@ -230,7 +230,7 @@ CREATE TABLE KIN_STUDENT(
 student_id INTEGER NOT NULL,
 first_name VARCHAR2(40),
 last_name VARCHAR2(40),
-street_no INTEGER,
+street_name VARCHAR2(50),
 city_name VARCHAR2(40),
 zip_code INTEGER,
 phone_number INTEGER,
