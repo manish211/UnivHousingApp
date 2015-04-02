@@ -22,6 +22,7 @@ public class Constants {
 	public static final String CLEANING = "Cleaning";
 	public static final String MISCELLANEOUS = "Miscellaneous";
 	public static final String DEFAULT_TICKET_STATUS = "Pending";
-
+	public static final String PROCESSING_TICKET_STATUS = "Processing";
+	
 	
 }
