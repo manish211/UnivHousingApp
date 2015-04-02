@@ -7,8 +7,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import oracle.jdbc.driver.DBConversion;
-
 import com.univhousing.main.ConnectionUtils;
 import com.univhousing.main.Constants;
 import com.univhousing.main.Utils;
