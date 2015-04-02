@@ -273,5 +273,18 @@ FOREIGN KEY(student_id) REFERENCES Student);
 CREATE TABLE Accomodation (
 accomodation_id INTEGER,
 accomodation_type VARCHAR2(20),
-PRIMARY KEY(accomodation_id));
+PRIMARY KEY(accomodation_id))
+;
+
+
+
+
+--creating sequence for ticket_person_staff
+
+-- create sequence ticket_seq_no
+-- 	start with 32
+-- 	increment by 1
+-- 	maxvalue 10000
+-- 	nocycle;
+
 
