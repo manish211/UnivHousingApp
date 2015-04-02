@@ -512,7 +512,7 @@ public class ParkingLot {
 		// Check if the student is actually the owner of this parking spot
 		if(!checkSpotValidity(spotNumber,personId))
 		{
-			System.out.println("The spot does not belong to this student. Please check");
+			System.out.println("The spot does not belong to this person. Please check");
 		}
 		else
 		{

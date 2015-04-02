@@ -299,7 +299,7 @@ public class TicketPersonStaff_Relation {
 		/* Getting the ticket number form the index, but have to substract 1 because ArrayList has values from 0 to n-1
 		 * but the options on screen are from 1 to n-1
 		*/
-		int ticketSelected = ticketNumbersList.get(choice);
+		int ticketSelected = ticketNumbersList.get(choice-1);
 		
 		ResultSet getTicketDetails = null;
 		/*Write SQL query for fetching the details with status for the ticket number (ticketSelected) by student*/
