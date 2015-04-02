@@ -141,7 +141,7 @@ public class Student {
 				
 				System.out.println("requestStatus="+requestStatus);
 				
-				if(requestStatus.equals("APPROVED"))
+				if(requestStatus.toUpperCase().equals("APPROVED"))
 				{
 					isStudentHavingAccomodation = true;
 //					System.out.println("IT IS TRUE: "+personId);
