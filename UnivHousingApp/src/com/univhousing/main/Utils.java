@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Random;
 
 public class Utils {
 
@@ -53,6 +54,17 @@ public class Utils {
 		return new SimpleDateFormat("MM/dd/yyyy");
 	}
 	
-	
+	/**
+	 * @param max Maximum value
+	 * @param min Minimum Value
+	 * @return random number wetween max and min, both inclusive
+	 */
+	public static int randomizeStaff(int max, int min)
+	{
+		int staffNo = 0;
+		Random rand = new Random();
+		staffNo = rand.nextInt((max-min)+1)+min	;
+		return staffNo;
+	}
 	
 }

@@ -9,6 +9,7 @@ import java.util.Scanner;
 
 import com.univhousing.main.ConnectionUtils;
 import com.univhousing.main.Constants;
+import com.univhousing.main.Utils;
 import com.univhousing.users.Student;
 
 public class TicketPersonStaff_Relation {
@@ -33,7 +34,7 @@ public class TicketPersonStaff_Relation {
 
 		String severity = "", description = "";
 		String ticketType = "";
-		int ticketNo = 0, staffNo = 0;
+		int ticketNo = 0, staffNoMax = 0, staffNoMin = 0;
 		System.out.println("Select the ticket type:\n" +
 				"1. Water\n" +
 				"2. Electricity\n" +
@@ -49,34 +50,28 @@ public class TicketPersonStaff_Relation {
 			case 1:
 				ticketType = Constants.WATER;
 				severity = Constants.HIGH_SEVERITY;
-				staffNo = Constants.HIGH_SEVERITY_STAFF;
 				break;
 			case 2:
 				ticketType = Constants.ELECTRICITY;
 				severity = Constants.HIGH_SEVERITY;
-				staffNo = Constants.HIGH_SEVERITY_STAFF;
 				break;
 				
 			case 3:
 				ticketType = Constants.APPLIANCE;
 				severity = Constants.MEDIUM_SEVERITY;
-				staffNo = Constants.MEDIUM_SEVERITY_STAFF;
 				break;
 			case 4:
 				ticketType = Constants.INTERNET;
 				severity = Constants.MEDIUM_SEVERITY;
-				staffNo = Constants.MEDIUM_SEVERITY_STAFF;
 				break;
 				
 			case 5:
 				ticketType = Constants.CLEANING;
 				severity = Constants.LOW_SEVERITY;
-				staffNo = Constants.LOW_SEVERITY_STAFF;
 				break;
 			case 6:
 				ticketType = Constants.MISCELLANEOUS;
 				severity = Constants.LOW_SEVERITY;
-				staffNo = Constants.LOW_SEVERITY_STAFF;
 				break;
 		}
 		
@@ -86,6 +81,56 @@ public class TicketPersonStaff_Relation {
 		System.out.println("Enter the description for the issue:");
 		description = inputObj.nextLine();
 		
+		/*Write SQL Query to fetch the maximum and minimum value of the staff no to randomize who gets the ticket*/
+		PreparedStatement ps = null;
+		Connection conn = ConnectionUtils.getConnection();
+		String query3 = "SELECT MAX(staff_no) AS LastStaff FROM ticket_person_staff";
+		try 
+		{
+			ps = conn.prepareStatement(query3);
+			ResultSet max = ps.executeQuery();
+			while(max.next())
+			{
+				staffNoMax = max.getInt("LastStaff");
+			}
+		}
+		catch(SQLException e)
+		{
+			try {
+				ConnectionUtils.closeConnection(conn);
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+		}
+		
+		PreparedStatement ps1 = null;
+		Connection conn1 = ConnectionUtils.getConnection();
+		String query4 = "SELECT MIN(staff_no) AS FirstStaff FROM ticket_person_staff";
+		try 
+		{
+			ps1 = conn1.prepareStatement(query4);
+			ResultSet min = ps1.executeQuery();
+			while(min.next())
+			{
+				staffNoMin = min.getInt("FirstStaff");
+			}
+		}
+		catch(SQLException e)
+		{
+			try {
+				ConnectionUtils.closeConnection(conn1);
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+		}
+		
+		// Getting a random staff number between First and the Last staff
+		staffNo = Utils.randomizeStaff(staffNoMax, staffNoMin);
+		System.out.println("Assigning ticket to staff: "+staffNo);
 		
 		/*Write SQL Query to fetch the maximum value of the ticket number so that we can continue from there
 		 * If the value is null then we will just assign value as default ticket number value*/
