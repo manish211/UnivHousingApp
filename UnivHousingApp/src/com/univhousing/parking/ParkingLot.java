@@ -377,7 +377,10 @@ public class ParkingLot {
 		int spotNumber = inputObj.nextInt();
 		
 		if(checkSpotValidity(spotNumber,personId) == false)
+		{
+			System.out.println("This spot number does not belong to this person. Please check.");
 			return;
+		}
 		
 		System.out.println("Spot was valid ++++++");
 		
@@ -401,6 +404,10 @@ public class ParkingLot {
 			preparedStatement.setInt(1,personId);
 			
 			rs = preparedStatement.executeQuery();
+			
+			System.out.println("personId:"+personId);
+			
+			System.out.println("isBeforeFirst: "+rs.isBeforeFirst());
 
 			//If record exists , rs.next() will evaluate to true
 			if(!rs.isBeforeFirst())
@@ -412,6 +419,8 @@ public class ParkingLot {
 			}
 			
 			rs.next();
+			
+			System.out.println("Marker++++++++++++++++==");
 			int oldPermitId = rs.getInt("permit_id");
 			
 			//Get the max permit id and use it to generate new permit id
@@ -436,12 +445,13 @@ public class ParkingLot {
 			
 			//Update query to update existing record in parkingSpot_belongs_parkinglot with new permit id
 			
-			String updateSql2 = "update parkingSpot_belongs_parkinglot set permit_id = ? where permit_id = ? ";
+			String updateSql2 = "update parkingSpot_belongs_parkinglot set permit_id = ? where permit_id = ? and spot_no = ? ";
 			
 			preparedStatement = dbConnection.prepareStatement(updateSql2);
 			
 			preparedStatement.setInt(1,newPermitId);
 			preparedStatement.setInt(2,oldPermitId);
+			preparedStatement.setInt(3,spotNumber);
 			
 			preparedStatement.executeUpdate();
 			
@@ -715,9 +725,18 @@ public class ParkingLot {
 			
 			if (rs.isBeforeFirst()) 
 			{
-					System.out.println("After execute!! MARKER checkSpotValidity");
-					isSpotValid = true;
-					System.out.println("IT IS TRUE:checkSpotValidity ");
+					rs.next();
+					if(rs.getInt("total") == 0)
+					{
+						isSpotValid = false;
+					}
+					else
+					{
+						System.out.println("After execute!! MARKER checkSpotValidity");
+						isSpotValid = true;
+						System.out.println("IT IS TRUE:checkSpotValidity ");
+					}
+					
 			}
 
 		} catch (SQLException e1) {
