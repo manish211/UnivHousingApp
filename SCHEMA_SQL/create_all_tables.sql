@@ -158,7 +158,7 @@ lot_no INTEGER,
 spot_no INTEGER,
 PRIMARY KEY(spot_no),
 availability varcahr2(10),
-permit_id INTEGER NOT NULL UNIQUE,
+permit_id INTEGER UNIQUE,
 FOREIGN KEY(lot_no) REFERENCES parking_lot);
 
 
