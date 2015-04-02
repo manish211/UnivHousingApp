@@ -148,8 +148,6 @@ public class TicketPersonStaff_Relation {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
 	}
 
 	/**
@@ -166,27 +164,160 @@ public class TicketPersonStaff_Relation {
 		
 		/*Write SQL Query to fetch all the tickets*/
 		ResultSet viewAllTickets = null;
+		
 		ticketNumbersList.clear();
-		while(viewAllTickets.next())
-		{
-			ticketNumbersList.add(viewAllTickets.getInt("ticket_no"));
+		
+		//-------------------------------------------------------------------------------------
+		
+		ResultSet rs = null;
+		Connection dbConnection = null;
+		PreparedStatement preparedStatement = null ;
+		
+		try{
+			dbConnection = ConnectionUtils.getConnection();
+			
+			String selectQuery = "SELECT ticket_no FROM ticket_person_staff WHERE person_id = ? " ;
+			
+//			System.out.println("SELECT QUERY IS: "+selectQuery);
+					
+			preparedStatement = dbConnection.prepareStatement(selectQuery);
+			
+			preparedStatement.setInt(1,personId);
+			
+			rs = preparedStatement.executeQuery();
+
+			//If record exists , rs.next() will evaluate to true
+			if(!rs.isBeforeFirst())
+			{
+				System.out.println("No tickets found!");
+				rs.close();
+		        preparedStatement.close();
+		        dbConnection.close();
+		        return;
+			}
+			else
+				{
+					while(rs.next())
+					{
+//						System.out.print(rs.getInt("ticket_no")+"\t\t");
+						ticketNumbersList.add(rs.getInt("ticket_no"));
+						
+					}
+				}
+			
+		}catch(SQLException e1){
+			System.out.println("SQLException: "+ e1.getMessage());
+			System.out.println("VendorError: "+ e1.getErrorCode());
 		}
+		catch(Exception e3)
+		{
+			System.out.println("General Exception Case. Printing stack trace below:\n");
+			e3.printStackTrace();
+		}
+		finally{
+				try {
+			        rs.close();
+			        preparedStatement.close();
+			        dbConnection.close();
+			      } catch (SQLException e) {
+			        e.printStackTrace();
+			      }
+		}
+		
+		
+		//-------------------------------------------------------------------------------------
+		
+//		ticketNumbersList.clear();
+//		while(rs.next())
+//		{
+//			ticketNumbersList.add(rs.getInt("ticket_no"));
+//		}
+		
+		//Close the result set if you are not going to use later
 		
 		System.out.println("\nBelow are the list of tickets:");
 		for (int i = 0; i < ticketNumbersList.size(); i++) 
 		{
 			System.out.println((i+1)+". "+ticketNumbersList.get(i));
 		}
+		
+		
 		System.out.println("\nSelect the ticket number you want to view details for:");
 		int choice = inputObj.nextInt();
+		
+		while(choice>ticketNumbersList.size())
+		{
+			System.out.println("\nPlease select the correct ticket number you want to view details for:");
+			choice = inputObj.nextInt();
+		}
 		
 		/* Getting the ticket number form the index, but have to substract 1 because ArrayList has values from 0 to n-1
 		 * but the options on screen are from 1 to n-1
 		*/
-		int ticketSelected = ticketNumbersList.get(choice-1);
+		int ticketSelected = ticketNumbersList.get(choice);
 		
 		ResultSet getTicketDetails = null;
 		/*Write SQL query for fetching the details with status for the ticket number (ticketSelected) by student*/
+		
+		//------------------------------------------------------------------------------------------------------
+		
+		
+		try{
+			dbConnection = ConnectionUtils.getConnection();
+			
+			String selectQuery = "SELECT * FROM ticket_person_staff WHERE ticket_no = ? " ;
+			
+			System.out.println("SELECT QUERY IS: "+selectQuery);
+					
+			preparedStatement = dbConnection.prepareStatement(selectQuery);
+			
+			preparedStatement.setInt(1,ticketSelected);
+			
+			System.out.println("ticketNo: "+choice);
+			
+			rs = preparedStatement.executeQuery();
+
+			//If record exists , rs.next() will evaluate to true
+			if(rs.isBeforeFirst())
+				{
+					rs.next();
+					System.out.println("=============================================================================================================");
+					System.out.print("staff_no\tticket_no\tticket_status\tticket_severity\tperson_id");
+					System.out.println("\tdescription\tticket_type\t") ;
+					System.out.println("=============================================================================================================");
+					
+					System.out.print(rs.getInt("staff_no")+"\t\t");
+					System.out.print(rs.getInt("ticket_no")+"\t\t");
+					System.out.print(rs.getString("ticket_status")+"\t\t");
+					System.out.print(rs.getString("ticket_severity")+"\t\t");
+					System.out.print(rs.getInt("person_id")+"\t\t");
+					System.out.print(rs.getString("description")+"\t\t");
+					System.out.print(rs.getString("ticket_type")+"\t\t");
+				}
+			
+			System.out.println("\n=============================================================================================================\n\n");
+			
+		}catch(SQLException e1){
+			System.out.println("SQLException: "+ e1.getMessage());
+			System.out.println("VendorError: "+ e1.getErrorCode());
+		}
+		catch(Exception e3)
+		{
+			System.out.println("General Exception Case. Printing stack trace below:\n");
+			e3.printStackTrace();
+		}
+		finally{
+				try {
+			        rs.close();
+			        preparedStatement.close();
+			        dbConnection.close();
+			      } catch (SQLException e) {
+			        e.printStackTrace();
+			      }
+		}
+		
+		//------------------------------------------------------------------------------------------------------
+		
 	}
 
 	/**
@@ -204,13 +335,15 @@ public class TicketPersonStaff_Relation {
 			maintenanceTicketsList.add(allTickets.getInt("ticket_no"));
 		}
 		
-		System.out.println("Displaying all Maintenance Tickets");
+		System.out.println("Displaying all Maintenance Tickets : "+maintenanceTicketsList.size());
 		for (int i = 0; i < maintenanceTicketsList.size(); i++) 
 		{
 			System.out.println((i+1)+". "+maintenanceTicketsList.get(i));
 		}
 		System.out.println("Select the ticket you want to: ");
 		int ticketSelected = inputObj.nextInt();
+		
+		System.out.println("ticketSelected:"+ticketSelected);
 		int ticketNumber = maintenanceTicketsList.get(ticketSelected-1);
 		
 		/*Write SQL Query to fetch all details for this ticket number 
