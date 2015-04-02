@@ -163,7 +163,7 @@ FOREIGN KEY(lot_no) REFERENCES parking_lot);
 
 
 Create table parking_spot_has_class(
-type varchar2(50),
+vehicle_type varchar2(50),
 fees number(7,2),
 spot_no number(5), 
 PRIMARY KEY (spot_no,type),
