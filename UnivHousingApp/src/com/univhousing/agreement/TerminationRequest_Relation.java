@@ -106,10 +106,11 @@ public class TerminationRequest_Relation {
 					"1. Submit\n" +
 					"2. Back ");
 			
-			String choice = "2";
+//			String choice = "2";
 		//	choice = Integer.parseInt(inputObj.nextLine());
-				
-		choice = inputObj.next();
+				System.out.println(" Before marker");
+		String choice = inputObj.next();
+		System.out.println("After marker");
 			
 			if(choice.equals("1"))
 			{

@@ -225,8 +225,14 @@ public class Lease {
 			preparedStatement = dbConnection.prepareStatement(selectQuery);
 			preparedStatement.setInt(1, personId);
 			rs = preparedStatement.executeQuery();
-
-			System.out.println("Sr# Lease#");
+			
+			if(rs.isBeforeFirst())
+			{
+				System.out.println("============================================");
+				System.out.println("Sr# Lease#");
+				System.out.println("============================================");
+			}
+			
 
 			leaseNumbers.clear();
 
@@ -477,9 +483,19 @@ public class Lease {
 
 			viewRequestsSet = preparedStatement.executeQuery();
 
-
-			System.out.println(String.format("%-15s%-20s%-15s", "Request type",
-					"Request number", "Status"));
+			if(viewRequestsSet.isBeforeFirst())
+			{
+				System.out.println("==================================================================");
+				System.out.println(String.format("%-15s%-20s%-15s", "Request type",
+						"Request number", "Status"));
+				System.out.println("==================================================================");
+			}
+			else
+			{
+				System.out.println("No Request Found");
+				return;
+			}
+			
 			while (viewRequestsSet.next()) {
 				System.out.print(String.format("%-15s%-20s%-15s",
 						"Termination",
@@ -532,7 +548,7 @@ public class Lease {
 	 * @throws SQLException
 	 * @action Deletes the requestNumber for the personID
 	 */
-	public void cancelRequest(int personId, int requestNumber)
+	public boolean cancelRequest(int personId, int requestNumber)
 			throws SQLException {
 
 		// viewAllRequests(personId);
@@ -540,6 +556,7 @@ public class Lease {
 		ResultSet rs = null;
 		Connection dbConnection = null;
 		PreparedStatement preparedStatement = null;
+		boolean isCancelSuccessful = false;
 		/*
 		 * Write SQL Query to delete the requestNumber mentioned by the PersonId
 		 * and set the status as "Cancelled"
@@ -581,6 +598,8 @@ public class Lease {
 
 				int update = preparedStatement.executeUpdate();
 				// System.out.println("Update returned " + update);
+				
+				isCancelSuccessful = true;
 
 			} else {
 
@@ -636,6 +655,7 @@ public class Lease {
 					preparedStatement.setInt(2, personId);
 					preparedStatement.setInt(3, requestNumber);
 					int update = preparedStatement.executeUpdate();
+					isCancelSuccessful = true;
 				} else {
 
 					/*
@@ -646,6 +666,7 @@ public class Lease {
 					System.out.println("Please enter a valid request number");
 				}
 			}
+			
 		} catch (SQLException e1) {
 			System.out.println("SQLException: " + e1.getMessage());
 			System.out.println("Vendor Error: " + e1.getErrorCode());
@@ -657,8 +678,11 @@ public class Lease {
 				rs.close();
 				preparedStatement.close();
 				dbConnection.close();
+				return isCancelSuccessful;
+				
 			} catch (SQLException e) {
 				e.printStackTrace();
+				return isCancelSuccessful;
 			}
 		}
 

@@ -223,9 +223,17 @@ public class EntryPoint {
 																		leaseObj.viewAllRequests(credentialObj.personId);
 																		break;
 																	case 2:
-																		System.out.println("Enter the Request Number to cancel: \n");
-																		int requestNumber = inputObj.nextInt();
-																		leaseObj.cancelRequest(credentialObj.personId, requestNumber);
+																		boolean isCancelSuccessful = false;
+																		int requestNumber;
+																		while(!isCancelSuccessful)
+																		{
+																			System.out.println("Enter the Request Number to cancel or press 0 for previous menu: \n");
+																			System.out.println("0. Back\n");
+																			requestNumber = inputObj.nextInt();
+																			if(requestNumber == 0)
+																				break;
+																			isCancelSuccessful = leaseObj.cancelRequest(credentialObj.personId, requestNumber);
+																		}
 																		break;
 																	case 3:
 																		mLevelFour = false;

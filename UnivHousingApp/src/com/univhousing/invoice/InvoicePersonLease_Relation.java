@@ -59,6 +59,7 @@ public class InvoicePersonLease_Relation {
 			System.out.println("SELECT QUERY IS: "+selectQuery);
 			
 			rs = preparedStatement.executeQuery();
+			int count = 1;
 
 			//If record exists , rs.next() will evaluate to true
 			if(rs.isBeforeFirst())
@@ -67,21 +68,27 @@ public class InvoicePersonLease_Relation {
 				System.out.println("INVOICE_NO");
 				System.out.println("==============================================================================================");
 				
-			}
+			
 			
 			while(rs.next())
 				{
 					
 					invoiceNumbersList.add(rs.getInt("invoice_no"));
 				}
-			int count = 1;
-			for(Integer item : invoiceNumbersList)
+			
+			
+				for(Integer item : invoiceNumbersList)
+				{
+					System.out.println(count+". "+item.intValue());
+					count++;
+				}
+			}
+			else
 			{
-				System.out.println(count+". "+item.intValue());
-				count++;
+				System.out.println("No Former Invoice Found");
 			}
 			count = 0;
-			System.out.println("0. Back");
+			System.out.println("\n0. Back");
 			System.out.println("\n");
 			int choice = inputObj.nextInt();
 			if(choice == 0)
@@ -247,6 +254,10 @@ public class InvoicePersonLease_Relation {
 					
 					System.out.println("==============================================================================================\n\n");
 				}
+			else
+			{
+				System.out.println("No invoice found.");
+			}
 			
 		}catch(SQLException e1){
 			System.out.println("SQLException: "+ e1.getMessage());

@@ -7,13 +7,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import javax.swing.text.TabExpander;
-
 import com.univhousing.main.ConnectionUtils;
 import com.univhousing.main.Constants;
-import com.univhousing.users.Student;
-import com.univhousing.main.Constants;
 import com.univhousing.users.Guest;
+import com.univhousing.users.Student;
 
 public class ParkingLot {
 	
@@ -36,19 +33,57 @@ public class ParkingLot {
 		System.out.println("Showing Request New Parking Spot\n");
 		System.out.println("Enter the following information\n");
 		
+		String handicappedInfo ="";
 		
-		System.out.println("Handicapped? Y/N");
-		String handicappedInfo = inputObj.next();
+		while(!handicappedInfo.equals("Y") && !handicappedInfo.equals("N"))
+		{
+			System.out.println("Handicapped? Y/N");
+			handicappedInfo = inputObj.next();
+		}
+		
 		
 		if(handicappedInfo.equals("N"))
 		{
-			System.out.println("Please enter your vehicle type:\n" +
-					"Bike, Compact Cars, Standard Cars, Large Cars");
-			vehicleType = inputObj.next();
+			boolean inputInvalid = true;
+			
+			while(inputInvalid)
+			{
+				System.out.println("Please enter your vehicle type:\n" +
+						"Bike, Compact Cars, Standard Cars, Large Cars");
+				vehicleType = inputObj.next();
+//				vehicleType = vehicleType.replaceAll("[\n\r]", "");
+				System.out.println("vehicleType:"+vehicleType.toLowerCase());
+				
+				if(vehicleType.toLowerCase().equals("bike"))
+				{
+					vehicleType = Constants.BIKE;
+					inputInvalid = false;
+					System.out.println("here");
+				}					
+				else if(vehicleType.toLowerCase().equals("compact cars"))
+				{
+					vehicleType = Constants.COMPACT_CARS;
+					inputInvalid = false;
+				}
+				else if(vehicleType.toLowerCase().equals("standard cars"))
+				{
+					vehicleType = Constants.STANDARD_CARS;
+					inputInvalid = false;
+				}
+				else if(vehicleType.toLowerCase().equals("large cars"))
+				{
+					vehicleType = Constants.LARGE_CARS;
+					inputInvalid = false;
+				}
+				else
+					System.out.println("You entered invalid input.Try again as below");;
+			}
+			
+			
 		}
 		
 		System.out.println("Do you want a nearby spot? Y/N");
-		String nearbySpot = inputObj.next();
+		String nearbySpot = inputObj.next();  //By default we are giving the nearby spot . that's why this variable not used so far
 		
 		System.out.println("1. Submit");
 		System.out.println("2. Back");
@@ -105,13 +140,13 @@ public class ParkingLot {
 					String handicappedField ;
 					
 					if(handicappedInfo.equals("Y"))
-						preparedStatement.setString(1,"handicapped");
+						preparedStatement.setString(1,Constants.HANDICAPPED);
 					else
 						preparedStatement.setString(1,vehicleType);
 						
-					
+					System.out.println("Marker1");
 					rs = preparedStatement.executeQuery();
-
+					System.out.println("Marker2");
 					//If record exists , rs.next() will evaluate to true
 					if(rs.isBeforeFirst())
 						{
@@ -125,6 +160,7 @@ public class ParkingLot {
 							
 							int numOfRowsInserted = preparedStatement.executeUpdate();
 							
+							System.out.println("Marker3");
 							if(numOfRowsInserted == 0)
 							{
 								System.out.println("\n\n ==================================================================================================================\n");
@@ -223,7 +259,7 @@ public class ParkingLot {
 			//If record exists , rs.next() will evaluate to true
 			if(!rs.isBeforeFirst())
 			{
-				System.out.println("No Parking Lot Information Found. Contact Administrator");
+				System.out.println("No Available Parking Lot Found for this person");
 			}
 			else
 			{
@@ -469,6 +505,8 @@ public class ParkingLot {
 			
 			preparedStatement.executeUpdate();
 			
+			System.out.println("Parking renewed for this person. New Permit Id is = "+newPermitId);
+			
 		}catch(SQLException e1){
 			{
 				System.out.println("SQLException: "+ e1.getMessage());
@@ -659,7 +697,7 @@ public class ParkingLot {
 				while(rs.next())
 				{
 					System.out.print(rs.getInt("student_id")+"\t\t\t");
-					System.out.print(rs.getString("request_status")+"\t\t\t");
+					System.out.print(rs.getString("request_status")+"\t\t");
 					System.out.print(rs.getInt("lot_no")+"\t\t");
 					System.out.println(rs.getInt("spot_no")+"\t\t\t");
 				}
@@ -937,7 +975,7 @@ public class ParkingLot {
 			if(lookAnyWhere)
 			{
 				ps5 = conn5.prepareStatement(query6);
-				ps5.setString(1, Constants.AVAILABE);
+				ps5.setString(1, Constants.AVAILABLE);
 			}
 			else
 			{
@@ -946,13 +984,13 @@ public class ParkingLot {
 					String query7 = "SELECT P.spot_no FROM parkingSpot_belongs_parkingLot P WHERE P.availability = ? " +
 					"AND P.zip_code = (SELECT zip_code FROM "+tableToQuery+"  WHERE hall_number = ?)";
 					ps5 = conn5.prepareStatement(query7);
-					ps5.setString(1, Constants.AVAILABE);
+					ps5.setString(1, Constants.AVAILABLE);
 					ps5.setInt(2, accomodation_id);
 				}
 				else
 				{
 					ps5 = conn5.prepareStatement(query5);
-					ps5.setString(1, Constants.AVAILABE);
+					ps5.setString(1, Constants.AVAILABLE);
 					ps5.setInt(2, accomodation_id);
 				}
 			}
