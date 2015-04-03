@@ -869,9 +869,8 @@ public class ParkingLot {
 				// If spotNumber is -1, that means we did not get a spot near the student's residence and will look for spot anywhere that's available
 				if(spotNumber == -1)
 				{
-					System.out.println("No Spot available near your residence, finiding another spot");
+					System.out.println("No Spot available near your residence, finding another spot");
 					spotNumber = getASpotForParkingRequest(personId, requestNumber, studentId, true, permitId);
-					
 				}
 			}
 			else if(requestApprovalStatus.equalsIgnoreCase("N") || requestApprovalStatus.equalsIgnoreCase("No"))
@@ -968,10 +967,17 @@ public class ParkingLot {
 			}
 			
 			
-			// This condition checks if there was no aprking spot even available far from the student's residence
+			// This condition checks if there was no parking spot even available far from the student's residence
 			if(spotNumber == -1)
 			{
-				System.out.println("There are no parking spots available, Sorry");
+				System.out.println(Constants.PARKING_SPOTS_FULL);
+				PreparedStatement ps10 = null;
+				Connection conn10 = ConnectionUtils.getConnection();
+				String query10 = "UPDATE StudentParkingSpot_Relation SET request_Status = ? WHERE request_no = ?";
+				ps10 = conn10.prepareStatement(query10);
+				ps10.setString(1, Constants.REJECTED_STATUS);
+				ps10.setInt(2, requestNumber);
+				ps10.executeUpdate();
 			}
 			else
 			{
@@ -1026,7 +1032,7 @@ public class ParkingLot {
 				studentId = getStudentID.getInt("student_id");
 				break;
 			}
-			System.out.println("Chanign request status for student id : "+studentId);
+			System.out.println("Changing request status for student id : "+studentId);
 		}
 		catch(SQLException e)
 		{

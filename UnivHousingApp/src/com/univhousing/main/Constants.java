@@ -38,4 +38,5 @@ public class Constants {
 	public static final String TABLE_FAMILY_APARTMENT = "Family_Apartment";
 	public static final String TABLE_BEDROOM = "bedroom";
 	public static final String TABLE_RESIDENCE_HALL = "residence_hall";
+	public static final String PARKING_SPOTS_FULL = "Your parking spot request has been denied due to unavailability of parking spaces";
 }
