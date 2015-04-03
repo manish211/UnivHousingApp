@@ -21,8 +21,22 @@ public class Constants {
 	public static final String INTERNET = "Internet";
 	public static final String CLEANING = "Cleaning";
 	public static final String MISCELLANEOUS = "Miscellaneous";
-	public static final String DEFAULT_TICKET_STATUS = "Pending";
-	public static final String PROCESSING_TICKET_STATUS = "Processing";
 	public static final int PERMIT_ID_START = 1000;
 	
+	public static final String PENDING_STATUS = "Pending";
+	public static final String PROCESSING_STATUS = "Processing";
+	public static final String COMPLETE_STATUS = "Complete";
+	public static final String APPROVED_STATUS = "Approved";
+	public static final String WAITING_STATUS = "Waiting";
+	public static final String REJECTED_STATUS = "Rejected";
+	public static final String AVAILABE = "Yes";
+	public static final String NOT_AVAILABLE = "No";
+	public static final String GENERAL_APARTMENT = "General Apartment";
+	public static final String FAMILY_APARTMENT = "Family Apartment";
+	public static final String RESIDENCE_HALL = "Residence Hall";
+	public static final String BEDROOM = "Bedroom";
+	public static final String TABLE_GENERAL_APARTMENT = "General_Apartment";
+	public static final String TABLE_FAMILY_APARTMENT = "Family_Apartment";
+	public static final String TABLE_BEDROOM = "bedroom";
+	public static final String TABLE_RESIDENCE_HALL = "residence_hall";
 }
