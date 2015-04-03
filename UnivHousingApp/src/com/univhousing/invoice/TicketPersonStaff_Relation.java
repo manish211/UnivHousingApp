@@ -179,7 +179,7 @@ public class TicketPersonStaff_Relation {
 			preparedStatement1 = dbConnection1.prepareStatement(query1);
 			preparedStatement1.setInt(1, staffNo);
 			preparedStatement1.setInt(2, ticketNo);
-			preparedStatement1.setString(3, Constants.DEFAULT_TICKET_STATUS);
+			preparedStatement1.setString(3, Constants.PENDING_STATUS);
 			preparedStatement1.setString(4, severity);
 			preparedStatement1.setInt(5, personId);
 			preparedStatement1.setString(6, description);
@@ -383,7 +383,7 @@ public class TicketPersonStaff_Relation {
 		try
 		{
 			ps = conn.prepareStatement(query);
-			ps.setString(1, Constants.DEFAULT_TICKET_STATUS);
+			ps.setString(1, Constants.PENDING_STATUS);
 			System.out.println(ps);
 			allTickets = ps.executeQuery();
 			
@@ -451,7 +451,7 @@ public class TicketPersonStaff_Relation {
 			
 			System.out.println("Updating ticket "+ticketNumber+ " ticket_status to Processing");
 			ps3 = conn3.prepareStatement(query3);
-			ps3.setString(1, Constants.PROCESSING_TICKET_STATUS);
+			ps3.setString(1, Constants.PROCESSING_STATUS);
 			ps3.setInt(2, ticketNumber);
 			ps3.executeUpdate();
 			

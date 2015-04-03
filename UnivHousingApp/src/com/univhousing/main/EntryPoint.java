@@ -414,7 +414,7 @@ public class EntryPoint {
 											case 4:
 												System.out.println("Showing Parking Requests");
 												parkingObj.getAllParkingRequests(mAdminLevelParkingRequests);
-												
+												break;
 											case 5:
 												System.out.println("Showing Profile\n");
 												Person personObj = new Person();

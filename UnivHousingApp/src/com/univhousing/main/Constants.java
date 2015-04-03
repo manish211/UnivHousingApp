@@ -22,7 +22,6 @@ public class Constants {
 	public static final String CLEANING = "Cleaning";
 	public static final String MISCELLANEOUS = "Miscellaneous";
 	public static final int PERMIT_ID_START = 1000;
-	
 	public static final String PENDING_STATUS = "Pending";
 	public static final String PROCESSING_STATUS = "Processing";
 	public static final String COMPLETE_STATUS = "Complete";
@@ -31,7 +30,7 @@ public class Constants {
 	public static final String REJECTED_STATUS = "Rejected";
 	public static final String AVAILABE = "Yes";
 	public static final String NOT_AVAILABLE = "No";
-	public static final String GENERAL_APARTMENT = "General Apartment";
+	public static final String GENERAL_APARTMENT = "Apartment";
 	public static final String FAMILY_APARTMENT = "Family Apartment";
 	public static final String RESIDENCE_HALL = "Residence Hall";
 	public static final String BEDROOM = "Bedroom";
