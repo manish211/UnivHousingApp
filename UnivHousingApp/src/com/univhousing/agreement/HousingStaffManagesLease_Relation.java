@@ -214,7 +214,7 @@ public class HousingStaffManagesLease_Relation {
 					preparedStatement.executeUpdate();
 					preparedStatement.close();
 
-					String SQL5 = "UPDATE PERSON_ACC_STAFF SET request_status = 'APPROVED' "
+					String SQL5 = "UPDATE PERSON_ACC_STAFF SET request_status = 'Approved' "
 							+ "WHERE application_request_no = ?";
 
 					preparedStatement = dbConnection.prepareStatement(SQL5);
@@ -232,6 +232,77 @@ public class HousingStaffManagesLease_Relation {
 
 				} else if (availableAcco.get(0).equalsIgnoreCase(
 						"Family Apartment")) {
+					
+					
+
+					String SQLF1 = "SELECT MAX(LEASE_NO) as Lease_no from LEASE";
+
+					preparedStatement = dbConnection.prepareStatement(SQLF1);
+					rs = preparedStatement.executeQuery();
+					rs.next();
+					int leaseNumApartment = rs.getInt("Lease_No") + 1; // Lease
+																		// Number
+					rs.close();
+					preparedStatement.close();
+					String depositeApartment = "2000";
+					
+					String SQLF2 = "INSERT INTO LEASE (lease_no,deposit,mode_of_payment,duration) "
+							+ "VALUES (?,?,?,?)";
+
+					preparedStatement = dbConnection.prepareStatement(SQLF2);
+					preparedStatement.setInt(1, leaseNumApartment);
+					preparedStatement.setString(2, depositeApartment);
+					preparedStatement.setString(3, modeofPayment);
+					preparedStatement.setString(4, duration);
+					preparedStatement.executeUpdate();
+
+					preparedStatement.close();
+
+					
+					String SQLF3 = "SELECT Family.accomodation_id FROM Family_Apartment Family "
+							+ "WHERE Family.accomodation_id NOT IN(SELECT PERSON_ACCOMODATION_LEASE.accomodation_id "
+							+ "FROM PERSON_ACCOMODATION_LEASE)";
+
+					preparedStatement = dbConnection.prepareStatement(SQLF3);
+					rs = preparedStatement.executeQuery();
+					rs.next();
+
+					int accomodationIDApartment = rs.getInt("accomodation_id");
+
+					rs.close();
+					preparedStatement.close();
+					
+
+					
+					String SQL4 = "INSERT INTO PERSON_ACCOMODATION_LEASE (accomodation_id,person_id,lease_no,accomodation_type,lease_move_in_date) "
+							+ "VALUES (?,?,?,?,?)";
+
+					preparedStatement = dbConnection.prepareStatement(SQL4);
+					preparedStatement.setInt(1, accomodationIDApartment);
+					preparedStatement.setInt(2, personID);
+					preparedStatement.setInt(3, leaseNumApartment);
+					preparedStatement.setString(4, "Family Apartment");
+					preparedStatement.setDate(5, moveInDate);
+					preparedStatement.executeUpdate();
+					preparedStatement.close();
+
+					
+
+					String SQLF5 = "UPDATE PERSON_ACC_STAFF SET request_status = 'Approved' "
+							+ "WHERE application_request_no = ?";
+
+					preparedStatement = dbConnection.prepareStatement(SQLF5);
+					preparedStatement.setInt(1, requestNumber);
+					preparedStatement.executeUpdate();
+					preparedStatement.close();
+
+					System.out.println("The status for Request Id "
+							+ requestNumber + " is APPROVED!!!!");
+
+					
+					
+					
+					
 					/*
 					 * Write an SQL query to approve the family apartment
 					 * request and allocate an apartment to the applicant
