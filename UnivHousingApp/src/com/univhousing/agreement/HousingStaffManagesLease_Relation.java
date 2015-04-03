@@ -159,7 +159,70 @@ public class HousingStaffManagesLease_Relation {
 					 * necessary Student should be alloted a room number and a
 					 * palce number
 					 */
-					ResultSet approveAndAssignAccomodation = null;
+					
+					selectQuery = "SELECT MAX(lease_no) AS lease_no "
+							+ "FROM Lease";
+					rs.close();
+					preparedStatement.close();
+					
+					preparedStatement = dbConnection.prepareStatement(selectQuery);
+					rs = preparedStatement.executeQuery();
+					rs.next();
+					int leaseNumberResHall = rs.getInt("lease_no");
+					String depositAmountResHall = "500";
+					
+					String insertQuery = "INSERT INTO LEASE "
+							+ "VALUES (?,?,?,?)";
+					rs.close();
+					preparedStatement.close();
+					preparedStatement = dbConnection.prepareStatement(insertQuery);
+					
+					preparedStatement.setInt(1, leaseNumberResHall);
+					preparedStatement.setString(1, depositAmountResHall);
+					preparedStatement.setString(2, modeofPayment);
+					preparedStatement.setString(4, duration);
+					preparedStatement.executeUpdate();
+					preparedStatement.close();
+					
+					String selectQueryRes = "SELECT accomodation_id "
+							+ "FROM residence_hall_provides_room "
+							+ "WHERE hall_number = (SELECT hall_number "
+							+ "						FROM residence_hall "
+							+ "						WHERE hall_name = ?) "
+							+ "AND accomodation_id NOT IN (SELECT accomodation_id "
+							+ "							FROM person_accomodation_lease)";
+					
+					preparedStatement = dbConnection.prepareStatement(selectQueryRes);
+					preparedStatement.setString(1, availableAcco.get(1));
+					rs = preparedStatement.executeQuery();
+					rs.next();
+					int accID = rs.getInt("accomodation_id");
+					
+					rs.close();
+					preparedStatement.close();
+					
+					String insertPerAccQuery = "INSERT INTO person_accomodation_lease "
+							+ "VALUES(?,?,?,?,?)";
+					
+					preparedStatement = dbConnection.prepareStatement(insertPerAccQuery);
+					preparedStatement.setInt(1, accID);
+					preparedStatement.setInt(2, personID);
+					preparedStatement.setInt(3, leaseNumberResHall);
+					preparedStatement.setString(4, "Residence Hall");
+					preparedStatement.setDate(5, moveInDate);
+					preparedStatement.executeUpdate();
+					
+					String updateQuery = "UPDATE PERSON_ACC_STAFF SET request_status = 'APPROVED' "
+							+ "WHERE application_request_no = ?";
+					preparedStatement.close();
+					
+					preparedStatement = dbConnection.prepareStatement(updateQuery);
+					preparedStatement.setInt(1, requestNumber);
+					preparedStatement.executeUpdate();
+					preparedStatement.close();
+
+					System.out.println("The status for Request Id "
+							+ requestNumber + " is APPROVED!!!!");
 
 				}
 
