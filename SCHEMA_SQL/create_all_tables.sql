@@ -206,7 +206,7 @@ lease_no INTEGER,
 accomodation_type VARCHAR2(40),
 permit_id INTEGER,
 lease_move_in_date date,
-PRIMARY KEY(accomodation_id,person_id),
+PRIMARY KEY(person_id),
 FOREIGN KEY(person_id) REFERENCES person,
 FOREIGN KEY(lease_no) REFERENCES lease);
 
