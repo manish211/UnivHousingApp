@@ -6,11 +6,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Scanner;
 
 import com.sun.corba.se.pept.encoding.InputObject;
 import com.univhousing.main.ConnectionUtils;
 import com.univhousing.main.Constants;
+import com.univhousing.main.Utils;
 import com.univhousing.users.Person;
 
 public class HousingStaffManagesLease_Relation {
@@ -123,9 +125,22 @@ public class HousingStaffManagesLease_Relation {
 				duration = rs.getString("DURATION");
 				personID = rs.getInt("person_id");
 				moveInDate = rs.getDate("LEASE_MOVE_IN_DATE");
-				//cutOffDate = 
+				 
+				String moveInDateStr = Utils.convertSQLDateToString(moveInDate);
 				
-
+				java.util.Date moveInDateUtil = Utils.convertStringToUtilDateFormat(moveInDateStr);
+				
+						
+				
+				Calendar c = Calendar.getInstance(); 
+				c.setTime(moveInDateUtil); 
+				c.add(Calendar.DATE, 15);
+				java.util.Date cutOffDateUtils = c.getTime();
+				
+				String cutOffDateStr = Utils.changeUtilDateToString(cutOffDateUtils);
+				
+				cutOffDate = Utils.convertStringToSQLDateFormat(cutOffDateStr);
+			
 				preferences.add(rs.getString("ACCOMODATION_TYPE"));
 				preferences.add(rs.getString("PREFERENCE1"));
 				preferences.add(rs.getString("PREFERENCE2"));
@@ -227,8 +242,8 @@ public class HousingStaffManagesLease_Relation {
 					
 					String depositAmountResHall = Constants.RESIDENCE_HALL_DEPOSITE;
 
-					String insertQuery = "INSERT INTO LEASE (lease_no,deposit,mode_of_payment,duration) "
-							+ "VALUES (?,?,?,?)";
+					String insertQuery = "INSERT INTO LEASE (lease_no,deposit,mode_of_payment,duration,cutoff_date) "
+							+ "VALUES (?,?,?,?,?)";
 					rs.close();
 					preparedStatement.close();
 					
@@ -239,6 +254,7 @@ public class HousingStaffManagesLease_Relation {
 					preparedStatement.setString(2, depositAmountResHall);
 					preparedStatement.setString(3, modeofPayment);
 					preparedStatement.setString(4, duration);
+					preparedStatement.setDate(5, cutOffDate);
 					preparedStatement.executeUpdate();
 					preparedStatement.close();
 
@@ -302,14 +318,15 @@ public class HousingStaffManagesLease_Relation {
 
 					String depositeApartment = Constants.GENERAL_APARTMENT_DEPOSITE; // deposite
 
-					String SQL2 = "INSERT INTO LEASE (lease_no,deposit,mode_of_payment,duration) "
-							+ "VALUES (?,?,?,?)";
+					String SQL2 = "INSERT INTO LEASE (lease_no,deposit,mode_of_payment,duration,cutoff_date) "
+							+ "VALUES (?,?,?,?,?)";
 
 					preparedStatement = dbConnection.prepareStatement(SQL2);
 					preparedStatement.setInt(1, newLeaseNumber);
 					preparedStatement.setString(2, depositeApartment);
 					preparedStatement.setString(3, modeofPayment);
 					preparedStatement.setString(4, duration);
+					preparedStatement.setDate(5, cutOffDate);
 					preparedStatement.executeUpdate();
 
 					preparedStatement.close();
@@ -363,14 +380,15 @@ public class HousingStaffManagesLease_Relation {
 					
 					String depositeApartment = Constants.FAMILY_APARTMENT_DEPOSITE;
 
-					String SQLF2 = "INSERT INTO LEASE (lease_no,deposit,mode_of_payment,duration) "
-							+ "VALUES (?,?,?,?)";
+					String SQLF2 = "INSERT INTO LEASE (lease_no,deposit,mode_of_payment,duration,cutoff_date) "
+							+ "VALUES (?,?,?,?,?)";
 
 					preparedStatement = dbConnection.prepareStatement(SQLF2);
 					preparedStatement.setInt(1, newLeaseNumber);
 					preparedStatement.setString(2, depositeApartment);
 					preparedStatement.setString(3, modeofPayment);
 					preparedStatement.setString(4, duration);
+					preparedStatement.setDate(5, cutOffDate);
 					preparedStatement.executeUpdate();
 
 					preparedStatement.close();
