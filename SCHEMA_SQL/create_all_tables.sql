@@ -12,13 +12,29 @@ CREATE TABLE  Person(person_id INTEGER,
  phone_number INTEGER,
  gender varchar2(10),
  DOB date,
+ nationality varchar2(20),
+ smoker varchar2(50),
+ special_needs varchar2(100),
+ housing_status varchar2(10),
+ study_field varchar2(20),
 PRIMARY KEY(person_id));
+
+
 
 CREATE TABLE  Student(student_id INTEGER,
  person_id INTEGER,
  student_type varchar2(10),
+ member_one varchar2(20),
+ member_two varchar2(20),
+ member_three varchar2(20),
+ member_four varchar2(20),
+ dob_member_one date,
+ dob_member_two date,
+ dob_member_three date,
+ dob_member_four date,
  PRIMARY KEY(student_id),
  FOREIGN KEY(person_id) REFERENCES Person);
+
 
 CREATE TABLE  Guest (approval_id INTEGER,
  person_id INTEGER,
