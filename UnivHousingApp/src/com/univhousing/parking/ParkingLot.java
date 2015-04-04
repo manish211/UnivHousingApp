@@ -124,15 +124,96 @@ public class ParkingLot {
 				Connection dbConnection = null;
 				PreparedStatement preparedStatement = null ;
 				
+				//---------------------------------------------------------------------------------//
+//				Get the accomodation type 
+				
+				String accomodation_type="";
+				String tableName="";
+				
 				try{
 					dbConnection = ConnectionUtils.getConnection();
 					
-					String selectQuery = "select spot_no,lot_no from(select p1.spot_no,plrh.hall_number,p1.lot_no,pl.zip_Code Parking_ZipCode,rh.zip_code as RESIDENCE_ZIPCODE,p1.availability " ;
-					selectQuery = selectQuery + " from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2,parking_lot_residence_hall plrh,residence_hall rh,parking_lot pl " ;
-					selectQuery = selectQuery + " where p2.vehicle_type = ? and p1.availability = ? and p1.lot_no = plrh.lot_no and plrh.hall_number = rh.hall_number" ;
-					selectQuery = selectQuery + " order by abs(rh.zip_code - pl.zip_code) asc) where rownum<2" ;
+					String selectQuery = "select accomodation_type " ;
+					selectQuery = selectQuery + " from (select accomodation_type from person_accomodation_lease " ;
+					selectQuery = selectQuery + " where person_id = ?  order by lease_move_in_date desc) where rownum <2" ;
+					
+					preparedStatement = dbConnection.prepareStatement(selectQuery);
+					
+					System.out.println("selectQuery1:="+selectQuery);
+					
+					preparedStatement.setInt(1,personId);
+					
+					rs = preparedStatement.executeQuery();
+
+					//If record exists , rs.next() will evaluate to true
+					if(!rs.isBeforeFirst())
+					{
+						System.out.println("Person does not have any accomodation");
+					}
+					else
+					{
+						rs.next();
+						accomodation_type = rs.getString("accomodation_type");
+					}	
+					
+				}catch(SQLException e1){
+					{
+						System.out.println("SQLException: "+ e1.getMessage());
+						System.out.println("VendorError: "+ e1.getErrorCode());
+						System.out.println("MARKER MARKER");
+					}
+				}
+				catch(Exception e3)
+				{
+					System.out.println("General Exception Case. Printing stack trace below:\n");
+					e3.printStackTrace();
+				}
+				finally{
+						try {
+						        rs.close();
+						        preparedStatement.close();
+						        dbConnection.close();
+						        if(accomodation_type =="")
+						        return;
+					      	} catch (SQLException e) {
+					        e.printStackTrace();
+					        return;
+					      	}
+				}
+				
+				
+//				Set the table names based on accomodation type
+				//---------------------------------------------------------------------------------//
+				
+				if(accomodation_type.equals(Constants.GENERAL_APARTMENT))
+				{
+					tableName="general_apartment";
+				}
+				else if(accomodation_type.equals(Constants.FAMILY_APARTMENT))
+				{
+					tableName="family_apartment";
+				}
+				else if(accomodation_type.equals(Constants.RESIDENCE_HALL))
+				{
+					tableName="residence_hall";
+				}
+				else if(accomodation_type.equals(Constants.BEDROOM))
+				{
+					tableName="bedroom";
+				}
+				
+				//----------------------------------------------------------------------------------//
+				try{
+					dbConnection = ConnectionUtils.getConnection();
+					
+					String selectQuery = "select spot_no,lot_no from(select p1.spot_no,p1.lot_no " ;
+					selectQuery = selectQuery + " from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2,"+tableName+" t,parking_lot pl " ;
+					selectQuery = selectQuery + " where p2.vehicle_type = ? and p1.availability = ? " ;
+					selectQuery = selectQuery + " order by abs(t.zip_code - pl.zip_code) asc) where rownum<2" ;
 							
 					preparedStatement = dbConnection.prepareStatement(selectQuery);
+					
+					System.out.println("selectQuery:="+selectQuery);
 					
 					String handicappedField ;
 					
@@ -158,7 +239,7 @@ public class ParkingLot {
 							preparedStatement.setInt(1,rs.getInt("lot_no"));
 							preparedStatement.setInt(2,rs.getInt("spot_no"));
 							preparedStatement.setInt(3,studentObj.studentId);
-							preparedStatement.setString(4,"PENDING");
+							preparedStatement.setString(4,Constants.PENDING_STATUS);
 							
 							int numOfRowsInserted = preparedStatement.executeUpdate();
 							
