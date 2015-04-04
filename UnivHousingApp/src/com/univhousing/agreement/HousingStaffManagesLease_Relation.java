@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 import com.sun.corba.se.pept.encoding.InputObject;
 import com.univhousing.main.ConnectionUtils;
+import com.univhousing.main.Constants;
 
 public class HousingStaffManagesLease_Relation {
 
@@ -39,7 +40,7 @@ public class HousingStaffManagesLease_Relation {
 		Connection dbConnection = null;
 		String accomodationType = "";
 		allLeaseRequestsToMonitor.clear();
-		String status = "PENDING";
+		String status = Constants.PENDING_STATUS;
 		String modeofPayment = "";
 		Date moveInDate = null;
 		String duration = "";
@@ -150,7 +151,7 @@ public class HousingStaffManagesLease_Relation {
 
 				// if(accAvailability)
 
-				if (availableAcco.get(0).equalsIgnoreCase("RESIDENCE HALL")) {
+				if (availableAcco.get(0).equalsIgnoreCase(Constants.RESIDENCE_HALL)) {
 					System.out.println("Availability in: "
 							+ availableAcco.get(1));
 					// Now we will give him the accommodation he wanted
@@ -208,7 +209,7 @@ public class HousingStaffManagesLease_Relation {
 					preparedStatement.setInt(1, accID);
 					preparedStatement.setInt(2, personID);
 					preparedStatement.setInt(3, leaseNumberResHall);
-					preparedStatement.setString(4, "Residence Hall");
+					preparedStatement.setString(4, Constants.RESIDENCE_HALL);
 					preparedStatement.setDate(5, moveInDate);
 					preparedStatement.executeUpdate();
 					
@@ -226,7 +227,7 @@ public class HousingStaffManagesLease_Relation {
 
 				}
 
-				else if (availableAcco.get(0).equalsIgnoreCase("Apartment")) {
+				else if (availableAcco.get(0).equalsIgnoreCase(Constants.GENERAL_APARTMENT)) {
 
 					String SQL1 = "SELECT MAX(LEASE_NO) as Lease_no from LEASE";
 
@@ -272,7 +273,7 @@ public class HousingStaffManagesLease_Relation {
 					preparedStatement.setInt(1, accomodationIDApartment);
 					preparedStatement.setInt(2, personID);
 					preparedStatement.setInt(3, leaseNumApartment);
-					preparedStatement.setString(4, "Apartment");
+					preparedStatement.setString(4, Constants.GENERAL_APARTMENT);
 					preparedStatement.setDate(5, moveInDate);
 					preparedStatement.executeUpdate();
 					preparedStatement.close();
@@ -294,7 +295,7 @@ public class HousingStaffManagesLease_Relation {
 					 */
 
 				} else if (availableAcco.get(0).equalsIgnoreCase(
-						"Family Apartment")) {
+						Constants.FAMILY_APARTMENT)) {
 					
 					
 
@@ -344,7 +345,7 @@ public class HousingStaffManagesLease_Relation {
 					preparedStatement.setInt(1, accomodationIDApartment);
 					preparedStatement.setInt(2, personID);
 					preparedStatement.setInt(3, leaseNumApartment);
-					preparedStatement.setString(4, "Family Apartment");
+					preparedStatement.setString(4, Constants.FAMILY_APARTMENT);
 					preparedStatement.setDate(5, moveInDate);
 					preparedStatement.executeUpdate();
 					preparedStatement.close();
@@ -371,7 +372,7 @@ public class HousingStaffManagesLease_Relation {
 					 * request and allocate an apartment to the applicant
 					 */
 				} else if (availableAcco.get(0).equalsIgnoreCase(
-						"Nothing Available")) {
+						Constants.NOTHING_AVAILABLE)) {
 
 					String selectQ1 = "UPDATE PERSON_ACC_STAFF SET request_status = 'Waiting' "
 							+ "WHERE application_request_no = ?";
@@ -442,7 +443,7 @@ public class HousingStaffManagesLease_Relation {
 		try {
 			dbConnection = ConnectionUtils.getConnection();
 
-			if (type.toUpperCase().equals("RESIDENCE HALL")) {
+			if (type.toUpperCase().equals(Constants.RESIDENCE_HALL)) {
 				for (int i = 0; i < 3; i++) {
 					String selectQueryPref = "SELECT COUNT(accomodation_id) AS count "
 							+ "FROM residence_hall_provides_room "
@@ -468,7 +469,7 @@ public class HousingStaffManagesLease_Relation {
 					preparedStatement.close();
 					rs.close();
 				}
-			} else if (type.toUpperCase().equals("APARTMENT")) {
+			} else if (type.toUpperCase().equals(Constants.GENERAL_APARTMENT)) {
 				String selectQueryGenApt = "SELECT COUNT (B.apt_place_no) AS rooms "
 						+ "FROM bedroom B "
 						+ "WHERE B.accomodation_id  NOT IN "
@@ -481,7 +482,7 @@ public class HousingStaffManagesLease_Relation {
 
 				while (rs.next()) {
 					if (rs.getInt("rooms") > 0) {
-						availableAcco.add("APARTMENT");
+						availableAcco.add(Constants.GENERAL_APARTMENT);
 						availableAcco.add("NA");
 						dbConnection.close();
 						return availableAcco;
@@ -489,7 +490,7 @@ public class HousingStaffManagesLease_Relation {
 					preparedStatement.close();
 					rs.close();
 				}
-			} else if (type.toUpperCase().equals("FAMILY APARTMENT")) {
+			} else if (type.toUpperCase().equals(Constants.FAMILY_APARTMENT)) {
 				String selectQueryFamApt = "SELECT COUNT (F.apt_no) AS apartments "
 						+ "FROM Family_Apartment F "
 						+ "WHERE F.accomodation_id NOT IN "
@@ -502,7 +503,7 @@ public class HousingStaffManagesLease_Relation {
 
 				while (rs.next()) {
 					if (rs.getInt("apartments") > 0) {
-						availableAcco.add("FAMILY APARTMENT");
+						availableAcco.add(Constants.FAMILY_APARTMENT);
 						availableAcco.add("NA");
 						dbConnection.close();
 						return availableAcco;
@@ -511,7 +512,7 @@ public class HousingStaffManagesLease_Relation {
 					rs.close();
 				}
 			} else {
-				availableAcco.add("Nothing Available");
+				availableAcco.add(Constants.NOTHING_AVAILABLE);
 				return availableAcco;
 			}
 		} catch (SQLException e1) {
@@ -548,7 +549,7 @@ public class HousingStaffManagesLease_Relation {
 		PreparedStatement preparedStatement = null;
 		Connection dbConnection = null;
 		allTerminationRequestsToMonitor.clear();
-		String status = "PENDING";
+		String status = Constants.PENDING_STATUS;
 		
 		try {
 			

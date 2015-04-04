@@ -44,5 +44,7 @@ public class Constants {
 	public static final String COMPACT_CARS = "COMPACT_CARS";
 	public static final String STANDARD_CARS = "STANDARD_CARS";
 	public static final String LARGE_CARS = "LARGE_CARS";
+	public static final String STATUS_CANCELED ="Cancelled";
+	public static final String NOTHING_AVAILABLE = "Nothing Available";
 	
 }
