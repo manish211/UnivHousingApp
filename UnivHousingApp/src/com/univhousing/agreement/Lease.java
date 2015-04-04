@@ -8,7 +8,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import com.sun.corba.se.impl.orbutil.closure.Constant;
 import com.univhousing.main.ConnectionUtils;
+import com.univhousing.main.Constants;
 
 public class Lease {
 
@@ -99,7 +101,7 @@ public class Lease {
 			rs.close();
 			preparedStatement.close();
 
-			if (accomodationType.equals("Apartment")) {
+			if (accomodationType.equals(Constants.GENERAL_APARTMENT)) {
 
 				/*
 				 * Go to General Apartment Table( and from there to the bedroom
@@ -126,7 +128,7 @@ public class Lease {
 
 				}
 
-			} else if (accomodationType.equals("Family Apartment")) {
+			} else if (accomodationType.equals(Constants.FAMILY_APARTMENT)) {
 
 				/*
 				 * Go to Family Apartment Table and fetch Place # Room # and
@@ -152,7 +154,7 @@ public class Lease {
 
 				}
 
-			} else if (accomodationType.equals("Residence Hall")) {
+			} else if (accomodationType.equals(Constants.RESIDENCE_HALL)) {
 
 				/*
 				 * Go to Residence Hall Table[FOllow like 1st i condition] and
@@ -349,7 +351,7 @@ public class Lease {
 			rs.close();
 			preparedStatement.close();
 
-			if (accomodationType.equals("Apartment")) {
+			if (accomodationType.equals(Constants.GENERAL_APARTMENT)) {
 
 				/*
 				 * Go to General Apartment Table( and from there to the bedroom
@@ -359,7 +361,7 @@ public class Lease {
 
 				String selectQuery1 = "SELECT B.bedroom_place_no,B.room_no, GA.street_name,GA.city_name,GA.zip_code "
 						+ "FROM General_Apartment GA, bedroom B "
-						+ "WHERE GA.accomodation_id = ? AND GA.apt_no = B.apt_no";
+						+ "WHERE B.accomodation_id = ? AND GA.apt_no = B.apt_no";
 
 				preparedStatement = dbConnection.prepareStatement(selectQuery1);
 				preparedStatement.setInt(1, accomodationId);
@@ -376,7 +378,7 @@ public class Lease {
 
 				}
 
-			} else if (accomodationType.equals("Family Apartment")) {
+			} else if (accomodationType.equals(Constants.FAMILY_APARTMENT)) {
 
 				/*
 				 * Go to Family Apartment Table and fetch Place # Room # and
@@ -402,7 +404,7 @@ public class Lease {
 
 				}
 
-			} else if (accomodationType.equals("Residence Hall")) {
+			} else if (accomodationType.equals(Constants.RESIDENCE_HALL)) {
 
 				/*
 				 * Go to Residence Hall Table[FOllow like 1st i condition] and
@@ -592,7 +594,7 @@ public class Lease {
 				preparedStatement.close();
 
 				preparedStatement = dbConnection.prepareStatement(updateQuery);
-				preparedStatement.setString(1, "CANCELED");
+				preparedStatement.setString(1, Constants.STATUS_CANCELED);
 				preparedStatement.setInt(2, personId);
 				preparedStatement.setInt(3, requestNumber);
 
@@ -651,7 +653,7 @@ public class Lease {
 					preparedStatement.close();
 					preparedStatement = dbConnection
 							.prepareStatement(updateQuery1);
-					preparedStatement.setString(1, "CANCELED");
+					preparedStatement.setString(1, Constants.STATUS_CANCELED);
 					preparedStatement.setInt(2, personId);
 					preparedStatement.setInt(3, requestNumber);
 					int update = preparedStatement.executeUpdate();
