@@ -112,7 +112,7 @@ public class ParkingLot {
 				/*select spot_no,lot_no
 				from(select p1.spot_no,plrh.hall_number,p1.lot_no,pl.zip_Code Parking_ZipCode,rh.zip_code as RESIDENCE_ZIPCODE,p1.availability
 				from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2,parking_lot_residence_hall plrh,residence_hall rh,parking_lot pl
-				where p2.type = 'handicapped'
+				where p2.vehicle_type = 'handicapped'
 				and p1.availability = 'YES'
 				and p1.lot_no = plrh.lot_no
 				and plrh.hall_number = rh.hall_number
@@ -129,22 +129,29 @@ public class ParkingLot {
 					
 					String selectQuery = "select spot_no,lot_no from(select p1.spot_no,plrh.hall_number,p1.lot_no,pl.zip_Code Parking_ZipCode,rh.zip_code as RESIDENCE_ZIPCODE,p1.availability " ;
 					selectQuery = selectQuery + " from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2,parking_lot_residence_hall plrh,residence_hall rh,parking_lot pl " ;
-					selectQuery = selectQuery + " where p2.vehicle_type = ? and p1.availability = 'YES' and p1.lot_no = plrh.lot_no and plrh.hall_number = rh.hall_number" ;
+					selectQuery = selectQuery + " where p2.vehicle_type = ? and p1.availability = ? and p1.lot_no = plrh.lot_no and plrh.hall_number = rh.hall_number" ;
 					selectQuery = selectQuery + " order by abs(rh.zip_code - pl.zip_code) asc) where rownum<2" ;
 							
 					preparedStatement = dbConnection.prepareStatement(selectQuery);
 					
 					String handicappedField ;
 					
+					preparedStatement.setString(2,Constants.AVAILABLE);
+					
 					if(handicappedInfo.equals("Y"))
 						preparedStatement.setString(1,Constants.HANDICAPPED);
 					else
 						preparedStatement.setString(1,vehicleType);
+						System.out.println("Marker1");
 						
 					rs = preparedStatement.executeQuery();
+					System.out.println("Marker2");
 					//If record exists , rs.next() will evaluate to true
+					System.out.println("selectQuery:="+selectQuery);
+					System.out.println("preparedStatement:="+preparedStatement.toString());
 					if(rs.isBeforeFirst())
 						{
+						System.out.println("Marker3");
 							rs.next();
 							String insertQuery = "INSERT INTO studentparkingspot_relation values(?,?,?,?,ParkingRequest_seq.nextval)";
 							preparedStatement = dbConnection.prepareStatement(insertQuery);
