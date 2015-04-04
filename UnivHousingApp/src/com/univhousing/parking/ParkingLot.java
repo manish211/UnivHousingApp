@@ -391,7 +391,6 @@ public class ParkingLot {
 			        e.printStackTrace();
 			      	}
 		}
-		
 	}
 
 	/**
@@ -719,9 +718,6 @@ public class ParkingLot {
 			      	}
 		}
 		
-				
-				
-		
 	}
 
 	/**
@@ -760,6 +756,7 @@ public class ParkingLot {
 			if (rs.isBeforeFirst()) 
 			{
 					rs.next();
+					
 					if(rs.getInt("total") == 0)
 					{
 						isSpotValid = false;
@@ -770,7 +767,6 @@ public class ParkingLot {
 						isSpotValid = true;
 						System.out.println("IT IS TRUE:checkSpotValidity ");
 					}
-					
 			}
 
 		} catch (SQLException e1) {
