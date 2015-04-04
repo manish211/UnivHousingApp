@@ -557,6 +557,8 @@ public class HousingStaffManagesLease_Relation {
 			 * status is PENDING
 			 */
 			dbConnection = ConnectionUtils.getConnection();
+			//dbConnection.setAutoCommit(false);
+			//dbConnection.commit();
 			String selectQuery = "SELECT termination_request_number "
 					+ "FROM TERMINATION_REQUESTS "
 					+ "WHERE UPPER(STATUS) = ?";
@@ -614,6 +616,18 @@ public class HousingStaffManagesLease_Relation {
 			
 			/*Write SQL Query to fetch the latest unpaid invoice and add the damageFees to already existing payment_due*/
 			
+			String selectPersonID = "SELECT person_id "
+					+ "FROM termination_requests "
+					+ "WHERE termination_request_number = ?";
+			rs.close();
+			preparedStatement.close();
+			
+			preparedStatement = dbConnection.prepareStatement(selectPersonID);
+			preparedStatement.setInt(1, requestNumber);
+			rs = preparedStatement.executeQuery();
+			rs.next();
+			int personID = rs.getInt("person_id");
+			
 			String selectQueryFees = "SELECT MAX(payment_date) as \"date\""
 					+ "FROM invoice_person_lease "
 					+ "WHERE payment_status <> ? "
@@ -628,8 +642,67 @@ public class HousingStaffManagesLease_Relation {
 			preparedStatement.setInt(2, requestNumber);
 			rs = preparedStatement.executeQuery();
 			
-			while (rs.next()) {
-				System.out.println("Maximum date: " + rs.getDate("date"));
+			if (rs.next()) {
+				Date maxDate = rs.getDate("date");
+				System.out.println("Maximum date: " + maxDate);
+
+				String selectQueryDamageFields = "SELECT monthly_housing_rent,"
+						+ "monthly_parking_rent,late_fees,incidental_charges,"
+						+ "damage_charges "
+						+ "FROM invoice_person_lease "
+						+ "WHERE payment_date = to_date(?,?) "
+						+ "AND person_id = (SELECT person_id FROM termination_requests "
+						+ "WHERE termination_request_number = ?)";
+				rs.close();
+				preparedStatement.close();
+
+				String a = "'";
+				String maximumDate = maxDate.toString();
+				maximumDate = a.concat(maximumDate);
+				maximumDate	= maximumDate.concat(a);
+				String dateFormat = "'yyyy-mm-dd'";
+				System.out.println("Maximum date and string and request number are: " 
+						+ maximumDate + " " + dateFormat + " " + requestNumber);
+
+				preparedStatement = dbConnection.prepareStatement(selectQueryDamageFields);
+				preparedStatement.setString(1, maximumDate);
+				preparedStatement.setString(2, dateFormat);
+				preparedStatement.setInt(3, requestNumber);
+
+				System.out.println("Before updating the table");
+				rs = preparedStatement.executeQuery();
+				System.out.println("After updating the table");
+				rs.next();
+				int monthlyHousingRent = rs.getInt("monthly_housing_rent");
+				int monthlyParkingRent = rs.getInt("monthly_parking_rent");
+				int lateFees = rs.getInt("late_fees");
+				int incidentalCharges = rs.getInt("incidental_charges");
+				int damageCharges = rs.getInt("damage_charges");
+
+				dbConnection.commit();
+				int totalCharges = monthlyHousingRent + monthlyParkingRent +
+						lateFees + incidentalCharges + damageCharges;
+				/*System.out.println(monthlyHousingRent + " " + monthlyParkingRent + " "
+					+ lateFees + " " + incidentalCharges + " " + damageCharges);*/
+				String updateQueryDamage = "UPDATE invoice_person_lease "
+						+ "SET payment_due = ?"
+						+ "WHERE (payment_date = to_date(?,?) "
+						+ "AND person_id = ? )";
+
+				rs.close();
+				Connection c1 =ConnectionUtils.getConnection();
+				PreparedStatement p1 = null;			
+				p1 = c1.prepareStatement(updateQueryDamage);
+				p1.setInt(1, totalCharges);
+				p1.setString(2, maximumDate);
+				p1.setString(3, dateFormat);
+				p1.setInt(4, personID);
+
+				//System.out.println(updateQueryDamage);
+				int z = p1.executeUpdate();
+				System.out.println("AFTER UPDATE");
+			} else {
+				System.out.println("No outstanding charges");
 			}
 		} catch (SQLException e1) {
 			System.out.println("SQLException: " + e1.getMessage());
