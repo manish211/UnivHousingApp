@@ -123,16 +123,59 @@ public class HousingStaffManagesLease_Relation {
 				duration = rs.getString("DURATION");
 				personID = rs.getInt("person_id");
 				moveInDate = rs.getDate("LEASE_MOVE_IN_DATE");
+				//cutOffDate = 
+				
 
 				preferences.add(rs.getString("ACCOMODATION_TYPE"));
 				preferences.add(rs.getString("PREFERENCE1"));
 				preferences.add(rs.getString("PREFERENCE2"));
 				preferences.add(rs.getString("PREFERENCE3"));
-
+				
+			/*	rs.close();
+				preparedStatement.close();
+*/
 			}
 
 			System.out.println("Do you want to approve this request? Y/N");
 			String approvalStatus = inputObj.next();
+			
+			
+			
+			
+			/*	START: Check to see if the person is already living on some lease Currently*/
+
+			
+
+			//System.out.println("BEFORE>>>>>>>>"+approvalStatus);
+
+			if (approvalStatus.equalsIgnoreCase("Y")) {
+				PreparedStatement ps2 = null;
+				ResultSet rs2 = null;
+				String queryToFindIfAlreadyLiving = "SELECT * FROM person_accomodation_lease WHERE person_id=?";
+				ps2 = dbConnection.prepareStatement(queryToFindIfAlreadyLiving);
+				ps2.setInt(1, personID);
+				rs2 = ps2.executeQuery();
+				if (!rs2.isBeforeFirst()) {
+
+					approvalStatus = "Y";
+				} else {
+					approvalStatus = "N";
+					System.out
+							.println("This is a duplicate Housing Request, Turn his/her status to waiting and inform the person!!!!");
+				}
+			}
+			
+
+		/*	rs.close();
+			preparedStatement.close();
+			*/
+			
+			
+			
+			
+			/*END: Check to see if the person is already living on some lease Currently*/
+			//System.out.println("AFTER>>>>>>>>"+approvalStatus);
+			
 			if (approvalStatus.equalsIgnoreCase("Y")) {
 
 				/*
@@ -151,6 +194,9 @@ public class HousingStaffManagesLease_Relation {
 
 				// boolean accAvailability =
 				// checkIfAccomodationTypeAvailable(preferences);
+				
+				
+				
 				ArrayList<String> availableAcco = checkIfAccomodationTypeAvailable(preferences);
 				selectQuery = "SELECT MAX(lease_no) AS lease_no "
 					+ "FROM Lease";
@@ -177,22 +223,27 @@ public class HousingStaffManagesLease_Relation {
 					 */
 
 					
-					String depositAmountResHall = "500";
+				//	System.out.println("TEST1");
+					
+					String depositAmountResHall = Constants.RESIDENCE_HALL_DEPOSITE;
 
-					String insertQuery = "INSERT INTO LEASE "
+					String insertQuery = "INSERT INTO LEASE (lease_no,deposit,mode_of_payment,duration) "
 							+ "VALUES (?,?,?,?)";
 					rs.close();
 					preparedStatement.close();
+					
 					preparedStatement = dbConnection
 							.prepareStatement(insertQuery);
 
 					preparedStatement.setInt(1, newLeaseNumber);
-					preparedStatement.setString(1, depositAmountResHall);
-					preparedStatement.setString(2, modeofPayment);
+					preparedStatement.setString(2, depositAmountResHall);
+					preparedStatement.setString(3, modeofPayment);
 					preparedStatement.setString(4, duration);
 					preparedStatement.executeUpdate();
 					preparedStatement.close();
 
+				//	System.out.println("TEST2");	
+					
 					String selectQueryRes = "SELECT accomodation_id "
 							+ "FROM residence_hall_provides_room "
 							+ "WHERE hall_number = (SELECT hall_number "
@@ -211,7 +262,10 @@ public class HousingStaffManagesLease_Relation {
 					rs.close();
 					preparedStatement.close();
 
-					String insertPerAccQuery = "INSERT INTO person_accomodation_lease "
+					//System.out.println("TEST3");
+					
+					System.out.println(newLeaseNumber);
+					String insertPerAccQuery = "INSERT INTO person_accomodation_lease (accomodation_id,person_id,lease_no,accomodation_type,lease_move_in_date) "
 							+ "VALUES(?,?,?,?,?)";
 
 					preparedStatement = dbConnection
@@ -227,9 +281,11 @@ public class HousingStaffManagesLease_Relation {
 							+ "WHERE application_request_no = ?";
 					preparedStatement.close();
 
+				//	System.out.println("TEST4");	
+				
 					preparedStatement = dbConnection
 							.prepareStatement(updateQuery);
-					preparedStatement.setString(1, Constants.APPROVED_STATUS);
+					preparedStatement.setString(1, Constants.PROCESSED_STATUS);
 					preparedStatement.setInt(2, requestNumber);
 					preparedStatement.executeUpdate();
 					preparedStatement.close();
@@ -244,7 +300,7 @@ public class HousingStaffManagesLease_Relation {
 					
 			
 
-					String depositeApartment = "1000"; // deposite
+					String depositeApartment = Constants.GENERAL_APARTMENT_DEPOSITE; // deposite
 
 					String SQL2 = "INSERT INTO LEASE (lease_no,deposit,mode_of_payment,duration) "
 							+ "VALUES (?,?,?,?)";
@@ -287,7 +343,7 @@ public class HousingStaffManagesLease_Relation {
 							+ "WHERE application_request_no = ?";
 
 					preparedStatement = dbConnection.prepareStatement(SQL5);
-					preparedStatement.setString(1, Constants.APPROVED_STATUS);
+					preparedStatement.setString(1, Constants.PROCESSED_STATUS);
 					preparedStatement.setInt(2, requestNumber);
 					preparedStatement.executeUpdate();
 					preparedStatement.close();
@@ -305,7 +361,7 @@ public class HousingStaffManagesLease_Relation {
 					accomodationTypeGiven = availableAcco.get(0);
 					wasAccomodationApproved = true;
 					
-					String depositeApartment = "2000";
+					String depositeApartment = Constants.FAMILY_APARTMENT_DEPOSITE;
 
 					String SQLF2 = "INSERT INTO LEASE (lease_no,deposit,mode_of_payment,duration) "
 							+ "VALUES (?,?,?,?)";
@@ -348,7 +404,7 @@ public class HousingStaffManagesLease_Relation {
 							+ "WHERE application_request_no = ?";
 
 					preparedStatement = dbConnection.prepareStatement(SQLF5);
-					preparedStatement.setString(1, Constants.APPROVED_STATUS);
+					preparedStatement.setString(1, Constants.PROCESSED_STATUS);
 					preparedStatement.setInt(2, requestNumber);
 					preparedStatement.executeUpdate();
 					preparedStatement.close();
@@ -367,7 +423,7 @@ public class HousingStaffManagesLease_Relation {
 							+ "WHERE application_request_no = ?";
 
 					preparedStatement = dbConnection.prepareStatement(selectQ1);
-					preparedStatement.setString(1, Constants.PENDING_STATUS);
+					preparedStatement.setString(1, Constants.WAITING_STATUS);
 					preparedStatement.setInt(2, requestNumber);
 					preparedStatement.executeUpdate();
 					preparedStatement.close();
@@ -382,7 +438,7 @@ public class HousingStaffManagesLease_Relation {
 						+ "WHERE application_request_no = ?";
 
 				preparedStatement = dbConnection.prepareStatement(selectQ1);
-				preparedStatement.setString(1, Constants.PENDING_STATUS);
+				preparedStatement.setString(1, Constants.WAITING_STATUS);
 				preparedStatement.setInt(2, requestNumber);
 				preparedStatement.executeUpdate();
 				preparedStatement.close();

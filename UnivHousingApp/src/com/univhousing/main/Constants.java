@@ -25,7 +25,8 @@ public class Constants {
 	public static final String PENDING_STATUS = "Pending";
 	public static final String PROCESSING_STATUS = "Processing";
 	public static final String COMPLETE_STATUS = "Complete";
-	public static final String APPROVED_STATUS = "Approved";
+	public static final String PROCESSED_STATUS = "Processed";
+	public static final String APPROVED_STATUS_PARKING = "Approved";
 	public static final String WAITING_STATUS = "Waiting";
 	public static final String PLACED_STATUS = "Waiting";
 	public static final String REJECTED_STATUS = "Rejected";
@@ -53,5 +54,9 @@ public class Constants {
 	public static final int MONTHS_IN_SEMESTER= 4;
 	public static final int LATE_FEES= 20;
 	public static final int INCIDENTAL_CHARGES= 20;
+	public static final String RESIDENCE_HALL_DEPOSITE = "500";
+	public static final String GENERAL_APARTMENT_DEPOSITE = "1000";
+	public static final String FAMILY_APARTMENT_DEPOSITE = "2000";
+	
 	
 }

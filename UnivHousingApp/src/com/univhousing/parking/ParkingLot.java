@@ -1111,7 +1111,7 @@ public class ParkingLot {
 		Connection conn3 = ConnectionUtils.getConnection();
 		String query3 = "UPDATE PersonParkingSpot_Relation SET request_Status = ? WHERE request_no = ?";
 		ps3 = conn3.prepareStatement(query3);
-		ps3.setString(1, Constants.APPROVED_STATUS);
+		ps3.setString(1, Constants.APPROVED_STATUS_PARKING);
 		ps3.setInt(2, requestNumber);
 		ps3.executeUpdate();
 		
