@@ -27,6 +27,7 @@ public class Constants {
 	public static final String COMPLETE_STATUS = "Complete";
 	public static final String APPROVED_STATUS = "Approved";
 	public static final String WAITING_STATUS = "Waiting";
+	public static final String PLACED_STATUS = "Waiting";
 	public static final String REJECTED_STATUS = "Rejected";
 	public static final String AVAILABLE = "Yes";
 	public static final String NOT_AVAILABLE = "No";

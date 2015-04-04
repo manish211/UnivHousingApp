@@ -48,6 +48,7 @@ public class EntryPoint {
 	public static void main(String[] args) {
 		Student studentObj = null; 
 		Credentials credentialObj = null;
+		Person personObj = null;
 		try {
 			Connection connectionObj = null;
 			Statement statementObj = null;
@@ -69,6 +70,7 @@ public class EntryPoint {
 				while(mLevelZero) {
 					studentObj = new Student();
 					credentialObj = new Credentials();
+					personObj = new Person();
 
 					System.out.println("\n1. Login");
 					System.out.println("2. Guest Login");
@@ -344,7 +346,7 @@ public class EntryPoint {
 												break;
 											case 4:
 												System.out.println("Showing Profile\n");
-												Person personObj = new Person();
+												personObj = new Person();
 
 												while(mLevelTwo)
 												{
@@ -425,7 +427,7 @@ public class EntryPoint {
 												break;
 											case 5:
 												System.out.println("Showing Profile\n");
-												Person personObj = new Person();
+												personObj = new Person();
 
 												while(mLevelTwo)
 												{
@@ -803,7 +805,7 @@ public class EntryPoint {
 											break;
 										case 4:
 											System.out.println("Showing Profile\n");
-											Person personObj = new Person();
+											personObj = new Person();
 
 											while(mLevelTwo)
 											{

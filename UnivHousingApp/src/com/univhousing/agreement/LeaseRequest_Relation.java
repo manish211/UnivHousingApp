@@ -11,6 +11,7 @@ import java.util.Scanner;
 import com.univhousing.main.ConnectionUtils;
 import com.univhousing.main.Constants;
 import com.univhousing.main.Utils;
+import com.univhousing.users.Person;
 
 public class LeaseRequest_Relation {
 
@@ -19,7 +20,7 @@ public class LeaseRequest_Relation {
 	public int personId;
 	public int staffNo;
 	public ArrayList<String> residenceHallNames = null;
-
+	Person personObj ;
 	/**
 	 * @param personId
 	 * @throws ParseException
@@ -29,7 +30,7 @@ public class LeaseRequest_Relation {
 	public void generateNewLeaseRequest(int personId) throws ParseException {
 
 		Scanner inputObj = new Scanner(System.in);
-
+		personObj = new Person();
 		Connection dbConnection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet rs = null;
@@ -259,6 +260,9 @@ public class LeaseRequest_Relation {
 				System.out
 						.println("Success!!!  Please Note down the Request Number for future References=>"
 								+ newApplicationRequestNumber);
+				
+				// Now updating the housing_status for this person to Waiting
+				personObj.updateHousingStatus(personId,Constants.WAITING_STATUS);
 
 			} else if (choice == 2) {
 				System.out.println("Request Cancelled");

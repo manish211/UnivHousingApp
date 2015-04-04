@@ -11,6 +11,7 @@ import java.util.Scanner;
 import com.sun.corba.se.pept.encoding.InputObject;
 import com.univhousing.main.ConnectionUtils;
 import com.univhousing.main.Constants;
+import com.univhousing.users.Person;
 
 public class HousingStaffManagesLease_Relation {
 
@@ -24,7 +25,8 @@ public class HousingStaffManagesLease_Relation {
 
 	boolean wasAccomodationApproved = false;
 	Scanner inputObj = new Scanner(System.in);
-
+	Person personObj ;
+	int personID = 0;
 	/**
 	 * @param ArrayList
 	 *            <Integer> allLeaseRequestsToMonitor
@@ -32,8 +34,8 @@ public class HousingStaffManagesLease_Relation {
 	 * @action This fetches all the new lease requests submitted for approval
 	 */
 	public void getAllNewLeaseRequests(
-			ArrayList<Integer> allLeaseRequestsToMonitor) throws SQLException {
-
+		ArrayList<Integer> allLeaseRequestsToMonitor) throws SQLException {
+		personObj =  new Person();
 		/* Write SQL Query to fetch all the lease requests pending for approval */
 
 		ResultSet rs = null;
@@ -45,7 +47,6 @@ public class HousingStaffManagesLease_Relation {
 		String modeofPayment = "";
 		Date moveInDate = null;
 		String duration = "";
-		int personID = 0;
 		int newLeaseNumber = 0;
 		String accomodationTypeGiven = "";
 		int accomodationIDGiven = 0;
@@ -392,9 +393,12 @@ public class HousingStaffManagesLease_Relation {
 			
 			// If the request was approved
 			if(wasAccomodationApproved)
-			{
+			{	
+				// Now updating the housing_status for this person to be placed
+				personObj.updateHousingStatus(personID,Constants.PLACED_STATUS);
+				
 				// We will write the logic for invoice generation for this person
-				generateInvoices(modeofPayment,personID,duration,moveInDate,newLeaseNumber,accomodationIDGiven,accomodationTypeGiven);
+				//generateInvoices(modeofPayment,personID,duration,moveInDate,newLeaseNumber,accomodationIDGiven,accomodationTypeGiven);
 			}
 			
 
@@ -531,6 +535,8 @@ public class HousingStaffManagesLease_Relation {
 					preparedStatement.close();
 					rs.close();
 				}
+				availableAcco.add(Constants.NOTHING_AVAILABLE);
+				return availableAcco;
 			} else if (type.equalsIgnoreCase(Constants.GENERAL_APARTMENT)) {
 				String selectQueryGenApt = "SELECT COUNT (B.apt_place_no) AS rooms "
 						+ "FROM bedroom B "
@@ -552,6 +558,8 @@ public class HousingStaffManagesLease_Relation {
 					preparedStatement.close();
 					rs.close();
 				}
+				availableAcco.add(Constants.NOTHING_AVAILABLE);
+				return availableAcco;
 			} else if (type.equalsIgnoreCase(Constants.FAMILY_APARTMENT)) {
 				String selectQueryFamApt = "SELECT COUNT (F.apt_no) AS apartments "
 						+ "FROM Family_Apartment F "
@@ -573,6 +581,8 @@ public class HousingStaffManagesLease_Relation {
 					preparedStatement.close();
 					rs.close();
 				}
+				availableAcco.add(Constants.NOTHING_AVAILABLE);
+				return availableAcco;
 			} else {
 				availableAcco.add(Constants.NOTHING_AVAILABLE);
 				return availableAcco;
@@ -620,6 +630,8 @@ public class HousingStaffManagesLease_Relation {
 			 * PENDING
 			 */
 			dbConnection = ConnectionUtils.getConnection();
+			//dbConnection.setAutoCommit(false);
+			//dbConnection.commit();
 			String selectQuery = "SELECT termination_request_number "
 					+ "FROM TERMINATION_REQUESTS " + "WHERE STATUS = ?";
 
@@ -687,7 +699,18 @@ public class HousingStaffManagesLease_Relation {
 			 * Write SQL Query to fetch the latest unpaid invoice and add the
 			 * damageFees to already existing payment_due
 			 */
-
+			String selectPersonID = "SELECT person_id "
+					+ "FROM termination_requests "
+					+ "WHERE termination_request_number = ?";
+			rs.close();
+			preparedStatement.close();
+			
+			preparedStatement = dbConnection.prepareStatement(selectPersonID);
+			preparedStatement.setInt(1, requestNumber);
+			rs = preparedStatement.executeQuery();
+			rs.next();
+			int personID = rs.getInt("person_id");
+			
 			String selectQueryFees = "SELECT MAX(payment_date) as \"date\""
 					+ "FROM invoice_person_lease "
 					+ "WHERE payment_status <> ? "
@@ -701,9 +724,152 @@ public class HousingStaffManagesLease_Relation {
 			preparedStatement.setString(1, "'Paid'");
 			preparedStatement.setInt(2, requestNumber);
 			rs = preparedStatement.executeQuery();
+			
+			rs.next();
+			Date maxDate = rs.getDate("date");
+			Date maxDateCopy = maxDate;
+			Date maxDateCopy1 = maxDateCopy;
+			String a = "'";
+			String maximumDate = maxDateCopy1.toString();
+			maximumDate = a.concat(maximumDate);
+			maximumDate	= maximumDate.concat(a);
+			String dateFormat = "'yyyy-mm-dd'";
+			if (maxDate == null) {
+				System.out.println("No outstanding charges");
+				System.out.println("Damage fees: " + damageFees);
+				
+				if (damageFees > 0) {
 
-			while (rs.next()) {
-				System.out.println("Maximum date: " + rs.getDate("date"));
+
+					/*
+					 * Query for getting invoice number from 
+					 * invoice_person_lease
+					 */
+					String selectQueryInvoiceNum = "SELECT MAX(invoice_no) as invoice_no "
+							+ "FROM invoice_person_lease "
+							+ "WHERE (payment_date = to_date(?,?)"
+							+ "AND person_id = ?) ";
+					rs.close();
+					preparedStatement.close();
+
+					preparedStatement = dbConnection.prepareStatement(selectQueryInvoiceNum);
+					preparedStatement.setString(1, maximumDate);
+					preparedStatement.setString(2, dateFormat);
+					preparedStatement.setInt(3, personID);
+
+					preparedStatement.executeQuery();
+					rs.next();
+					int invoiceNumber = rs.getInt("invoice_no");
+
+					String selectQueryLeaseNum = "SELECT lease_no "
+							+ "FROM invoice_person_lease "
+							+ "WHERE (payment_date = to_date(?,?) "
+							+ "AND person_id = ?";
+					rs.close();
+					preparedStatement.close();
+
+					preparedStatement = dbConnection.prepareStatement(selectQueryLeaseNum);
+					preparedStatement.setString(1, maximumDate);
+					preparedStatement.setString(2, dateFormat);
+					preparedStatement.setInt(3, personID);
+
+					preparedStatement.executeQuery();
+					rs.next();
+					int leaseNumber = rs.getInt("lease_no");
+
+					ResultSet r1 = null;
+					PreparedStatement p2 = null;
+					Connection c2 = null;
+
+					/*
+					 * Write a query to insert an entry into the invoice_person_lease table
+					 */
+					String insertQueryLease = "INSERT INTO invoice_person_lease "
+							+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+
+					c2 = ConnectionUtils.getConnection();
+					p2 = c2.prepareStatement(insertQueryLease);
+					p2.setInt(1, 0);
+					p2.setInt(2, 0);
+					p2.setInt(3, 0);
+					p2.setInt(4, 0);
+					p2.setInt(5, invoiceNumber);
+					p2.setDate(6, maxDate);
+					p2.setInt(7, leaseNumber);
+					p2.setString(8, "Credit");
+					p2.setString(9, "Outstanding");
+					p2.setInt(10, damageFees);
+					p2.setInt(11, 0);
+					p2.setInt(12, personID);
+
+					int insertRes = p2.executeUpdate();
+
+					p2.close();
+					c2.close();
+				} else {
+					/*
+					 * There are no damage fees. Write a query 
+					 * to remove the entry from person_accommodation_lease
+					 */
+					
+				}
+			} else {
+				System.out.println("Maximum date: " + maxDate);
+
+				String selectQueryDamageFields = "SELECT monthly_housing_rent,"
+						+ "monthly_parking_rent,late_fees,incidental_charges,"
+						+ "damage_charges "
+						+ "FROM invoice_person_lease "
+						+ "WHERE payment_date = to_date(?,?) "
+						+ "AND person_id = (SELECT person_id FROM termination_requests "
+						+ "WHERE termination_request_number = ?)";
+				rs.close();
+				preparedStatement.close();
+
+				
+				System.out.println("Maximum date and string and request number are: " 
+						+ maximumDate + " " + dateFormat + " " + requestNumber);
+
+				preparedStatement = dbConnection.prepareStatement(selectQueryDamageFields);
+				preparedStatement.setString(1, maximumDate);
+				preparedStatement.setString(2, dateFormat);
+				preparedStatement.setInt(3, requestNumber);
+
+				System.out.println("Before updating the table");
+				rs = preparedStatement.executeQuery();
+				System.out.println("After updating the table");
+				rs.next();
+				int monthlyHousingRent = rs.getInt("monthly_housing_rent");
+				int monthlyParkingRent = rs.getInt("monthly_parking_rent");
+				int lateFees = rs.getInt("late_fees");
+				int incidentalCharges = rs.getInt("incidental_charges");
+				int damageCharges = rs.getInt("damage_charges");
+
+				dbConnection.commit();
+				int totalCharges = monthlyHousingRent + monthlyParkingRent +
+						lateFees + incidentalCharges + damageCharges;
+				/*System.out.println(monthlyHousingRent + " " + monthlyParkingRent + " "
+					+ lateFees + " " + incidentalCharges + " " + damageCharges);*/
+				String updateQueryDamage = "UPDATE invoice_person_lease "
+						+ "SET payment_due = ?"
+						+ "WHERE (payment_date = to_date(?,?) "
+						+ "AND person_id = ? )";
+
+				rs.close();
+				Connection c1 =ConnectionUtils.getConnection();
+				PreparedStatement p1 = null;			
+				p1 = c1.prepareStatement(updateQueryDamage);
+				p1.setInt(1, totalCharges);
+				p1.setString(2, maximumDate);
+				p1.setString(3, dateFormat);
+				p1.setInt(4, personID);
+
+				//System.out.println(updateQueryDamage);
+				int z = p1.executeUpdate();
+				System.out.println("AFTER UPDATE");
+				p1.close();
+				c1.close();
+				
 			}
 		} catch (SQLException e1) {
 			System.out.println("SQLException: " + e1.getMessage());
