@@ -817,7 +817,7 @@ public class ParkingLot {
 		PreparedStatement ps1 = null;
 		Connection conn1 = ConnectionUtils.getConnection();
 		ResultSet allRequests = null;
-		String query = "SELECT request_no FROM StudentParkingSpot_Relation WHERE request_status = ?";
+		String query = "SELECT request_no FROM StudentParkingSpot_Relation_bk WHERE request_status = ?";
 		try
 		{
 			ps1 = conn1.prepareStatement(query);
@@ -836,10 +836,19 @@ public class ParkingLot {
 			{
 				System.out.println((i+1)+". "+parkingTicketsList.get(i));
 			}
-			System.out.println("Please select the parking request:");
-			int requestSelected = inputObj.nextInt();
-			requestNumber = parkingTicketsList.get(requestSelected-1);
-			System.out.println("Selected request number: "+requestNumber);
+			if(parkingTicketsList.size()>0)
+			{
+				System.out.println("Please select the parking request:");
+				int requestSelected = inputObj.nextInt();
+				requestNumber = parkingTicketsList.get(requestSelected-1);
+				System.out.println("Selected request number: "+requestNumber);
+			}
+			else
+			{
+				System.out.println("Great you're all done here");
+				return;
+			}
+			
 		}
 		catch(SQLException e)
 		{
@@ -867,156 +876,24 @@ public class ParkingLot {
 			{
 				/*Write SQL Query to change status of request to approved and 
 				 * also generate a permit_id which will be updated in atleast two tables*/
+
+				spotNumber = approveRequestAndFetchSpotNumber(requestNumber, spotNumber);
 				
-				PreparedStatement ps3 = null;
-				Connection conn3 = ConnectionUtils.getConnection();
-				String query3 = "UPDATE StudentParkingSpot_Relation SET request_Status = ? WHERE request_no = ?";
-				ps3 = conn3.prepareStatement(query3);
-				ps3.setString(1, Constants.APPROVED_STATUS);
-				ps3.setInt(2, requestNumber);
-				ps3.executeUpdate();
+				getTheMaxPermitIdFromTable(permitId);
 				
-				
-				PreparedStatement ps2 = null;
-				Connection conn2 = ConnectionUtils.getConnection();
-				String query2 = "SELECT MAX(permit_id) AS MAX_PERMIT_ID FROM person_accomodation_lease";
-				ps2 = conn2.prepareStatement(query2);
-				ResultSet maxPermit = ps2.executeQuery();
-				
-				while(maxPermit.next())
-				{
-					permitId = maxPermit.getInt("MAX_PERMIT_ID");
-					break;
-				}
-				ConnectionUtils.closeConnection(conn2);
-				
-				 
-				 /*Write SQL Query to update permit_id in parkingSpot_belongs_parkingLot and person_accomodation_lease*/
+				/*Write SQL Query to update permit_id in parkingSpot_belongs_parkingLot and person_accomodation_lease*/
 				 // Get the studentId for this request_no
 				studentId = getStudentIdFromParkingRequest(requestNumber);
 				
 				// Get the personId
 				int personId = studentObj.getPersonIdForStudentId(studentId);
 				
-				 // First we need to get a spot_no that has to be assigned to student based on his nearby location if possible
-				spotNumber = getASpotForParkingRequest(personId, requestNumber, studentId, false, permitId);
-				// If spotNumber is -1, that means we did not get a spot near the student's residence and will look for spot anywhere that's available
-				if(spotNumber == -1)
-				{
-					System.out.println("No Spot available near your residence, finding another spot");
-					spotNumber = getASpotForParkingRequest(personId, requestNumber, studentId, true, permitId);
-				}
-			}
-			else if(requestApprovalStatus.equalsIgnoreCase("N") || requestApprovalStatus.equalsIgnoreCase("No"))
-			{
-				/*Write SQL Query to change status of request to denied*/
-				System.out.println("Your Parking request has been denied");
-				PreparedStatement ps3 = null;
-				Connection conn3 = ConnectionUtils.getConnection();
-				String query3 = "UPDATE StudentParkingSpot_Relation SET request_Status = ? WHERE request_no = ?";
-				ps3 = conn3.prepareStatement(query3);
-				ps3.setString(1, Constants.REJECTED_STATUS);
-				ps3.setInt(2, requestNumber);
-				ps3.executeUpdate();
-			}
-		}
-		catch(SQLException e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-	private int getASpotForParkingRequest(int personId, int requestNumber, int studentId, boolean lookAnyWhere, int maxPermitId) {
-		
-		int spotNumber = -1, accomodation_id = 0;
-		String accomodation_type = "";
-		
-		System.out.println("Student id: "+studentId);
-		System.out.println("PersonId: "+personId);
-		try
-		{
-			// Get the accommodation id and accommodation type of the person
-			PreparedStatement ps4 = null;
-			Connection conn4 = ConnectionUtils.getConnection();
-			String query4 = "SELECT L.accomodation_id, L.accomodation_type FROM person_accomodation_lease L " +
-					"WHERE L.lease_move_in_date = (SELECT MAX(L2.lease_move_in_date) FROM person_accomodation_lease L2 WHERE L2.person_id = ?" +
-					" AND L2.person_id = L.person_id)";
-			ps4 = conn4.prepareStatement(query4);
-			ps4.setInt(1, personId);
-			ResultSet getAccInfo = ps4.executeQuery();
-			
-			while(getAccInfo.next())
-			{
-				accomodation_id = getAccInfo.getInt("accomodation_id");
-				accomodation_type = getAccInfo.getString("accomodation_type");
-				System.out.println("Accomodation id: "+ accomodation_id+ " and accomodation type: "+accomodation_type);
-			}
-			
-			String tableToQuery = "";
-			if(accomodation_type.equalsIgnoreCase(Constants.GENERAL_APARTMENT))
-				tableToQuery = Constants.TABLE_GENERAL_APARTMENT;
-			else if(accomodation_type.equalsIgnoreCase(Constants.RESIDENCE_HALL))
-				tableToQuery = Constants.TABLE_RESIDENCE_HALL;
-			else if(accomodation_type.equalsIgnoreCase(Constants.FAMILY_APARTMENT))
-				tableToQuery = Constants.TABLE_FAMILY_APARTMENT;
-			
-			PreparedStatement ps5 = null;
-			Connection conn5 = ConnectionUtils.getConnection();
-			String query5 = "SELECT P.spot_no FROM parkingSpot_belongs_parkingLot P WHERE P.availability = ? " +
-					"AND P.zip_code = (SELECT zip_code FROM "+tableToQuery+"  WHERE accomodation_id = ?)";
-
-			String query6 = "SELECT P.spot_no FROM parkingSpot_belongs_parkingLot P WHERE P.availability = ? ";
-
-			// If the lookAnyWhere flag is false, this means that we have to find parking spot near to student's residence else not
-			if(lookAnyWhere)
-			{
-				ps5 = conn5.prepareStatement(query6);
-				ps5.setString(1, Constants.AVAILABLE);
-			}
-			else
-			{
-				if(tableToQuery.equalsIgnoreCase(Constants.TABLE_RESIDENCE_HALL))
-				{
-					String query7 = "SELECT P.spot_no FROM parkingSpot_belongs_parkingLot P WHERE P.availability = ? " +
-					"AND P.zip_code = (SELECT zip_code FROM "+tableToQuery+"  WHERE hall_number = ?)";
-					ps5 = conn5.prepareStatement(query7);
-					ps5.setString(1, Constants.AVAILABLE);
-					ps5.setInt(2, accomodation_id);
-				}
-				else
-				{
-					ps5 = conn5.prepareStatement(query5);
-					ps5.setString(1, Constants.AVAILABLE);
-					ps5.setInt(2, accomodation_id);
-				}
-			}
-			
-			
-			ResultSet getSpot = ps5.executeQuery();
-			
-			while(getSpot.next())
-			{
-				spotNumber = getSpot.getInt("spot_no");
-				break;
-			}
-			
-			
-			// This condition checks if there was no parking spot even available far from the student's residence
-			if(spotNumber == -1)
-			{
-				System.out.println(Constants.PARKING_SPOTS_FULL);
-				PreparedStatement ps10 = null;
-				Connection conn10 = ConnectionUtils.getConnection();
-				String query10 = "UPDATE StudentParkingSpot_Relation SET request_Status = ? WHERE request_no = ?";
-				ps10 = conn10.prepareStatement(query10);
-				ps10.setString(1, Constants.REJECTED_STATUS);
-				ps10.setInt(2, requestNumber);
-				ps10.executeUpdate();
-			}
-			else
-			{
+				 /*Write SQL Queries to update 2 tables
+				  * 1. Update person_accomodation_lease to put permit id
+				  * 2. Update parkingSpot_belongs_parkingLot to change availability */
+				
 				// This is done so that we get the new permitId and not do permitId++ every time for each insert/update query
-				int newPermitId = ++maxPermitId;
+				int newPermitId = ++permitId;
 
 				System.out.println("Congratulations you have got a parking spot and your permit id is: "+newPermitId);
 				// We will now update person_accomodation_lease table once the spot is found
@@ -1029,7 +906,7 @@ public class ParkingLot {
 				ps8.executeUpdate();
 				System.out.println("Updated person_accomodation_lease table");
 				
-				// We will now update person_accomodation_lease table once the spot is found
+				// We will now update parkingSpot_belongs_parkingLot table once the spot is found
 				PreparedStatement ps9 = null;
 				Connection conn9 = ConnectionUtils.getConnection();
 				String query9 = "UPDATE parkingSpot_belongs_parkingLot SET permit_id = ?, availability = ? WHERE spot_no = ?";
@@ -1039,15 +916,86 @@ public class ParkingLot {
 				ps9.setInt(3, spotNumber);
 				ps9.executeUpdate();
 				System.out.println("Updated parkingSpot_belongs_parkingLot table");
+				
+			}
+			else if(requestApprovalStatus.equalsIgnoreCase("N") || requestApprovalStatus.equalsIgnoreCase("No"))
+			{
+				rejectTheParkingRequest(requestNumber);
 			}
 		}
 		catch(SQLException e)
 		{
 			e.printStackTrace();
 		}
+	}
+
+	
+
+	/**
+	 * @param permitId
+	 * @return The maximum permit Id fetched from the table and this wil be used to get the next permit id to be alloted
+	 * @throws SQLException
+	 */
+	private int getTheMaxPermitIdFromTable(int permitId) throws SQLException {
 		
+		PreparedStatement ps2 = null;
+		Connection conn2 = ConnectionUtils.getConnection();
+		String query2 = "SELECT MAX(permit_id) AS MAX_PERMIT_ID FROM person_accomodation_lease";
+		ps2 = conn2.prepareStatement(query2);
+		ResultSet maxPermit = ps2.executeQuery();
+		
+		while(maxPermit.next())
+		{
+			permitId = maxPermit.getInt("MAX_PERMIT_ID");
+			break;
+		}
+		ConnectionUtils.closeConnection(conn2);
+		return permitId;
+	}
+
+	/**
+	 * @param requestNumber
+	 * @throws SQLException
+	 * @action Approves the request for a particular request number and updates the status of the request in the table
+	 */
+	private int approveRequestAndFetchSpotNumber(int requestNumber, int spotNumber) throws SQLException 
+	{
+		PreparedStatement ps3 = null;
+		Connection conn3 = ConnectionUtils.getConnection();
+		String query3 = "UPDATE StudentParkingSpot_Relation_bk SET request_Status = ? WHERE request_no = ?";
+		ps3 = conn3.prepareStatement(query3);
+		ps3.setString(1, Constants.APPROVED_STATUS);
+		ps3.setInt(2, requestNumber);
+		ps3.executeUpdate();
+		
+		
+		PreparedStatement ps11 = null;
+		Connection conn11 = ConnectionUtils.getConnection();
+		String query11 = "SELECT spot_no FROM StudentParkingSpot_Relation_bk WHERE request_no = ?";
+		ps11 = conn11.prepareStatement(query11);
+		ps11.setInt(1, requestNumber);
+		ps11.executeUpdate();
 		
 		return spotNumber;
+	}
+
+	/**
+	 * @param requestNumber
+	 * @throws SQLException
+	 * @action Rejects the request for a particular request number and updates the status of the request in the table
+	 */
+	private void rejectTheParkingRequest(int requestNumber) throws SQLException 
+	{
+		/*Write SQL Query to change status of request to denied*/
+		System.out.println("Your Parking request has been denied");
+		PreparedStatement ps3 = null;
+		Connection conn3 = ConnectionUtils.getConnection();
+		String query3 = "UPDATE StudentParkingSpot_Relation_bk SET request_Status = ? WHERE request_no = ?";
+		ps3 = conn3.prepareStatement(query3);
+		ps3.setString(1, Constants.REJECTED_STATUS);
+		ps3.setInt(2, requestNumber);
+		ps3.executeUpdate();
+		
 	}
 
 	private int getStudentIdFromParkingRequest(int requestNumber) {
@@ -1056,7 +1004,7 @@ public class ParkingLot {
 		{
 			PreparedStatement ps3 = null;
 			Connection conn3 = ConnectionUtils.getConnection();
-			String query3 = "SELECT student_id FROM StudentParkingSpot_Relation WHERE request_no = ?";
+			String query3 = "SELECT student_id FROM StudentParkingSpot_Relation_bk WHERE request_no = ?";
 			ps3 = conn3.prepareStatement(query3);
 			ps3.setInt(1, requestNumber);
 			ResultSet getStudentID = ps3.executeQuery();
