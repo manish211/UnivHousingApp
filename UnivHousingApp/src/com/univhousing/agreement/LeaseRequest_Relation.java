@@ -86,8 +86,9 @@ public class LeaseRequest_Relation {
 
 			/************************************************************************/
 
-			System.out.println("Enter the period of leasing: ");
-			int periodOfLeasing = inputObj.nextInt();
+			System.out.println("IMPORTANT INFORMATION : One semester is equal to 4 months");
+			System.out.println("Enter the period of leasing[as No of semesters 1 2 or 3 max]: ");
+			String periodOfLeasing = inputObj.nextLine();
 
 			if (isFreshmen == false) {
 				System.out.println("Welcome " + studentName + "!");
@@ -158,6 +159,64 @@ public class LeaseRequest_Relation {
 				}
 
 			}
+			
+			/*SELECTING STAFF NO BLOCK START*/
+			String query3 = "SELECT MAX(staff_no) AS LastStaff FROM ticket_person_staff";
+			int staffNoMax = 0;
+			int staffNoMin=0;
+			try 
+			{
+				preparedStatement = dbConnection.prepareStatement(query3);
+				ResultSet max = preparedStatement.executeQuery();
+				while(max.next())
+				{
+					staffNoMax = max.getInt("LastStaff");
+				}
+				
+				max.close();
+				preparedStatement.close();
+			}
+			catch(SQLException e)
+			{
+				try {
+					ConnectionUtils.closeConnection(dbConnection);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				e.printStackTrace();
+			}
+			
+			//PreparedStatement preparedStatement = null;
+			//Connection conn1 = ConnectionUtils.getConnection();
+			String query4 = "SELECT MIN(staff_no) AS FirstStaff FROM ticket_person_staff";
+			
+			try 
+			{
+				preparedStatement = dbConnection.prepareStatement(query4);
+				ResultSet min = preparedStatement.executeQuery();
+				while(min.next())
+				{
+					staffNoMin = min.getInt("FirstStaff");
+				}
+			}
+			catch(SQLException e)
+			{
+				try {
+					ConnectionUtils.closeConnection(dbConnection);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				e.printStackTrace();
+			}
+			
+			// Getting a random staff number between First and the Last staff
+			staffNo = Utils.randomizeStaff(staffNoMax, staffNoMin);
+			
+			
+			
+			/*SELECTING STAFF NI BLOCK END*/
 
 			System.out.println("Date you want to enter in MM/dd/YYYY format: ");
 			String moveInDate = inputObj.next();
@@ -180,8 +239,8 @@ public class LeaseRequest_Relation {
 
 				String reqStatus = Constants.PENDING_STATUS;
 				String selectQuery3 = "INSERT INTO PERSON_ACC_STAFF (application_request_no,accomodation_type,person_id,request_status, "
-						+ "mode_of_payment,lease_move_in_date,duration,PREFERENCE1,PREFERENCE2,PREFERENCE3) "
-						+ "VALUES (?,?,?,?,?,?,?,?,?,?)";
+						+ "mode_of_payment,lease_move_in_date,duration,PREFERENCE1,PREFERENCE2,PREFERENCE3,staff_no) "
+						+ "VALUES (?,?,?,?,?,?,?,?,?,?,?)";
 
 				preparedStatement = dbConnection.prepareStatement(selectQuery3);
 				preparedStatement.setInt(1, newApplicationRequestNumber);
@@ -190,10 +249,11 @@ public class LeaseRequest_Relation {
 				preparedStatement.setString(4, reqStatus);
 				preparedStatement.setString(5, paymentOption);
 				preparedStatement.setDate(6, sqlMoveInDate);
-				preparedStatement.setInt(7, periodOfLeasing);
+				preparedStatement.setString(7, periodOfLeasing);
 				preparedStatement.setString(8, hallPreference1);
 				preparedStatement.setString(9, hallPreference2);
 				preparedStatement.setString(10, hallPreference3);
+				preparedStatement.setInt(11, staffNo);
 				preparedStatement.executeUpdate();
 
 				System.out
