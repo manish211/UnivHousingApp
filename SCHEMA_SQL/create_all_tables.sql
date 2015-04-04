@@ -157,7 +157,7 @@ CREATE TABLE parkingSpot_belongs_parkingLot(
 lot_no INTEGER,
 spot_no INTEGER,
 PRIMARY KEY(spot_no),
-availability varcahr2(10),
+availability varchar2(10),
 permit_id INTEGER UNIQUE,
 zip_code INTEGER,
 FOREIGN KEY(lot_no) REFERENCES parking_lot);
@@ -266,7 +266,7 @@ spot_no INTEGER,
 student_id INTEGER,
 request_status VARCHAR2(20),
 request_no INTEGER,
-PRIMARY KEY(lot_no,spot_no,student_id),
+PRIMARY KEY(request_no),
 FOREIGN KEY(lot_no) REFERENCES parking_lot,
 FOREIGN KEY(spot_no) REFERENCES parkingSpot_parkingLot,
 FOREIGN KEY(student_id) REFERENCES Student);

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import com.univhousing.main.ConnectionUtils;
+import com.univhousing.main.Constants;
 import com.univhousing.main.Utils;
 
 public class LeaseRequest_Relation {
@@ -56,7 +57,7 @@ public class LeaseRequest_Relation {
 				studentName = rs.getString("first_name");
 				String tempStr = rs.getString("Student_type");
 
-				if (tempStr.equals("FRESHMEN")) {
+				if (tempStr.equals(Constants.FRESHMEN)) {
 					isFreshmen = true;
 
 				}
@@ -103,7 +104,7 @@ public class LeaseRequest_Relation {
 					hallPreference2 = "NA";
 					hallPreference3 = "NA";
 				} else if (housingOption.equals("b")) {
-					housingOption = "Residence Hall";
+					housingOption = Constants.RESIDENCE_HALL;
 
 					residenceHallNames = getHallNameList();
 
@@ -112,13 +113,13 @@ public class LeaseRequest_Relation {
 					hallPreference3 = residenceHallNames.get(2);
 
 				} else if (housingOption.equals("c")) {
-					housingOption.replaceAll("c", "Apartment");
-					housingOption = "Apartment";
+					housingOption.replaceAll("c", Constants.GENERAL_APARTMENT);
+					housingOption = Constants.GENERAL_APARTMENT;
 					hallPreference1 = "NA";
 					hallPreference2 = "NA";
 					hallPreference3 = "NA";
 				} else if (housingOption.equals("d")) {
-					housingOption = "Family Apartment";
+					housingOption = Constants.FAMILY_APARTMENT;
 					hallPreference1 = "NA";
 					hallPreference2 = "NA";
 					hallPreference3 = "NA";
@@ -138,19 +139,19 @@ public class LeaseRequest_Relation {
 				housingOption = inputObj.next();
 
 				if (housingOption.equals("a")) {
-					housingOption = "Residence Hall";
+					housingOption = Constants.RESIDENCE_HALL;
 
 					residenceHallNames = getHallNameList();
 					hallPreference1 = residenceHallNames.get(0);
 					hallPreference2 = residenceHallNames.get(1);
 					hallPreference3 = residenceHallNames.get(2);
 				} else if (housingOption.equals("b")) {
-					housingOption = "Apartment";
+					housingOption = Constants.GENERAL_APARTMENT;
 					hallPreference1 = "NA";
 					hallPreference2 = "NA";
 					hallPreference3 = "NA";
 				} else if (housingOption.equals("c")) {
-					housingOption = "Family Apartment";
+					housingOption = Constants.FAMILY_APARTMENT;
 					hallPreference1 = "NA";
 					hallPreference2 = "NA";
 					hallPreference3 = "NA";
@@ -167,9 +168,9 @@ public class LeaseRequest_Relation {
 					+ "b) Semester\n");
 			String paymentOption = inputObj.next();
 			if (paymentOption.equals("a"))
-				paymentOption = "Monthly";
+				paymentOption = Constants.PAYMENTOPTION_MONTHLY;
 			else if (paymentOption.equals("b"))
-				paymentOption = "Semester";
+				paymentOption = Constants.PAYMENTOPTION_SEMESTER;
 
 			System.out.println("Do you want to: \n" + "1. Submit\n"
 					+ "2. Back ");
@@ -177,7 +178,7 @@ public class LeaseRequest_Relation {
 			int choice = inputObj.nextInt();
 			if (choice == 1) {
 
-				String reqStatus = "Pending";
+				String reqStatus = Constants.PENDING_STATUS;
 				String selectQuery3 = "INSERT INTO PERSON_ACC_STAFF (application_request_no,accomodation_type,person_id,request_status, "
 						+ "mode_of_payment,lease_move_in_date,duration,PREFERENCE1,PREFERENCE2,PREFERENCE3) "
 						+ "VALUES (?,?,?,?,?,?,?,?,?,?)";

@@ -52,7 +52,7 @@ public class HousingStaffManagesLease_Relation {
 			dbConnection = ConnectionUtils.getConnection();
 			String selectQuery = "SELECT application_request_no "
 					+ "FROM PERSON_ACC_STAFF "
-					+ "WHERE UPPER(request_status) = ?";
+					+ "WHERE request_status = ?";
 
 			preparedStatement = dbConnection.prepareStatement(selectQuery);
 			preparedStatement.setString(1, status);
@@ -213,12 +213,13 @@ public class HousingStaffManagesLease_Relation {
 					preparedStatement.setDate(5, moveInDate);
 					preparedStatement.executeUpdate();
 					
-					String updateQuery = "UPDATE PERSON_ACC_STAFF SET request_status = 'APPROVED' "
+					String updateQuery = "UPDATE PERSON_ACC_STAFF SET request_status = ? "
 							+ "WHERE application_request_no = ?";
 					preparedStatement.close();
 					
 					preparedStatement = dbConnection.prepareStatement(updateQuery);
-					preparedStatement.setInt(1, requestNumber);
+					preparedStatement.setString(1, Constants.APPROVED_STATUS);
+					preparedStatement.setInt(2, requestNumber);
 					preparedStatement.executeUpdate();
 					preparedStatement.close();
 
@@ -278,11 +279,12 @@ public class HousingStaffManagesLease_Relation {
 					preparedStatement.executeUpdate();
 					preparedStatement.close();
 
-					String SQL5 = "UPDATE PERSON_ACC_STAFF SET request_status = 'Approved' "
+					String SQL5 = "UPDATE PERSON_ACC_STAFF SET request_status = ? "
 							+ "WHERE application_request_no = ?";
 
 					preparedStatement = dbConnection.prepareStatement(SQL5);
-					preparedStatement.setInt(1, requestNumber);
+					preparedStatement.setString(1, Constants.APPROVED_STATUS);
+					preparedStatement.setInt(2, requestNumber);
 					preparedStatement.executeUpdate();
 					preparedStatement.close();
 
@@ -352,11 +354,12 @@ public class HousingStaffManagesLease_Relation {
 
 					
 
-					String SQLF5 = "UPDATE PERSON_ACC_STAFF SET request_status = 'Approved' "
+					String SQLF5 = "UPDATE PERSON_ACC_STAFF SET request_status = ? "
 							+ "WHERE application_request_no = ?";
 
 					preparedStatement = dbConnection.prepareStatement(SQLF5);
-					preparedStatement.setInt(1, requestNumber);
+					preparedStatement.setString(1, Constants.APPROVED_STATUS);
+					preparedStatement.setInt(2, requestNumber);
 					preparedStatement.executeUpdate();
 					preparedStatement.close();
 
@@ -374,36 +377,34 @@ public class HousingStaffManagesLease_Relation {
 				} else if (availableAcco.get(0).equalsIgnoreCase(
 						Constants.NOTHING_AVAILABLE)) {
 
-					String selectQ1 = "UPDATE PERSON_ACC_STAFF SET request_status = 'Waiting' "
+					String selectQ1 = "UPDATE PERSON_ACC_STAFF SET request_status = ? "
 							+ "WHERE application_request_no = ?";
 
 					preparedStatement = dbConnection.prepareStatement(selectQ1);
-					preparedStatement.setInt(1, requestNumber);
+					preparedStatement.setString(1, Constants.PENDING_STATUS);
+					preparedStatement.setInt(2, requestNumber);
 					preparedStatement.executeUpdate();
 					preparedStatement.close();
 
 					System.out.println("The status for Request Id "
 							+ requestNumber + " is turned to Waiting!");
-					/*
-					 * First we will write a query to approve the status,
-					 * irrespective of whether there is accommodation available
-					 * for that accommodation type
-					 */
-
-					/*
-					 * Write SQL Query to change the status of the request to
-					 * waiting list, this can be done from table
-					 * PERSON_ACC_STAFF (not sure)
-					 */
-
-					ResultSet changeRequestStatus = null;
 
 				}
 			} else { // if availableAcco ="N"
-				/*
-				 * You DO NOT want to approve the request. Put the student's
-				 * request in the waiting list.
-				 */
+
+				String selectQ1 = "UPDATE PERSON_ACC_STAFF SET request_status = ? "
+					+ "WHERE application_request_no = ?";
+
+			preparedStatement = dbConnection.prepareStatement(selectQ1);
+			preparedStatement.setString(1, Constants.PENDING_STATUS);
+			preparedStatement.setInt(2, requestNumber);
+			preparedStatement.executeUpdate();
+			preparedStatement.close();
+
+			System.out.println("The status for Request Id "
+					+ requestNumber + " is not Approved and hence turned to Waiting!");
+
+
 			}
 
 		} catch (SQLException e1) {
@@ -443,7 +444,7 @@ public class HousingStaffManagesLease_Relation {
 		try {
 			dbConnection = ConnectionUtils.getConnection();
 
-			if (type.toUpperCase().equals(Constants.RESIDENCE_HALL)) {
+			if (type.equalsIgnoreCase(Constants.RESIDENCE_HALL)) {
 				for (int i = 0; i < 3; i++) {
 					String selectQueryPref = "SELECT COUNT(accomodation_id) AS count "
 							+ "FROM residence_hall_provides_room "
@@ -469,7 +470,7 @@ public class HousingStaffManagesLease_Relation {
 					preparedStatement.close();
 					rs.close();
 				}
-			} else if (type.toUpperCase().equals(Constants.GENERAL_APARTMENT)) {
+			} else if (type.equalsIgnoreCase(Constants.GENERAL_APARTMENT)) {
 				String selectQueryGenApt = "SELECT COUNT (B.apt_place_no) AS rooms "
 						+ "FROM bedroom B "
 						+ "WHERE B.accomodation_id  NOT IN "
@@ -490,7 +491,7 @@ public class HousingStaffManagesLease_Relation {
 					preparedStatement.close();
 					rs.close();
 				}
-			} else if (type.toUpperCase().equals(Constants.FAMILY_APARTMENT)) {
+			} else if (type.equalsIgnoreCase(Constants.FAMILY_APARTMENT)) {
 				String selectQueryFamApt = "SELECT COUNT (F.apt_no) AS apartments "
 						+ "FROM Family_Apartment F "
 						+ "WHERE F.accomodation_id NOT IN "
@@ -560,7 +561,7 @@ public class HousingStaffManagesLease_Relation {
 			dbConnection = ConnectionUtils.getConnection();
 			String selectQuery = "SELECT termination_request_number "
 					+ "FROM TERMINATION_REQUESTS "
-					+ "WHERE UPPER(STATUS) = ?";
+					+ "WHERE STATUS = ?";
 		
 			preparedStatement = dbConnection.prepareStatement(selectQuery);
 			preparedStatement.setString(1, status);
