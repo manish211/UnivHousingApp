@@ -642,8 +642,11 @@ public class HousingStaffManagesLease_Relation {
 			preparedStatement.setInt(2, requestNumber);
 			rs = preparedStatement.executeQuery();
 			
-			if (rs.next()) {
-				Date maxDate = rs.getDate("date");
+			rs.next();
+			Date maxDate = rs.getDate("date");
+			if (maxDate == null) {
+				System.out.println("No outstanding charges");
+			} else {
 				System.out.println("Maximum date: " + maxDate);
 
 				String selectQueryDamageFields = "SELECT monthly_housing_rent,"
@@ -701,8 +704,9 @@ public class HousingStaffManagesLease_Relation {
 				//System.out.println(updateQueryDamage);
 				int z = p1.executeUpdate();
 				System.out.println("AFTER UPDATE");
-			} else {
-				System.out.println("No outstanding charges");
+				p1.close();
+				c1.close();
+				
 			}
 		} catch (SQLException e1) {
 			System.out.println("SQLException: " + e1.getMessage());
