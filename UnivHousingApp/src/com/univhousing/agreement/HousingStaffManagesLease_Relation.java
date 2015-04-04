@@ -644,8 +644,80 @@ public class HousingStaffManagesLease_Relation {
 			
 			rs.next();
 			Date maxDate = rs.getDate("date");
+			Date maxDateCopy = maxDate;
+			Date maxDateCopy1 = maxDateCopy;
+			String a = "'";
+			String maximumDate = maxDateCopy1.toString();
+			maximumDate = a.concat(maximumDate);
+			maximumDate	= maximumDate.concat(a);
+			String dateFormat = "'yyyy-mm-dd'";
 			if (maxDate == null) {
 				System.out.println("No outstanding charges");
+				System.out.println("Damage fees: " + damageFees);
+				
+				/*
+				 * Query for getting invoice number from 
+				 * invoice_person_lease
+				 */
+				String selectQueryInvoiceNum = "SELECT MAX(invoice_no) as invoice_no "
+						+ "FROM invoice_person_lease "
+						+ "WHERE (payment_date = to_date(?,?)"
+						+ "AND person_id = ?) ";
+				rs.close();
+				preparedStatement.close();
+				
+				preparedStatement = dbConnection.prepareStatement(selectQueryInvoiceNum);
+				preparedStatement.setString(1, maximumDate);
+				preparedStatement.setString(2, dateFormat);
+				preparedStatement.setInt(3, personID);
+				
+				preparedStatement.executeQuery();
+				rs.next();
+				int invoiceNumber = rs.getInt("invoice_no");
+				
+				String selectQueryLeaseNum = "SELECT lease_no "
+						+ "FROM invoice_person_lease "
+						+ "WHERE (payment_date = to_date(?,?) "
+						+ "AND person_id = ?";
+				rs.close();
+				preparedStatement.close();
+				
+				preparedStatement = dbConnection.prepareStatement(selectQueryLeaseNum);
+				preparedStatement.setString(1, maximumDate);
+				preparedStatement.setString(2, dateFormat);
+				preparedStatement.setInt(3, personID);
+				
+				preparedStatement.executeQuery();
+				rs.next();
+				int leaseNumber = rs.getInt("lease_no");
+				
+				ResultSet r1 = null;
+				PreparedStatement p2 = null;
+				Connection c2 = null;
+				
+				String insertQueryLease = "INSERT INTO invoice_person_lease "
+						+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+				
+				p2 = c2.prepareStatement(insertQueryLease);
+				p2.setInt(1, 0);
+				p2.setInt(2, 0);
+				p2.setInt(3, 0);
+				p2.setInt(4, 0);
+				p2.setInt(5, invoiceNumber);
+				p2.setDate(6, maxDate);
+				p2.setInt(7, leaseNumber);
+				p2.setString(8, "Credit");
+				p2.setString(9, "Outstanding");
+				p2.setInt(10, damageFees);
+				p2.setInt(11, 0);
+				p2.setInt(12, personID);
+				
+				int insertRes = p2.executeUpdate();
+				
+				/*
+				 * Write a query to insert an entry into the invoice_person_lease table
+				 */
+				
 			} else {
 				System.out.println("Maximum date: " + maxDate);
 
@@ -659,11 +731,7 @@ public class HousingStaffManagesLease_Relation {
 				rs.close();
 				preparedStatement.close();
 
-				String a = "'";
-				String maximumDate = maxDate.toString();
-				maximumDate = a.concat(maximumDate);
-				maximumDate	= maximumDate.concat(a);
-				String dateFormat = "'yyyy-mm-dd'";
+				
 				System.out.println("Maximum date and string and request number are: " 
 						+ maximumDate + " " + dateFormat + " " + requestNumber);
 
