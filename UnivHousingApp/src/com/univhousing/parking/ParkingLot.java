@@ -41,7 +41,6 @@ public class ParkingLot {
 			handicappedInfo = inputObj.next();
 		}
 		
-		
 		if(handicappedInfo.equals("N"))
 		{
 			boolean inputInvalid = true;
@@ -91,8 +90,6 @@ public class ParkingLot {
 		
 		if(flag == 1)
 		{			
-			System.out.println("marker1");
-			System.out.println("marker1");
 			// Fetch the student Id for a particular Person Id
 			studentObj.studentId = studentObj.getStudentIdForPersonId(personId);
 			
@@ -144,9 +141,7 @@ public class ParkingLot {
 					else
 						preparedStatement.setString(1,vehicleType);
 						
-					System.out.println("Marker1");
 					rs = preparedStatement.executeQuery();
-					System.out.println("Marker2");
 					//If record exists , rs.next() will evaluate to true
 					if(rs.isBeforeFirst())
 						{
@@ -396,8 +391,6 @@ public class ParkingLot {
 			        e.printStackTrace();
 			      	}
 		}
-		
-		
 		
 	}
 
