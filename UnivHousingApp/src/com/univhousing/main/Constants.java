@@ -49,4 +49,8 @@ public class Constants {
 	public static final String FRESHMEN = "Freshmen";
 	public static final String PAYMENTOPTION_MONTHLY= "Month";
 	public static final String PAYMENTOPTION_SEMESTER= "Semester";
+	public static final int MONTHS_IN_SEMESTER= 4;
+	public static final int LATE_FEES= 20;
+	public static final int INCIDENTAL_CHARGES= 20;
+	
 }
