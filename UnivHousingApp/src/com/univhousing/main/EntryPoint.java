@@ -570,6 +570,7 @@ public class EntryPoint {
 																		else
 																		{
 																			System.out.println("No previous invoices\n");
+																			break;
 																		}
 																	}
 																	
