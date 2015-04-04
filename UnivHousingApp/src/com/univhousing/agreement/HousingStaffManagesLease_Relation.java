@@ -11,6 +11,7 @@ import java.util.Scanner;
 import com.sun.corba.se.pept.encoding.InputObject;
 import com.univhousing.main.ConnectionUtils;
 import com.univhousing.main.Constants;
+import com.univhousing.users.Person;
 
 public class HousingStaffManagesLease_Relation {
 
@@ -24,7 +25,8 @@ public class HousingStaffManagesLease_Relation {
 
 	boolean wasAccomodationApproved = false;
 	Scanner inputObj = new Scanner(System.in);
-
+	Person personObj ;
+	int personID = 0;
 	/**
 	 * @param ArrayList
 	 *            <Integer> allLeaseRequestsToMonitor
@@ -32,8 +34,8 @@ public class HousingStaffManagesLease_Relation {
 	 * @action This fetches all the new lease requests submitted for approval
 	 */
 	public void getAllNewLeaseRequests(
-			ArrayList<Integer> allLeaseRequestsToMonitor) throws SQLException {
-
+		ArrayList<Integer> allLeaseRequestsToMonitor) throws SQLException {
+		personObj =  new Person();
 		/* Write SQL Query to fetch all the lease requests pending for approval */
 
 		ResultSet rs = null;
@@ -45,7 +47,6 @@ public class HousingStaffManagesLease_Relation {
 		String modeofPayment = "";
 		Date moveInDate = null;
 		String duration = "";
-		int personID = 0;
 		int newLeaseNumber = 0;
 		String accomodationTypeGiven = "";
 		int accomodationIDGiven = 0;
@@ -392,9 +393,12 @@ public class HousingStaffManagesLease_Relation {
 			
 			// If the request was approved
 			if(wasAccomodationApproved)
-			{
+			{	
+				// Now updating the housing_status for this person to be placed
+				personObj.updateHousingStatus(personID,Constants.PLACED_STATUS);
+				
 				// We will write the logic for invoice generation for this person
-				generateInvoices(modeofPayment,personID,duration,moveInDate,newLeaseNumber,accomodationIDGiven,accomodationTypeGiven);
+				//generateInvoices(modeofPayment,personID,duration,moveInDate,newLeaseNumber,accomodationIDGiven,accomodationTypeGiven);
 			}
 			
 

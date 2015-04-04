@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.util.Scanner;
 
 import com.univhousing.main.ConnectionUtils;
+import com.univhousing.main.Constants;
 import com.univhousing.main.Utils;
 
 public class Person {
@@ -239,6 +240,34 @@ public class Person {
 		{
 			e.printStackTrace();
 		}
+		
+	}
+
+	/**
+	 * @param personId
+	 * @param status 
+	 * @action This method is introduced because a housing_status field has been added to Person table which says whether his housing status is
+	 * Place or Waiting
+	 */
+	public void updateHousingStatus(int personId, String status) {
+		
+		PreparedStatement ps = null;
+		Connection conn = ConnectionUtils.getConnection();
+		String query = "UPDATE Person SET housing_status = ? WHERE person_id = ?";
+		try 
+		{
+			ps = conn.prepareStatement(query);
+			ps.setString(1, status);
+			ps.setInt(2, personId);
+			ps.executeUpdate();
+			ConnectionUtils.closeConnection(conn);
+			ps.close();
+		}
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+		
 		
 	}
 
