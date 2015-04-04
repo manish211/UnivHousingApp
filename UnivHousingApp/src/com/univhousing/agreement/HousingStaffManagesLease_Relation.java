@@ -531,6 +531,8 @@ public class HousingStaffManagesLease_Relation {
 					preparedStatement.close();
 					rs.close();
 				}
+				availableAcco.add(Constants.NOTHING_AVAILABLE);
+				return availableAcco;
 			} else if (type.equalsIgnoreCase(Constants.GENERAL_APARTMENT)) {
 				String selectQueryGenApt = "SELECT COUNT (B.apt_place_no) AS rooms "
 						+ "FROM bedroom B "
@@ -552,6 +554,8 @@ public class HousingStaffManagesLease_Relation {
 					preparedStatement.close();
 					rs.close();
 				}
+				availableAcco.add(Constants.NOTHING_AVAILABLE);
+				return availableAcco;
 			} else if (type.equalsIgnoreCase(Constants.FAMILY_APARTMENT)) {
 				String selectQueryFamApt = "SELECT COUNT (F.apt_no) AS apartments "
 						+ "FROM Family_Apartment F "
@@ -573,6 +577,8 @@ public class HousingStaffManagesLease_Relation {
 					preparedStatement.close();
 					rs.close();
 				}
+				availableAcco.add(Constants.NOTHING_AVAILABLE);
+				return availableAcco;
 			} else {
 				availableAcco.add(Constants.NOTHING_AVAILABLE);
 				return availableAcco;
