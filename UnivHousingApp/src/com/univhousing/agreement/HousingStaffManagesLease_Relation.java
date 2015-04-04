@@ -728,6 +728,7 @@ public class HousingStaffManagesLease_Relation {
 					 * There are no damage fees. Write a query 
 					 * to remove the entry from person_accommodation_lease
 					 */
+					
 				}
 			} else {
 				System.out.println("Maximum date: " + maxDate);
