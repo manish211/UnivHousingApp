@@ -817,7 +817,7 @@ public class ParkingLot {
 		PreparedStatement ps1 = null;
 		Connection conn1 = ConnectionUtils.getConnection();
 		ResultSet allRequests = null;
-		String query = "SELECT request_no FROM StudentParkingSpot_Relation_bk WHERE request_status = ?";
+		String query = "SELECT request_no FROM personparkingspot_relation WHERE request_status = ?";
 		try
 		{
 			ps1 = conn1.prepareStatement(query);
@@ -883,11 +883,8 @@ public class ParkingLot {
 				
 				/*Write SQL Query to update permit_id in parkingSpot_belongs_parkingLot and person_accomodation_lease*/
 				 // Get the studentId for this request_no
-				studentId = getStudentIdFromParkingRequest(requestNumber);
-				
-				// Get the personId
-				int personId = studentObj.getPersonIdForStudentId(studentId);
-				
+				int personId = getPersonIdFromParkingRequest(requestNumber);
+
 				 /*Write SQL Queries to update 2 tables
 				  * 1. Update person_accomodation_lease to put permit id
 				  * 2. Update parkingSpot_belongs_parkingLot to change availability */
@@ -962,7 +959,7 @@ public class ParkingLot {
 	{
 		PreparedStatement ps3 = null;
 		Connection conn3 = ConnectionUtils.getConnection();
-		String query3 = "UPDATE StudentParkingSpot_Relation_bk SET request_Status = ? WHERE request_no = ?";
+		String query3 = "UPDATE personparkingspot_relation SET request_Status = ? WHERE request_no = ?";
 		ps3 = conn3.prepareStatement(query3);
 		ps3.setString(1, Constants.APPROVED_STATUS);
 		ps3.setInt(2, requestNumber);
@@ -971,7 +968,7 @@ public class ParkingLot {
 		
 		PreparedStatement ps11 = null;
 		Connection conn11 = ConnectionUtils.getConnection();
-		String query11 = "SELECT spot_no FROM StudentParkingSpot_Relation_bk WHERE request_no = ?";
+		String query11 = "SELECT spot_no FROM personparkingspot_relation WHERE request_no = ?";
 		ps11 = conn11.prepareStatement(query11);
 		ps11.setInt(1, requestNumber);
 		ps11.executeUpdate();
@@ -990,7 +987,7 @@ public class ParkingLot {
 		System.out.println("Your Parking request has been denied");
 		PreparedStatement ps3 = null;
 		Connection conn3 = ConnectionUtils.getConnection();
-		String query3 = "UPDATE StudentParkingSpot_Relation_bk SET request_Status = ? WHERE request_no = ?";
+		String query3 = "UPDATE personparkingspot_relation SET request_Status = ? WHERE request_no = ?";
 		ps3 = conn3.prepareStatement(query3);
 		ps3.setString(1, Constants.REJECTED_STATUS);
 		ps3.setInt(2, requestNumber);
@@ -998,28 +995,28 @@ public class ParkingLot {
 		
 	}
 
-	private int getStudentIdFromParkingRequest(int requestNumber) {
-		int studentId = 0;
+	private int getPersonIdFromParkingRequest(int requestNumber) {
+		int personId = 0;
 		try
 		{
 			PreparedStatement ps3 = null;
 			Connection conn3 = ConnectionUtils.getConnection();
-			String query3 = "SELECT student_id FROM StudentParkingSpot_Relation_bk WHERE request_no = ?";
+			String query3 = "SELECT person_id FROM personparkingspot_relation WHERE request_no = ?";
 			ps3 = conn3.prepareStatement(query3);
 			ps3.setInt(1, requestNumber);
-			ResultSet getStudentID = ps3.executeQuery();
+			ResultSet getPersonID = ps3.executeQuery();
 			
-			while(getStudentID.next())
+			while(getPersonID.next())
 			{
-				studentId = getStudentID.getInt("student_id");
+				personId = getPersonID.getInt("person_id");
 				break;
 			}
-			System.out.println("Changing request status for student id : "+studentId);
+			System.out.println("Changing request status for student id : "+personId);
 		}
 		catch(SQLException e)
 		{
 			e.printStackTrace();
 		}
-		return studentId;
+		return personId;
 	}
 }
