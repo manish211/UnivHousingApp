@@ -53,23 +53,23 @@ public class ParkingLot {
 //				vehicleType = vehicleType.replaceAll("[\n\r]", "");
 				System.out.println("vehicleType:"+vehicleType.toLowerCase());
 				
-				if(vehicleType.toLowerCase().equals("bike"))
+				if(vehicleType.toLowerCase().equals(Constants.BIKE))
 				{
 					vehicleType = Constants.BIKE;
 					inputInvalid = false;
 					System.out.println("here");
 				}					
-				else if(vehicleType.toLowerCase().equals("compact cars"))
+				else if(vehicleType.toLowerCase().equals(Constants.COMPACT_CARS))
 				{
 					vehicleType = Constants.COMPACT_CARS;
 					inputInvalid = false;
 				}
-				else if(vehicleType.toLowerCase().equals("standard cars"))
+				else if(vehicleType.toLowerCase().equals(Constants.STANDARD_CARS))
 				{
 					vehicleType = Constants.STANDARD_CARS;
 					inputInvalid = false;
 				}
-				else if(vehicleType.toLowerCase().equals("large cars"))
+				else if(vehicleType.toLowerCase().equals(Constants.LARGE_CARS))
 				{
 					vehicleType = Constants.LARGE_CARS;
 					inputInvalid = false;
