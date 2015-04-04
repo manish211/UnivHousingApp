@@ -47,6 +47,8 @@ public class HousingStaffManagesLease_Relation {
 		String duration = "";
 		int personID = 0;
 		int newLeaseNumber = 0;
+		String accomodationTypeGiven = "";
+		int accomodationIDGiven = 0;
 		ArrayList<String> preferences = new ArrayList<String>();
 
 		try {
@@ -149,7 +151,6 @@ public class HousingStaffManagesLease_Relation {
 				// boolean accAvailability =
 				// checkIfAccomodationTypeAvailable(preferences);
 				ArrayList<String> availableAcco = checkIfAccomodationTypeAvailable(preferences);
-
 				selectQuery = "SELECT MAX(lease_no) AS lease_no "
 					+ "FROM Lease";
 				rs.close();
@@ -163,6 +164,7 @@ public class HousingStaffManagesLease_Relation {
 
 				if (availableAcco.get(0).equalsIgnoreCase(
 						Constants.RESIDENCE_HALL)) {
+					accomodationTypeGiven = availableAcco.get(0);
 					wasAccomodationApproved = true;
 					System.out.println("Availability in: "
 							+ availableAcco.get(1));
@@ -204,7 +206,7 @@ public class HousingStaffManagesLease_Relation {
 					rs = preparedStatement.executeQuery();
 					rs.next();
 					int accID = rs.getInt("accomodation_id");
-
+					accomodationIDGiven = accID;
 					rs.close();
 					preparedStatement.close();
 
@@ -236,6 +238,7 @@ public class HousingStaffManagesLease_Relation {
 
 				} else if (availableAcco.get(0).equalsIgnoreCase(
 						Constants.GENERAL_APARTMENT)) {
+					accomodationTypeGiven = availableAcco.get(0);
 					wasAccomodationApproved = true;
 					
 			
@@ -263,7 +266,7 @@ public class HousingStaffManagesLease_Relation {
 					rs.next();
 
 					int accomodationIDApartment = rs.getInt("accomodation_id");
-
+					accomodationIDGiven = accomodationIDApartment;
 					rs.close();
 					preparedStatement.close();
 
@@ -298,6 +301,7 @@ public class HousingStaffManagesLease_Relation {
 
 				} else if (availableAcco.get(0).equalsIgnoreCase(
 						Constants.FAMILY_APARTMENT)) {
+					accomodationTypeGiven = availableAcco.get(0);
 					wasAccomodationApproved = true;
 					
 					String depositeApartment = "2000";
@@ -323,7 +327,7 @@ public class HousingStaffManagesLease_Relation {
 					rs.next();
 
 					int accomodationIDApartment = rs.getInt("accomodation_id");
-
+					accomodationIDGiven = accomodationIDApartment;
 					rs.close();
 					preparedStatement.close();
 
@@ -390,7 +394,7 @@ public class HousingStaffManagesLease_Relation {
 			if(wasAccomodationApproved)
 			{
 				// We will write the logic for invoice generation for this person
-				generateInvoices(modeofPayment,personID,duration,moveInDate,newLeaseNumber);
+				generateInvoices(modeofPayment,personID,duration,moveInDate,newLeaseNumber,accomodationIDGiven,accomodationTypeGiven);
 			}
 			
 
@@ -420,9 +424,9 @@ public class HousingStaffManagesLease_Relation {
 	 * @param moveInDate When he wants to move in
 	 * @throws SQLException 
 	 */
-	private void generateInvoices(String modeofPayment, int personID,String duration, Date moveInDate, int newLeaseNumber) throws SQLException 
+	private void generateInvoices(String modeofPayment, int personID,String duration, Date moveInDate, int newLeaseNumber, int accomodationIdGiven, String accomodationTypeGiven) throws SQLException 
 	{
-		int numberOfInvoices = 0, livingRent = 0, parkingRent = 0, lateFees = 0;
+		int numberOfInvoices = 0, livingRent = 0, parkingFees = 0, lateFees = 0;
 		int incidentalCharges = 0, invoiceNo = 0, leaseNumber = 0, totalPaymentDue = 0, damageCharges = 0;
 		String paymentStatus = null;
 		String paymentDateString = null;
@@ -444,7 +448,7 @@ public class HousingStaffManagesLease_Relation {
 				"payment_due,damage_charges,person_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 		ps = conn.prepareStatement(insertQuery);
 		ps.setInt(1, livingRent);
-		ps.setInt(2, parkingRent);
+		ps.setInt(2, parkingFees);
 		ps.setInt(3, lateFees);
 		ps.setInt(4, incidentalCharges);
 		ps.setInt(5, invoiceNo);
@@ -457,7 +461,7 @@ public class HousingStaffManagesLease_Relation {
 		ps.setInt(12, personID);
 		
 		getLivingRent(personID,leaseNumber);
-		getParkingRent(personID,leaseNumber);
+		getParkingFees(personID,leaseNumber);
 		generateInvoiceNo();
 		
 		for (int i = 0; i < numberOfInvoices; i++) 
@@ -466,12 +470,14 @@ public class HousingStaffManagesLease_Relation {
 		}
 	}
 
-	private void generateInvoiceNo() {
+	private int generateInvoiceNo() {
 		// TODO Auto-generated method stub
-		
+		PreparedStatement ps = null;
+		Connection conn = ConnectionUtils.getConnection();
+		return 0;
 	}
 
-	private void getParkingRent(int personID, int leaseNumber) {
+	private void getParkingFees(int personID, int leaseNumber) {
 		// TODO Auto-generated method stub
 		
 	}
