@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.Scanner;
 
 import com.univhousing.main.ConnectionUtils;
+import com.univhousing.main.Constants;
 import com.univhousing.main.Utils;
 
 public class TerminationRequest_Relation {
@@ -79,18 +80,20 @@ public class TerminationRequest_Relation {
 
 			System.out
 					.println("Enter date you wnt to leave in MM/dd/YYYY format: ");
-			String moveOutDate = inputObj.next();
+			String moveOutDate = inputObj.nextLine();
 
 			java.sql.Date sqlMoveOutDate = Utils
 					.convertStringToSQLDateFormat(moveOutDate);
 
 			System.out
 					.println("Enter the reason for leaving[Less than 50 characters]:");
-			String reasonToMoveOut = inputObj.next();
+			String reasonToMoveOut = inputObj.nextLine();
 
 			System.out.println("Do you want to: \n" + "1. Submit\n"
 					+ "2. Back ");
 
+			String choice = inputObj.nextLine();	
+			
 			/* SELECTING STAFF NO BLOCK START */
 			String query3 = "SELECT MAX(staff_no) AS LastStaff FROM ticket_person_staff";
 			int staffNoMax = 0;
@@ -139,13 +142,13 @@ public class TerminationRequest_Relation {
 
 			/* SELECTING STAFF NI BLOCK END */
 
-			System.out.println(" Before marker");
-			String choice = inputObj.next();
-			System.out.println("After marker");
+			//System.out.println(" Before marker");
+			
+			//System.out.println("After marker");
 
 			if (choice.equals("1")) {
 
-				String reqStatus = "Pending";
+				String reqStatus = Constants.PENDING_STATUS;
 				String selectQuery3 = "INSERT INTO Termination_Requests (REASON,termination_request_number,"
 						+ "status,termination_date,inspection_date,person_id,staff_no) "
 						+ "VALUES (?,?,?,?,?,?,?)";

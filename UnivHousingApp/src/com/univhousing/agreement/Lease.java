@@ -583,6 +583,8 @@ public class Lease {
 
 				int update = preparedStatement.executeUpdate();
 				// System.out.println("Update returned " + update);
+				
+				System.out.println("The request # "+requestNumber+" is cancelled!" );
 
 				isCancelSuccessful = true;
 
