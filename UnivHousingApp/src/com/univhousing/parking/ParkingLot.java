@@ -139,7 +139,7 @@ public class ParkingLot {
 					
 					preparedStatement = dbConnection.prepareStatement(selectQuery);
 					
-					System.out.println("selectQuery1:="+selectQuery);
+//					System.out.println("selectQuery1:="+selectQuery);
 					
 					preparedStatement.setInt(1,personId);
 					
@@ -213,7 +213,7 @@ public class ParkingLot {
 							
 					preparedStatement = dbConnection.prepareStatement(selectQuery);
 					
-					System.out.println("selectQuery:="+selectQuery);
+//					System.out.println("selectQuery:="+selectQuery);
 					
 					String handicappedField ;
 					
@@ -223,21 +223,89 @@ public class ParkingLot {
 						preparedStatement.setString(1,Constants.HANDICAPPED);
 					else
 						preparedStatement.setString(1,vehicleType);
-						System.out.println("Marker1");
+//						System.out.println("Marker1");
 						
 					rs = preparedStatement.executeQuery();
-					System.out.println("Marker2");
+//					System.out.println("Marker2");
 					//If record exists , rs.next() will evaluate to true
-					System.out.println("selectQuery:="+selectQuery);
-					System.out.println("preparedStatement:="+preparedStatement.toString());
+//					System.out.println("selectQuery:="+selectQuery);
+//					System.out.println("preparedStatement:="+preparedStatement.toString());
+					boolean isRecordAlreadyPresent = false;
+					
 					if(rs.isBeforeFirst())
+					{
+						rs.next();
+						int lot_no = rs.getInt("lot_no");
+						int spot_no = rs.getInt("spot_no");
+						
+						//----------------------------------
+						ResultSet rs1 = null;
+						try{
+							
+						String selectQuery1 = "select count(*) as total from studentparkingspot_relation " ;
+						selectQuery1= selectQuery1 + " where lot_no = ? and spot_no = ? and student_id = ? and request_status = ? ";
+						
+						preparedStatement = dbConnection.prepareStatement(selectQuery1);
+						preparedStatement.setInt(1,lot_no);
+						preparedStatement.setInt(2,spot_no);
+						preparedStatement.setInt(3,studentObj.studentId);
+						preparedStatement.setString(4,Constants.PENDING_STATUS);
+						
+//						System.out.println("===========================================================");
+//						System.out.println("lot_no:="+lot_no);
+//						System.out.println("spot_no:="+spot_no);
+//						System.out.println("studentid:="+studentObj.studentId);
+//						System.out.println("selectQuery1:="+selectQuery1);
+						
+						rs1 = preparedStatement.executeQuery();
+						
+						if(rs1.isBeforeFirst())
 						{
-						System.out.println("Marker3");
-							rs.next();
+							rs1.next();
+//							System.out.println("total:="+rs1.getInt("total"));
+							if(rs1.getInt("total") != 0)
+							{
+								System.out.println("Request already exists.No need to create a new one for that student,spot,lot combination");
+								isRecordAlreadyPresent = true;
+							}
+						}
+						}catch(SQLException e1){
+							{
+								System.out.println("SQLException: "+ e1.getMessage());
+								System.out.println("VendorError: "+ e1.getErrorCode());
+								System.out.println("MARKER MARKER11");
+							}
+						}
+						catch(Exception e3)
+						{
+							System.out.println("General Exception Case. Printing stack trace below:\n");
+							e3.printStackTrace();
+						}
+						finally{
+								try {
+								        rs1.close();
+								        if(accomodation_type =="")
+								        return;
+							      	} catch (SQLException e) {
+							        e.printStackTrace();
+							        return;
+							      	}
+						}
+						
+						
+						//----------------------------------
+//							System.out.println("Marker3");
+//							System.out.println("isRecordAlreadyPresent:"+isRecordAlreadyPresent);
+							
+							if(isRecordAlreadyPresent)
+							{
+								return;
+							}
+							
 							String insertQuery = "INSERT INTO studentparkingspot_relation values(?,?,?,?,ParkingRequest_seq.nextval)";
 							preparedStatement = dbConnection.prepareStatement(insertQuery);
-							preparedStatement.setInt(1,rs.getInt("lot_no"));
-							preparedStatement.setInt(2,rs.getInt("spot_no"));
+							preparedStatement.setInt(1,lot_no);
+							preparedStatement.setInt(2,spot_no);
 							preparedStatement.setInt(3,studentObj.studentId);
 							preparedStatement.setString(4,Constants.PENDING_STATUS);
 							
