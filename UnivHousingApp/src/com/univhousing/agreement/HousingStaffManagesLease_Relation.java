@@ -52,7 +52,7 @@ public class HousingStaffManagesLease_Relation {
 			dbConnection = ConnectionUtils.getConnection();
 			String selectQuery = "SELECT application_request_no "
 					+ "FROM PERSON_ACC_STAFF "
-					+ "WHERE UPPER(request_status) = ?";
+					+ "WHERE request_status = ?";
 
 			preparedStatement = dbConnection.prepareStatement(selectQuery);
 			preparedStatement.setString(1, status);
@@ -443,7 +443,7 @@ public class HousingStaffManagesLease_Relation {
 		try {
 			dbConnection = ConnectionUtils.getConnection();
 
-			if (type.toUpperCase().equals(Constants.RESIDENCE_HALL)) {
+			if (type.equalsIgnoreCase(Constants.RESIDENCE_HALL)) {
 				for (int i = 0; i < 3; i++) {
 					String selectQueryPref = "SELECT COUNT(accomodation_id) AS count "
 							+ "FROM residence_hall_provides_room "
@@ -469,7 +469,7 @@ public class HousingStaffManagesLease_Relation {
 					preparedStatement.close();
 					rs.close();
 				}
-			} else if (type.toUpperCase().equals(Constants.GENERAL_APARTMENT)) {
+			} else if (type.equalsIgnoreCase(Constants.GENERAL_APARTMENT)) {
 				String selectQueryGenApt = "SELECT COUNT (B.apt_place_no) AS rooms "
 						+ "FROM bedroom B "
 						+ "WHERE B.accomodation_id  NOT IN "
@@ -490,7 +490,7 @@ public class HousingStaffManagesLease_Relation {
 					preparedStatement.close();
 					rs.close();
 				}
-			} else if (type.toUpperCase().equals(Constants.FAMILY_APARTMENT)) {
+			} else if (type.equalsIgnoreCase(Constants.FAMILY_APARTMENT)) {
 				String selectQueryFamApt = "SELECT COUNT (F.apt_no) AS apartments "
 						+ "FROM Family_Apartment F "
 						+ "WHERE F.accomodation_id NOT IN "
@@ -560,7 +560,7 @@ public class HousingStaffManagesLease_Relation {
 			dbConnection = ConnectionUtils.getConnection();
 			String selectQuery = "SELECT termination_request_number "
 					+ "FROM TERMINATION_REQUESTS "
-					+ "WHERE UPPER(STATUS) = ?";
+					+ "WHERE STATUS = ?";
 		
 			preparedStatement = dbConnection.prepareStatement(selectQuery);
 			preparedStatement.setString(1, status);
