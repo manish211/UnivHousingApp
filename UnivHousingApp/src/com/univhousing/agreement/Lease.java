@@ -29,7 +29,6 @@ public class Lease {
 	 */
 	public void displayLeaseDetails(int personId, Integer leaseNumber) {
 
-
 		ResultSet rs = null;
 		Connection dbConnection = null;
 		PreparedStatement preparedStatement = null;
@@ -84,19 +83,10 @@ public class Lease {
 			 * Hard-coded "Apartment"/ "Family apartment"/"Residence Hall "
 			 * Strings. This way get into one of the three If loops and print
 			 * the relevant pa=lace# room # information about them.
-			 * 
 			 */
 
 			String accomodationType = rs.getString("accomodation_type");
 			int accomodationId = rs.getInt("accomodation_id");
-
-			/*
-			 * 
-			 * Closing RS and Preparedstatement -- because --> I want to reuse
-			 * the rs for next queries in the same module
-			 * 
-			 */
-			
 
 			rs.close();
 			preparedStatement.close();
@@ -206,8 +196,6 @@ public class Lease {
 	public void displayListOfLeasesForAPerson(int personId,
 			ArrayList<Integer> leaseNumbers) throws SQLException {
 
-		/* Write SQL Query to display a list of leases for a person id */
-
 		/*
 		 * ResultSet listOfLeases = null; leaseNumbers.clear();
 		 * while(listOfLeases.next()) {
@@ -227,14 +215,14 @@ public class Lease {
 			preparedStatement = dbConnection.prepareStatement(selectQuery);
 			preparedStatement.setInt(1, personId);
 			rs = preparedStatement.executeQuery();
-			
-			if(rs.isBeforeFirst())
-			{
-				System.out.println("============================================");
+
+			if (rs.isBeforeFirst()) {
+				System.out
+						.println("============================================");
 				System.out.println("Sr# Lease#");
-				System.out.println("============================================");
+				System.out
+						.println("============================================");
 			}
-			
 
 			leaseNumbers.clear();
 
@@ -451,7 +439,6 @@ public class Lease {
 			}
 		}
 
-
 	}
 
 	/**
@@ -472,39 +459,35 @@ public class Lease {
 			/* Create and insert SQL Query here */
 
 			String selectQuery = "SELECT T.termination_request_number, T.status "
-					+ "FROM termination_requests T "
-					+ "WHERE T.person_id = ? ";
-			
+					+ "FROM termination_requests T " + "WHERE T.person_id = ? ";
+
 			String selectQuery1 = "SELECT P.application_request_no, P.request_status "
-					+ "FROM PERSON_ACC_STAFF P "
-					+ "WHERE P.person_id = ?";
-			
+					+ "FROM PERSON_ACC_STAFF P " + "WHERE P.person_id = ?";
 
 			preparedStatement = dbConnection.prepareStatement(selectQuery);
 			preparedStatement.setInt(1, personId);
 
 			viewRequestsSet = preparedStatement.executeQuery();
 
-			if(viewRequestsSet.isBeforeFirst())
-			{
-				System.out.println("==================================================================");
-				System.out.println(String.format("%-15s%-20s%-15s", "Request type",
-						"Request number", "Status"));
-				System.out.println("==================================================================");
-			}
-			else
-			{
+			if (viewRequestsSet.isBeforeFirst()) {
+				System.out
+						.println("==================================================================");
+				System.out.println(String.format("%-15s%-20s%-15s",
+						"Request type", "Request number", "Status"));
+				System.out
+						.println("==================================================================");
+			} else {
 				System.out.println("No Request Found");
 				return;
 			}
-			
+
 			while (viewRequestsSet.next()) {
 				System.out.print(String.format("%-15s%-20s%-15s",
 						"Termination",
 						viewRequestsSet.getInt("termination_request_number"),
 						viewRequestsSet.getString("status")));
 				System.out.println("");
-			
+
 				/*
 				 * Write an SQL Query for fetching details of each value of
 				 * requestNumber variable
@@ -519,9 +502,9 @@ public class Lease {
 			viewRequestsSet = preparedStatement.executeQuery();
 			// System.out.println("Request Number" + "\t Status");
 			while (viewRequestsSet.next()) {
-				System.out.print(String.format("%-15s%-20s%-15s","Lease"
-						,viewRequestsSet.getInt("application_request_no")
-						,viewRequestsSet.getString("request_status")));
+				System.out.print(String.format("%-15s%-20s%-15s", "Lease",
+						viewRequestsSet.getInt("application_request_no"),
+						viewRequestsSet.getString("request_status")));
 
 				System.out.println("");
 			}
@@ -546,7 +529,7 @@ public class Lease {
 	/**
 	 * @param personId
 	 * @param requestNumber
-	 *            
+	 * 
 	 * @throws SQLException
 	 * @action Deletes the requestNumber for the personID
 	 */
@@ -600,18 +583,18 @@ public class Lease {
 
 				int update = preparedStatement.executeUpdate();
 				// System.out.println("Update returned " + update);
-				
+
 				isCancelSuccessful = true;
 
 			} else {
 
 				/*
-				 * Since the entry is not in the termination table,
-				 * it must be in the PERSON_ACC_STAFF table
+				 * Since the entry is not in the termination table, it must be
+				 * in the PERSON_ACC_STAFF table
 				 */
 				preparedStatement.close();
 				rs.close();
-				
+
 				String selectQuery1 = "SELECT * "
 						+ "FROM PERSON_ACC_STAFF P "
 						+ "WHERE P.person_id = ? AND p.application_request_no = ?";
@@ -628,27 +611,24 @@ public class Lease {
 				if (rs.next()) {
 
 					/*
-
-					 * If the request id is in the PERSON_ACC_STAFF table 
-					 * update the status in this table to CANCELED
-
+					 * 
+					 * If the request id is in the PERSON_ACC_STAFF table update
+					 * the status in this table to CANCELED
+					 * 
 					 * If the request id is in the parking table, get the
 					 * student id and update the table. Get the student id first
-
 					 */
 					// System.out.println("Executed with values: " + personId +
 					// " and " + requestNumber);
 					preparedStatement.close();
 					rs.close();
 
-					
 					/*
 					 * Update the status with CANCELED
 					 */
 					String updateQuery1 = "UPDATE PERSON_ACC_STAFF "
 							+ "SET request_status = ? "
 							+ "WHERE person_id = ? AND application_request_no = ?";
-					
 
 					preparedStatement.close();
 					preparedStatement = dbConnection
@@ -668,7 +648,7 @@ public class Lease {
 					System.out.println("Please enter a valid request number");
 				}
 			}
-			
+
 		} catch (SQLException e1) {
 			System.out.println("SQLException: " + e1.getMessage());
 			System.out.println("Vendor Error: " + e1.getErrorCode());
@@ -681,7 +661,7 @@ public class Lease {
 				preparedStatement.close();
 				dbConnection.close();
 				return isCancelSuccessful;
-				
+
 			} catch (SQLException e) {
 				e.printStackTrace();
 				return isCancelSuccessful;
@@ -697,34 +677,34 @@ public class Lease {
 	 */
 	public void viewAccomodationVacancies() throws SQLException {
 		/* Write SQL Query to pull up all the vacancies to display the student */
-		
+
 		/*
-		 * Method for viewing all the vacancies.
-		 * I am assuming that the accommodation ID is unique 
-		 * for bedroom, residence hall room and Family Apartment.
-		 * Using the person_id, we can index into person_acc_lease table 
-		 * and get the accommodation id, and query the three tables
-		 * to find entries that are not present in lease.
+		 * Method for viewing all the vacancies. I am assuming that the
+		 * accommodation ID is unique for bedroom, residence hall room and
+		 * Family Apartment. Using the person_id, we can index into
+		 * person_acc_lease table and get the accommodation id, and query the
+		 * three tables to find entries that are not present in lease.
 		 */
 		ResultSet rs = null;
 		Connection dbConnection = null;
 		PreparedStatement preparedStatement = null;
-		
+
 		try {
 			dbConnection = ConnectionUtils.getConnection();
-			
+
 			/*
-			 * Query for getting count of free bedrooms
-			 * Assuming that accommodation_id is unique
+			 * Query for getting count of free bedrooms Assuming that
+			 * accommodation_id is unique
 			 */
 			String selectQueryBedroom = "SELECT COUNT (B.apt_place_no) AS rooms "
 					+ "FROM bedroom B "
 					+ "WHERE B.accomodation_id  NOT IN "
 					+ "(SELECT accomodation_id "
 					+ "FROM person_accomodation_lease)";
-			preparedStatement = dbConnection.prepareStatement(selectQueryBedroom);
+			preparedStatement = dbConnection
+					.prepareStatement(selectQueryBedroom);
 			rs = preparedStatement.executeQuery();
-			
+
 			while (rs.next()) {
 				System.out.println("Available vacancies in General "
 						+ "Apartments: " + rs.getInt("rooms") + " rooms");
@@ -732,34 +712,37 @@ public class Lease {
 			rs.close();
 			preparedStatement.close();
 			/*
-			 * Query for getting count of free family apartments. 
-			 * Assuming accommodation_id is unique.
+			 * Query for getting count of free family apartments. Assuming
+			 * accommodation_id is unique.
 			 */
 			String selectQueryFamilyApt = "SELECT COUNT (F.apt_no) AS apartments "
 					+ "FROM Family_Apartment F "
 					+ "WHERE F.accomodation_id NOT IN "
 					+ "(SELECT accomodation_id "
 					+ "FROM person_accomodation_lease)";
-			preparedStatement = dbConnection.prepareStatement(selectQueryFamilyApt);
+			preparedStatement = dbConnection
+					.prepareStatement(selectQueryFamilyApt);
 			rs = preparedStatement.executeQuery();
-			
+
 			while (rs.next()) {
 				System.out.println("Available vacancies in Family "
-						+ "Apartments: " + rs.getInt("apartments") + " apartments");
+						+ "Apartments: " + rs.getInt("apartments")
+						+ " apartments");
 			}
-			
+
 			/*
-			 * Query for getting count of free residence halls.
-			 * Exactly same as the previous two queries.
+			 * Query for getting count of free residence halls. Exactly same as
+			 * the previous two queries.
 			 */
 			String selectQueryResidence = "SELECT COUNT (R.residence_place_no) AS residence "
 					+ "FROM residence_hall_provides_room R "
 					+ "WHERE R.accomodation_id NOT IN "
 					+ "(SELECT accomodation_id "
 					+ "FROM person_accomodation_lease)";
-			preparedStatement = dbConnection.prepareStatement(selectQueryResidence);
+			preparedStatement = dbConnection
+					.prepareStatement(selectQueryResidence);
 			rs = preparedStatement.executeQuery();
-			
+
 			while (rs.next()) {
 				System.out.println("Available rooms in Residence Hall: "
 						+ rs.getInt("residence") + " rooms");
@@ -768,7 +751,8 @@ public class Lease {
 			System.out.println("SQLException: " + s.getMessage());
 			System.out.println("Vendor Error: " + s.getErrorCode());
 		} catch (Exception e) {
-			System.out.println("General exception case. Please see stack trace");
+			System.out
+					.println("General exception case. Please see stack trace");
 			e.printStackTrace();
 		} finally {
 			rs.close();
