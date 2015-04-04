@@ -400,7 +400,8 @@ public class EntryPoint {
 										System.out.println("3. View Maintenance Tickets");
 										System.out.println("4. View Parking Requests");
 										System.out.println("5. Profile");
-										System.out.println("6. Back\n");
+										System.out.println("6. Generate Invoices");
+										System.out.println("7. Back\n");
 										
 										choice = inputObj.nextInt();
 										
@@ -456,8 +457,15 @@ public class EntryPoint {
 												}
 												mLevelTwo = true;
 												 break;
-												 
+											
 											case 6:
+												System.out.println("Showing Invoice lease generation");
+												System.out.println("Enter the date you want to generate invoices for: ");
+												String invoiceGenerationDate = inputObj.nextLine();
+												InvoicePersonLease_Relation invoiceObj = new InvoicePersonLease_Relation();
+												invoiceObj.generateLeasesForGivenDate(invoiceGenerationDate);
+												break;
+											case 7:
 												mLevelOne = false;
 												break;
 	

@@ -1,14 +1,17 @@
 package com.univhousing.invoice;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 import com.univhousing.main.ConnectionUtils;
+import com.univhousing.main.Constants;
 
 public class InvoicePersonLease_Relation {
 
@@ -281,6 +284,75 @@ public class InvoicePersonLease_Relation {
 		
 
 
+	}
+
+	/**
+	 * @param invoiceGenerationDate
+	 * @action This method will take a date and generate invoices for people whose invoices have to be generated on that date
+	 */
+	public void generateLeasesForGivenDate(String invoiceGenerationDate) 
+	{
+		int personId;
+		java.sql.Date moveInDate;
+		String meansOfPayment;
+		String accomodationType;
+		int accomodationId;
+		int dateIncrementValue = 0;
+		final int counter = 30;
+		String duration = "" ;
+		
+		PreparedStatement ps = null;
+		Connection conn = ConnectionUtils.getConnection();
+		ResultSet getRequestData = null;
+		String query = "select table1.duration,table1.person_id,table1.lease_move_in_date,table1.mode_of_payment,table1.accomodation_type " +
+				"from person_acc_staff table1,(select person_id,max(lease_move_in_date) max_lease_move_in_date from person_acc_staff inner_table" +
+				" where request_status = ? group by person_id) table2 where table1.person_id = table2.person_id " +
+				"and table1.lease_move_in_date = table2.max_lease_move_in_date";
+		try
+		{
+			ps = conn.prepareStatement(query);
+			ps.setString(1, "Processed");
+			getRequestData = ps.executeQuery();
+			
+			while(getRequestData.next())
+			{
+				personId = getRequestData.getInt("person_id");
+				moveInDate = getRequestData.getDate("lease_move_in_date");
+				meansOfPayment = getRequestData.getString("mode_of_payment");
+				accomodationType = getRequestData.getString("accomodation_type");
+				duration = getRequestData.getString("duration");
+
+				PreparedStatement ps1 = null;
+				Connection conn1 = ConnectionUtils.getConnection();
+				ResultSet getAccId = null;
+				String query1 = "SELECT accomodation_id FROM person_accomodation_lease WHERE person_id = ?";
+				ps1 = conn1.prepareStatement(query1);
+				ps1.setInt(1, personId);
+				getAccId = ps1.executeQuery();
+
+				while(getAccId.next())
+				{
+					accomodationId = getAccId.getInt("accomodation_id");
+					break;
+				}
+				int durationOfStay = Integer.parseInt(duration);
+				durationOfStay = durationOfStay*Constants.MONTHS_IN_SEMESTER;
+				for(int i = 0; i< durationOfStay; i++)
+				{
+					dateIncrementValue = i*counter + counter;
+					System.out.println("Date increamented by : "+dateIncrementValue);
+					// Calling the PL/SQL Statement
+					CallableStatement cst = conn.prepareCall("{call create_invoice (?,?,?,?)}");
+				}
+				
+			}
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		
 	}
 }
 
