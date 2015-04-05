@@ -179,7 +179,8 @@ public class EntryPoint {
 																}
 															}
 															// Setting true so that we can come back in the third level
-															mLevelThree = true;															break;
+															mLevelThree = true;	
+															break;
 														case 3:
 															System.out.println("Generating New Request");
 															/*Runtime.getRuntime().exec("clear");*/
@@ -358,7 +359,7 @@ public class EntryPoint {
 													switch (choice) 
 													{
 														case 1: System.out.println("Showing View Profile");
-															personObj.viewProfileDetails(studentId);
+															personObj.viewProfileDetails(credentialObj.personId);
 															break;
 	
 														case 2: System.out.println("Showing Update Profile");
@@ -368,7 +369,7 @@ public class EntryPoint {
 														case 3:
 															System.out.println("Shwowing Back");
 															mLevelTwo = false;
-
+															break;
 														default:
 															break;
 													}
@@ -451,6 +452,7 @@ public class EntryPoint {
 														case 3:
 															System.out.println("Shwowing Back");
 															mLevelTwo = false;
+															break;
 														default:
 															break;
 													}
@@ -660,7 +662,8 @@ public class EntryPoint {
 															}
 														}
 														// Setting true so that we can come back in the third level
-														mLevelThree = true;															break;
+														mLevelThree = true;	
+														break;
 													case 3:
 														System.out.println("Generating New Request");
 														/*Runtime.getRuntime().exec("clear");*/
@@ -831,17 +834,19 @@ public class EntryPoint {
 												switch (choice) 
 												{
 													case 1: System.out.println("Showing View Profile");
+													// credentialObj.personId is person id
 														personObj.viewProfileDetails(credentialObj.personId);
 														break;
 
 													case 2: System.out.println("Showing Update Profile");
+													// credentialObj.personId is person id
 													personObj.updateProfile(credentialObj.personId);
 														break;
 														
 													case 3:
 														System.out.println("Shwowing Back");
 														mLevelTwo = false;
-
+														break;
 													default:
 														break;
 												}
