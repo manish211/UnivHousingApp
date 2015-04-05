@@ -303,18 +303,19 @@ public class InvoicePersonLease_Relation {
 		final int counter = 30;
 		String duration = "" ;
 		int result = 0;
+		String paymentGateway = "";
 		
 		PreparedStatement ps = null;
 		Connection conn = ConnectionUtils.getConnection();
 		ResultSet getRequestData = null;
-		String query = "select table1.duration,table1.person_id,table1.lease_move_in_date,table1.mode_of_payment,table1.accomodation_type " +
+		String query = "select table1.payment_gateway,table1.duration,table1.person_id,table1.lease_move_in_date,table1.mode_of_payment,table1.accomodation_type " +
 				"from person_acc_staff table1,(select person_id,max(lease_move_in_date) max_lease_move_in_date from person_acc_staff inner_table" +
 				" where request_status = ? group by person_id) table2 where table1.person_id = table2.person_id " +
 				"and table1.lease_move_in_date = table2.max_lease_move_in_date";
 		try
 		{
 			ps = conn.prepareStatement(query);
-			ps.setString(1, "Processed");
+			ps.setString(1, Constants.PROCESSED_STATUS);
 			getRequestData = ps.executeQuery();
 			
 			while(getRequestData.next())
@@ -324,6 +325,7 @@ public class InvoicePersonLease_Relation {
 				meansOfPayment = getRequestData.getString("mode_of_payment");
 				accomodationType = getRequestData.getString("accomodation_type");
 				duration = getRequestData.getString("duration");
+				paymentGateway = getRequestData.getString("payment_gateway");
 
 				PreparedStatement ps1 = null;
 				Connection conn1 = ConnectionUtils.getConnection();
@@ -350,7 +352,7 @@ public class InvoicePersonLease_Relation {
 					cst.setInt(1, personId);
 					cst.setInt(2, accomodationId);
 					cst.setInt(3, dateIncrementValue);
-					cst.setString(4, meansOfPayment);
+					cst.setString(4, paymentGateway);
 					cst.setString(5, accomodationType);
 					cst.setInt(6, durationOfStay);
 					// Now registering out parameter
@@ -374,39 +376,3 @@ public class InvoicePersonLease_Relation {
 		
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

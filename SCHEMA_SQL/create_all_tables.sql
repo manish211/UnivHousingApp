@@ -239,6 +239,7 @@ duration VARCHAR2(10),
 PREFERENCE1 VARCHAR2(20),
 PREFERENCE2 VARCHAR2(20),
 PREFERENCE3 VARCHAR2(20),
+payment_gateway varchar2(20),
 PRIMARY KEY(application_request_no),
 FOREIGN KEY (person_id) REFERENCES person);
 
