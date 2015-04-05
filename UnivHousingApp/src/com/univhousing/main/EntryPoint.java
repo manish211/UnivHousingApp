@@ -86,6 +86,7 @@ public class EntryPoint {
 							System.out.print("\nEnter Password:");
 							credentialObj.password = inputObj.next();
 							// Fetch the person id for the student id and use that for login
+							System.out.println("Please wait while we are authenticating you.");
 							credentialObj.personId = studentObj.getPersonIdForStudentId(studentId);
 							if(authenticateUser(credentialObj.personId,credentialObj.password,credentialObj))
 							{
@@ -903,20 +904,6 @@ public class EntryPoint {
 		/* Write SQL query to check if userName and password match the Credentials Table in Database
 		 If matches retrieve designation and person_id
 		 */		
-		/*ResultSet user = null;
-		 * 
-		
-		while(user.next())
-		{
-			credentials.personId = user.getInt("person_id");
-			credentials.designation = user.getString("designation");
-
-			// Returning true, because if the 
-			return true;
-		}
-		return false;*/
-		
-		
 		Boolean isUserAuthenticated = false;
 		
 		Connection dbConnection = ConnectionUtils.getConnection();

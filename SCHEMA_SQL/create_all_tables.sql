@@ -101,7 +101,7 @@ PRIMARY KEY(hall_number));
 
 CREATE TABLE Family_Apartment(
 apt_no INTEGER,
-apt_type VARCHAR2(10),   
+apt_type VARCHAR2(20),   
 accomodation_id INTEGER,
 street_name VARCHAR2(40),				
 city_name VARCHAR2(50),
@@ -113,7 +113,7 @@ FOREIGN KEY(accomodation_id) REFERENCES Accomodation);
 
 CREATE TABLE General_Apartment(
 apt_no INTEGER,
-apt_type VARCHAR2(10),
+apt_type VARCHAR2(20),
 no_of_bedrooms INTEGER,
 no_of_bathrooms INTEGER,
 accomodation_id INTEGER,
