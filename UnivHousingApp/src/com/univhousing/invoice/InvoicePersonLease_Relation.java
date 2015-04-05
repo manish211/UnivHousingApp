@@ -292,7 +292,7 @@ public class InvoicePersonLease_Relation {
 	 * @param invoiceGenerationDate
 	 * @action This method will take a date and generate invoices for people whose invoices have to be generated on that date
 	 */
-	public void generateLeasesForGivenDate(String invoiceGenerationDate) 
+	public void generateLeasesForGivenDate() 
 	{
 		int personId;
 		java.sql.Date moveInDate;

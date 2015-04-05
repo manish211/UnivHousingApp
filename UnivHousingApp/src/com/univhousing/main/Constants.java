@@ -5,9 +5,9 @@ public class Constants {
 	public static final String JDBCURL = "jdbc:oracle:thin:@ora.csc.ncsu.edu:1521:orcl";
 	public static final String USERNAME = "Mrsingh";
 	public static final String PASSWORD = "sudhanshu123";
-	public static final String STUDENT = "student";
-	public static final String SUPERVISOR = "supervisor";
-	public static final String GUEST = "guest";
+	public static final String STUDENT = "Student";
+	public static final String SUPERVISOR = "Supervisor";
+	public static final String GUEST = "Guest";
 	public static final int TICKET_DEFAULT_VALUE = 5000;
 	public static final String HIGH_SEVERITY = "High";
 	public static final String MEDIUM_SEVERITY = "Medium";

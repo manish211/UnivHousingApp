@@ -436,6 +436,52 @@ public class HousingStaffManagesLease_Relation {
 					 * Write an SQL query to approve the family apartment
 					 * request and allocate an apartment to the applicant
 					 */
+					
+					
+					/*System.out.println("Please enter your family members name (max 4): ");
+					inputObj.nextLine();
+					System.out.println("Name of Family member 1: ");
+					String memberOne = inputObj.nextLine();
+					System.out.println("DOB Of member 1: ");
+					String dobMemberOne = inputObj.nextLine();
+					java.sql.Date dmo = Utils.convertStringToSQLDateFormat(dobMemberOne);
+
+					System.out.println("Name of Family member 2: ");
+					String memberTwo = inputObj.nextLine();
+					System.out.println("DOB Of member 2: ");
+					String dobMemberTwo = inputObj.nextLine();
+					java.sql.Date dmto = Utils.convertStringToSQLDateFormat(dobMemberTwo);
+					
+					System.out.println("Name of Family member 3: ");
+					String memberThree = inputObj.nextLine();
+					System.out.println("DOB Of member 3: ");
+					String dobMemberThree = inputObj.nextLine();
+					java.sql.Date dmth = Utils.convertStringToSQLDateFormat(dobMemberThree);
+					
+					System.out.println("Name of Family member 4: ");
+					String memberFour = inputObj.nextLine();
+					System.out.println("DOB Of member 4: ");
+					String dobMemberFour = inputObj.nextLine();
+					java.sql.Date dmf = Utils.convertStringToSQLDateFormat(dobMemberFour);
+					
+					Write SQL Query to fill student's family details in students table
+					PreparedStatement ps = null;
+					Connection conn = ConnectionUtils.getConnection();
+					String query = "UPDATE student set member_one = ?, member_two = ?, member_three = ?, member_four = ?" +
+							"dob_member_one = ?  (), dob_member_two = ?, dob_member_three = ?, dob_member_four = ? WHERE ";
+					
+					ps = conn.prepareStatement(query);
+					ps.setString(1, memberOne);
+					ps.setString(2, memberTwo);
+					ps.setString(3, memberThree);
+					ps.setString(4, memberFour);
+					ps.setDate(5, dmo);
+					ps.setDate(6, dmto);
+					ps.setDate(7, dmth);
+					ps.setDate(8, dmf);
+					ps.executeUpdate();
+					ps.close();
+					ConnectionUtils.closeConnection(conn);*/
 				} else if (availableAcco.get(0).equalsIgnoreCase(
 						Constants.NOTHING_AVAILABLE)) {
 					wasAccomodationApproved = false;
