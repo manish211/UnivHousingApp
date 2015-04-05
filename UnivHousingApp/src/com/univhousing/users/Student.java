@@ -174,8 +174,8 @@ public class Student {
 	 * @return
 	 */
 	public String getStudentDesignation(int personId)
-	{
-		String studentDesignation = "";
+	{String studentDesignation = "";
+		
 		/*Write SQL Query to get the student's designation from login_credentials table i think*/
 		try
 		{

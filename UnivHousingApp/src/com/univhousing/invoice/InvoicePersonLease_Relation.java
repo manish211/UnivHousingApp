@@ -7,9 +7,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 import com.univhousing.main.ConnectionUtils;
 import com.univhousing.main.Constants;
 
@@ -296,10 +298,11 @@ public class InvoicePersonLease_Relation {
 		java.sql.Date moveInDate;
 		String meansOfPayment;
 		String accomodationType;
-		int accomodationId;
+		int accomodationId = 0;
 		int dateIncrementValue = 0;
 		final int counter = 30;
 		String duration = "" ;
+		int result = 0;
 		
 		PreparedStatement ps = null;
 		Connection conn = ConnectionUtils.getConnection();
@@ -329,7 +332,7 @@ public class InvoicePersonLease_Relation {
 				ps1 = conn1.prepareStatement(query1);
 				ps1.setInt(1, personId);
 				getAccId = ps1.executeQuery();
-
+			
 				while(getAccId.next())
 				{
 					accomodationId = getAccId.getInt("accomodation_id");
@@ -340,11 +343,27 @@ public class InvoicePersonLease_Relation {
 				for(int i = 0; i< durationOfStay; i++)
 				{
 					dateIncrementValue = i*counter + counter;
-					System.out.println("Date increamented by : "+dateIncrementValue);
+					System.out.println("Date incremented by : "+dateIncrementValue);
 					// Calling the PL/SQL Statement
-					CallableStatement cst = conn.prepareCall("{call create_invoice (?,?,?,?)}");
+					//create_invoice(v_person_id,v_accomodation_id,v_increment,v_mode_payment,v_accomodation_type,v_output);
+					CallableStatement cst = conn.prepareCall("{call create_invoice (?,?,?,?,?,?,?)}");
+					cst.setInt(1, personId);
+					cst.setInt(2, accomodationId);
+					cst.setInt(3, dateIncrementValue);
+					cst.setString(4, meansOfPayment);
+					cst.setString(5, accomodationType);
+					cst.setInt(6, durationOfStay);
+					// Now registering out parameter
+					cst.registerOutParameter(7, Types.INTEGER,result);
+					cst.execute();
+					cst.close();
+					ps1.close();
+					getAccId.close();
+					ConnectionUtils.closeConnection(conn1);
 				}
-				
+				// Resetting dateIncrementValue to zero
+				System.out.println("------------------");
+				dateIncrementValue = 0;
 			}
 		}
 		catch(SQLException e)
