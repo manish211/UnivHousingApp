@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Scanner;
 
+import oracle.sql.DATE;
+
 import com.sun.corba.se.pept.encoding.InputObject;
 import com.univhousing.main.ConnectionUtils;
 import com.univhousing.main.Constants;
@@ -696,6 +698,8 @@ public class HousingStaffManagesLease_Relation {
 		Connection dbConnection = null;
 		allTerminationRequestsToMonitor.clear();
 		String status = Constants.PENDING_STATUS;
+		ArrayList<Integer> allPersonID = new ArrayList<Integer>();
+		allPersonID.clear();
 
 		try {
 
@@ -706,7 +710,7 @@ public class HousingStaffManagesLease_Relation {
 			dbConnection = ConnectionUtils.getConnection();
 			//dbConnection.setAutoCommit(false);
 			//dbConnection.commit();
-			String selectQuery = "SELECT termination_request_number "
+			String selectQuery = "SELECT termination_request_number, person_id "
 					+ "FROM TERMINATION_REQUESTS " + "WHERE STATUS = ?";
 
 			preparedStatement = dbConnection.prepareStatement(selectQuery);
@@ -716,12 +720,14 @@ public class HousingStaffManagesLease_Relation {
 			while (rs.next()) {
 				allTerminationRequestsToMonitor.add(rs
 						.getInt("termination_request_number"));
+				allPersonID.add(rs.getInt("person_id"));
 			}
 
 			System.out.println("Displaying all the requests to approve: ");
 			for (int i = 0; i < allTerminationRequestsToMonitor.size(); i++) {
 				System.out.println((i + 1) + ". "
-						+ allTerminationRequestsToMonitor.get(i));
+						+ allTerminationRequestsToMonitor.get(i) + " - "
+						+ allPersonID.get(i));
 			}
 			int requestChosen = inputObj.nextInt();
 			int requestNumber = allTerminationRequestsToMonitor
@@ -787,13 +793,16 @@ public class HousingStaffManagesLease_Relation {
 			
 			String selectQueryFees = "SELECT MAX(payment_date) as \"date\""
 					+ "FROM invoice_person_lease "
-					+ "WHERE payment_status <> ? "
-					+ "AND person_id = (SELECT person_id "
+					+ "WHERE (payment_status <> ?  "
+					+ "AND person_id = ?) ";
+				/*	+ "AND person_id = (SELECT person_id "
 					+ "FROM termination_requests "
-					+ "WHERE termination_request_number = ?)";
+					+ "WHERE termination_request_number = ?))";*/
 			rs.close();
 			preparedStatement.close();
-
+			
+			System.out.println("Getting date for person_id: " + personID 
+					+ " and requestNumber: " + requestNumber);
 			preparedStatement = dbConnection.prepareStatement(selectQueryFees);
 			preparedStatement.setString(1, "'Paid'");
 			preparedStatement.setInt(2, requestNumber);
@@ -801,13 +810,7 @@ public class HousingStaffManagesLease_Relation {
 			
 			rs.next();
 			Date maxDate = rs.getDate("date");
-			Date maxDateCopy = maxDate;
-			Date maxDateCopy1 = maxDateCopy;
-			String a = "'";
-			String maximumDate = maxDateCopy1.toString();
-			maximumDate = a.concat(maximumDate);
-			maximumDate	= maximumDate.concat(a);
-			String dateFormat = "'yyyy-mm-dd'";
+			System.out.println("Maximum date: " + maxDate);
 			if (maxDate == null) {
 				System.out.println("No outstanding charges");
 				System.out.println("Damage fees: " + damageFees);
@@ -819,39 +822,34 @@ public class HousingStaffManagesLease_Relation {
 					 * Query for getting invoice number from 
 					 * invoice_person_lease
 					 */
+					
 					String selectQueryInvoiceNum = "SELECT MAX(invoice_no) as invoice_no "
-							+ "FROM invoice_person_lease "
-							+ "WHERE (payment_date = to_date(?,?)"
-							+ "AND person_id = ?) ";
+							+ "FROM invoice_person_lease ";
 					rs.close();
 					preparedStatement.close();
 
 					preparedStatement = dbConnection.prepareStatement(selectQueryInvoiceNum);
-					preparedStatement.setString(1, maximumDate);
-					preparedStatement.setString(2, dateFormat);
-					preparedStatement.setInt(3, personID);
 
-					preparedStatement.executeQuery();
+					rs = preparedStatement.executeQuery();
 					rs.next();
+					System.out.println("Breakpoint1");
 					int invoiceNumber = rs.getInt("invoice_no");
-
-					String selectQueryLeaseNum = "SELECT lease_no "
-							+ "FROM invoice_person_lease "
-							+ "WHERE (payment_date = to_date(?,?) "
-							+ "AND person_id = ?";
+					invoiceNumber++;
 					rs.close();
+					
+					String selectQueryLeaseNum = "SELECT lease_no "
+							+ "FROM person_accomodation_lease "
+							+ "WHERE person_id = ?";
 					preparedStatement.close();
 
 					preparedStatement = dbConnection.prepareStatement(selectQueryLeaseNum);
-					preparedStatement.setString(1, maximumDate);
-					preparedStatement.setString(2, dateFormat);
-					preparedStatement.setInt(3, personID);
+					preparedStatement.setInt(1, personID);
 
-					preparedStatement.executeQuery();
+					rs = preparedStatement.executeQuery();
 					rs.next();
+					System.out.println("Breakpoint2");
 					int leaseNumber = rs.getInt("lease_no");
 
-					ResultSet r1 = null;
 					PreparedStatement p2 = null;
 					Connection c2 = null;
 
@@ -861,6 +859,12 @@ public class HousingStaffManagesLease_Relation {
 					String insertQueryLease = "INSERT INTO invoice_person_lease "
 							+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 
+					Calendar cal = Calendar.getInstance();
+					cal.add(Calendar.DATE, 30);
+					java.util.Date justNowUtils = cal.getTime();
+					String temp = Utils.changeUtilDateToString(justNowUtils);
+					Date oneMonthLater = Utils.convertStringToSQLDateFormat(temp);
+					
 					c2 = ConnectionUtils.getConnection();
 					p2 = c2.prepareStatement(insertQueryLease);
 					p2.setInt(1, 0);
@@ -868,9 +872,9 @@ public class HousingStaffManagesLease_Relation {
 					p2.setInt(3, 0);
 					p2.setInt(4, 0);
 					p2.setInt(5, invoiceNumber);
-					p2.setDate(6, maxDate);
-					p2.setInt(7, leaseNumber);
-					p2.setString(8, "Credit");
+					p2.setDate(6, oneMonthLater);
+					p2.setString(7, "Credit");
+					p2.setInt(8, leaseNumber);
 					p2.setString(9, "Outstanding");
 					p2.setInt(10, damageFees);
 					p2.setInt(11, 0);
@@ -886,10 +890,86 @@ public class HousingStaffManagesLease_Relation {
 					 * to remove the entry from person_accommodation_lease
 					 */
 					
+					String getLease = "SELECT lease_no "
+							+ "FROM person_accomodation_lease "
+							+ "WHERE person_id = ?";
+					rs.close();
+					preparedStatement.close();
+					
+					preparedStatement = dbConnection.prepareStatement(getLease);
+					preparedStatement.setInt(1, personID);
+					
+					rs = preparedStatement.executeQuery();
+					rs.next();
+					int leaseNumber = rs.getInt("lease_no");
+					System.out.println("Lease number: " + leaseNumber
+							+ ". PersonID: " + personID);
+					
+					//ResultSet r2 = null;
+					/*
+					 * Delete entry from person_accommodation_lease
+					 */
+					Connection connDeleteEntry = null;
+					PreparedStatement pDeleteEntry = null;
+					
+					connDeleteEntry = ConnectionUtils.getConnection();
+					String deleteQuery = "DELETE FROM person_accomodation_lease "
+							+ "WHERE person_id = ?";
+					
+					pDeleteEntry = connDeleteEntry.prepareStatement(deleteQuery);
+					pDeleteEntry.setInt(1, personID);
+					pDeleteEntry.executeUpdate();
+					
+					System.out.println("After deleting from "
+							+ "person_accomodation_lease");
+					
+					/*
+					 * Delete entry from invoice_person_lease
+					 */
+					Connection connDeleteInvoice = null;
+					PreparedStatement pDeleteInvoice = null;
+					connDeleteInvoice = ConnectionUtils.getConnection();
+					String deleteInvoice = "DELETE FROM invoice_person_lease "
+							+ "WHERE (lease_no = ? AND person_id = ?";
+					pDeleteInvoice = connDeleteInvoice.prepareStatement(deleteInvoice);
+					pDeleteInvoice.setInt(1, leaseNumber);
+					pDeleteInvoice.setInt(2, personID);
+					pDeleteInvoice.executeUpdate();
+					System.out.println("After deleting from invoice_person_lease");
+					
+					
+					/*
+					 * Delete entry from lease
+					 */
+					Connection connDeleteLease = null;
+					PreparedStatement pDeleteLease = null;
+					
+					connDeleteLease = ConnectionUtils.getConnection();
+					String deleteLease = "DELETE FROM Lease "
+							+ "WHERE lease_no = ?";
+					
+					pDeleteLease = connDeleteLease.prepareStatement(deleteLease);
+					pDeleteLease.setInt(1, leaseNumber);
+					pDeleteLease.executeUpdate();
+					
+					System.out.println("After deleting from "
+							+ "lease");
+					connDeleteEntry.close();
+					connDeleteLease.close();
+					connDeleteInvoice.close();
+					pDeleteEntry.close();
+					pDeleteLease.close();
+					pDeleteInvoice.close();
 				}
 			} else {
 				System.out.println("Maximum date: " + maxDate);
-
+				Date maxDateCopy = maxDate;
+				Date maxDateCopy1 = maxDateCopy;
+				String a = "'";
+				String maximumDate = maxDateCopy1.toString();
+				maximumDate = a.concat(maximumDate);
+				maximumDate	= maximumDate.concat(a);
+				String dateFormat = "'yyyy-mm-dd'";
 				String selectQueryDamageFields = "SELECT monthly_housing_rent,"
 						+ "monthly_parking_rent,late_fees,incidental_charges,"
 						+ "damage_charges "
