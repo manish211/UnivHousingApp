@@ -468,10 +468,9 @@ public class EntryPoint {
 											
 											case 6:
 												System.out.println("Showing Invoice lease generation");
-												System.out.println("Enter the date you want to generate invoices for: ");
-												String invoiceGenerationDate = inputObj.nextLine();
+												
 												InvoicePersonLease_Relation invoiceObj = new InvoicePersonLease_Relation();
-												invoiceObj.generateLeasesForGivenDate(invoiceGenerationDate);
+												invoiceObj.generateLeasesForGivenDate();
 												break;
 											
 											case 7: System.out.println("Checking for the Completed leases");
