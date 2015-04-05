@@ -401,7 +401,8 @@ public class EntryPoint {
 										System.out.println("4. View Parking Requests");
 										System.out.println("5. Profile");
 										System.out.println("6. Generate Invoices");
-										System.out.println("7. Back\n");
+										System.out.println("7. Check the Completed Leases");
+										System.out.println("8. Back\n");
 										
 										choice = inputObj.nextInt();
 										
@@ -465,7 +466,12 @@ public class EntryPoint {
 												InvoicePersonLease_Relation invoiceObj = new InvoicePersonLease_Relation();
 												invoiceObj.generateLeasesForGivenDate(invoiceGenerationDate);
 												break;
-											case 7:
+											
+											case 7: System.out.println("Checking for the Completed leases");
+													housingLeaseObj.checkForLeaseCompletion();
+													break;
+											
+											case 8:
 												mLevelOne = false;
 												break;
 	

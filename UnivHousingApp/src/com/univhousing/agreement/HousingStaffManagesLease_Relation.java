@@ -962,4 +962,80 @@ public class HousingStaffManagesLease_Relation {
 			}
 		}
 	}
+
+	public void checkForLeaseCompletion() {
+		
+		Connection dbConnection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet rs = null;
+
+		try {
+
+			dbConnection = ConnectionUtils.getConnection();
+
+			String selectQuery = "SELECT * FROM PERSON_ACC_STAFF WHERE REQUEST_STATUS= ? ";
+
+			preparedStatement = dbConnection.prepareStatement(selectQuery);
+			preparedStatement.setString(1, Constants.PROCESSED_STATUS);
+			rs = preparedStatement.executeQuery();
+
+			while (rs.next()) {
+
+				java.util.Date currentDateUtil = new java.util.Date();
+
+				Date moveInDate = rs.getDate("lease_move_in_date");
+				int duration = Integer.parseInt(rs.getString("Duration"));
+				int requestNumber = rs.getInt("application_request_no");
+				String moveInDateStr = Utils.changeUtilDateToString(moveInDate);
+				java.util.Date moveInDateUtils = Utils
+						.convertStringToUtilDateFormat(moveInDateStr);
+
+				Calendar c = Calendar.getInstance();
+				c.setTime(moveInDateUtils);
+				c.add(Calendar.MONTH, duration * 4);
+				java.util.Date moveOutDateUtils = c.getTime();
+
+				/*
+				 * System.out.println("MoveiN<<<<"+moveInDateUtils);
+				 * System.out.println
+				 * ("MoveOut>>>>>>"+moveOutDateUtils+"<<<<"+currentDateUtil
+				 * +">>>>> REquest # "+requestNumber);
+				 */
+				if (currentDateUtil.compareTo(moveOutDateUtils) >= 0) {
+
+					String selectQ1 = "UPDATE PERSON_ACC_STAFF SET request_status = ? "
+							+ "WHERE application_request_no = ?";
+
+					preparedStatement = dbConnection.prepareStatement(selectQ1);
+					preparedStatement.setString(1,
+							Constants.COMPLETED_LEASE_STATUS);
+					preparedStatement.setInt(2, requestNumber);
+					preparedStatement.executeUpdate();
+					preparedStatement.close();
+
+					System.out.println("Request number " + requestNumber
+							+ " has completed the LEASE!");
+
+				}
+
+			}
+
+		} catch (SQLException e1) {
+			System.out.println("SQLException: " + e1.getMessage());
+			System.out.println("VendorError: " + e1.getErrorCode());
+		} catch (Exception e3) {
+			System.out
+					.println("General Exception Case. Printing stack trace below:\n");
+			e3.printStackTrace();
+		} finally {
+			try {
+				rs.close();
+				preparedStatement.close();
+				dbConnection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
 }
