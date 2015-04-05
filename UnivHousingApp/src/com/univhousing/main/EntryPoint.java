@@ -358,7 +358,7 @@ public class EntryPoint {
 													switch (choice) 
 													{
 														case 1: System.out.println("Showing View Profile");
-															personObj.viewProfileDetails(studentId);
+															personObj.viewProfileDetails(credentialObj.personId);
 															break;
 	
 														case 2: System.out.println("Showing Update Profile");
@@ -825,10 +825,12 @@ public class EntryPoint {
 												switch (choice) 
 												{
 													case 1: System.out.println("Showing View Profile");
+													// credentialObj.personId is person id
 														personObj.viewProfileDetails(credentialObj.personId);
 														break;
 
 													case 2: System.out.println("Showing Update Profile");
+													// credentialObj.personId is person id
 													personObj.updateProfile(credentialObj.personId);
 														break;
 														

@@ -14,7 +14,7 @@ import com.univhousing.main.Utils;
 
 public class Person {
 
-	public int personId;
+	//public int personId;
 	public String firstName;
 	public String lastName;
 	public String streetName;
@@ -27,19 +27,28 @@ public class Person {
 	
 	Student studentObj = new Student();
 	Scanner inputObj = new Scanner(System.in);
-	
+	Guest guestObj = new Guest();
 	/**
-	 * @param personId
+	 * @param personId But for guests this parameter is personId
 	 * @action Displays name, number, address, dob, gender, category (freshman, sophomore, etc) family details
 	 *  if needed, special needs etc (refer the description for a comprehensive list)
 	 */
-	public void viewProfileDetails(int studentId) {
-		
+	public void viewProfileDetails(int personId) {
+		int studentId = studentObj.getStudentIdForPersonId(personId);
+		System.out.println("Person Id is: "+personId);
+		System.out.println("Student Id is: "+studentId);
+		String nationality = "";
+		String smoker = "";
+		String specialNeeds = "";
+		String housingStatus = "";
+		String studyField = "";
 		/*Write SQL Query for fetching:
 		 * name, number, address, dob, gender, category (freshman, sophomore, etc) family details (from NextOfKin)
 		 * if needed, special needs for a student.
 		 * There might be more than these please check the project document for this*/
-		int personId = studentObj.getPersonIdForStudentId(studentId);
+		
+			
+
 
 		ResultSet studentProfile = null;
 		ResultSet studentType = null;
@@ -53,7 +62,7 @@ public class Person {
 		try
 		{
 			queryPersonProfile = "SELECT P.first_name, P.last_name, P.street_no, P.city, P.postcode, P.phone_number, P.gender," +
-					"P.DOB FROM Person P WHERE P.person_id = ?";
+					"P.DOB, P.nationality, P.smoker, P.special_needs, P.housing_status, P.study_field FROM Person P WHERE P.person_id = ?";
 			queryStudentType = "SELECT S.student_type FROM Student S WHERE S.student_id = ?";
 			preparedStatement1 = dbConnection1.prepareStatement(queryPersonProfile);
 			preparedStatement1.setInt(1, personId);
@@ -69,25 +78,36 @@ public class Person {
 				phoneNumber = studentProfile.getLong("phone_number");
 				gender = studentProfile.getString("gender");
 				DOB = studentProfile.getDate("DOB");
+				nationality = studentProfile.getString("nationality");
+				smoker = studentProfile.getString("smoker");
+				specialNeeds = studentProfile.getString("special_needs");
+				housingStatus = studentProfile.getString("housing_status");
+				studyField = studentProfile.getString("study_field");
 				
 				System.out.println("Name: "+firstName+lastName+"\n"+"Address: "+streetName+","+city+","+postCode+"\t");
 				System.out.println("Phone Number: "+phoneNumber+"\n"+"Gender: "+gender+"\nDOB: "+DOB);
+				System.out.println("Nationality: "+nationality+"\n"+"Smoker: "+smoker);
+				System.out.println("Special Needs: "+specialNeeds+"\n"+"Housing Status: "+housingStatus);
+				System.out.println("Study Field: "+studyField);
 			}
 			
-			preparedStatement2 = dbConnection.prepareStatement(queryStudentType);
-			preparedStatement2.setInt(1, studentId);
-			studentType = preparedStatement2.executeQuery();
-			String studentCategory = "";
-
-			while(studentType.next())
+			if(!guestObj.checkPersonIsGuest(personId))
 			{
-				studentCategory = studentType.getString("student_type");
+				preparedStatement2 = dbConnection.prepareStatement(queryStudentType);
+				preparedStatement2.setInt(1, studentId);
+				studentType = preparedStatement2.executeQuery();
+				String studentCategory = "";
+
+				while(studentType.next())
+				{
+					studentCategory = studentType.getString("student_type");
+				}
+				System.out.println("Category: "+ studentCategory);
+				dbConnection.close();
+				System.out.println("Now displaying your Next of Kin details:\n");
+				NextOfKin nokObj = new NextOfKin();
+				nokObj.getNextOfKinDetails(personId);
 			}
-			System.out.println("Category: "+ studentCategory);
-			dbConnection.close();
-			System.out.println("Now displaying your Next of Kin details:\n");
-			NextOfKin nokObj = new NextOfKin();
-			nokObj.getNextOfKinDetails(studentId);
 		}
 		catch(SQLException e)
 		{
