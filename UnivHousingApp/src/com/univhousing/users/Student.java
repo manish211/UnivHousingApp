@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.univhousing.main.ConnectionUtils;
+import com.univhousing.main.Constants;
 
 public class Student {
 	
@@ -141,7 +142,7 @@ public class Student {
 				
 				System.out.println("requestStatus="+requestStatus);
 				
-				if(requestStatus.toUpperCase().equals("APPROVED"))
+				if(requestStatus.equalsIgnoreCase(Constants.PROCESSED_STATUS))
 				{
 					isStudentHavingAccomodation = true;
 //					System.out.println("IT IS TRUE: "+personId);

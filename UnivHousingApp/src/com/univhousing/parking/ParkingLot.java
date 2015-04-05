@@ -35,7 +35,7 @@ public class ParkingLot {
 		
 		String handicappedInfo ="";
 		
-		while(!handicappedInfo.equals("Y") && !handicappedInfo.equals("N"))
+		while(!handicappedInfo.equalsIgnoreCase("Y") && !handicappedInfo.equalsIgnoreCase("N"))
 		{
 			System.out.println("Handicapped? Y/N");
 			handicappedInfo = inputObj.next();
