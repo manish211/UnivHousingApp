@@ -58,6 +58,7 @@ public class Constants {
 	public static final String RESIDENCE_HALL_DEPOSITE = "500";
 	public static final String GENERAL_APARTMENT_DEPOSITE = "1000";
 	public static final String FAMILY_APARTMENT_DEPOSITE = "2000";
-	
+	public static final String PAID_INVOICE = "Paid";
+	public static final String OUTSTANDING_INVOICE = "Outstanding";
 	
 }

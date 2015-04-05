@@ -133,7 +133,8 @@ public class EntryPoint {
 																/*Runtime.getRuntime().exec("clear");*/
 																System.out.println("\n1. View Current Invoice");
 																System.out.println("2. View Former Invoices");
-																System.out.println("3. Back\n");
+																System.out.println("3. Pay All Invoices");
+																System.out.println("4. Back\n");
 																choice = inputObj.nextInt();
 																
 																switch(choice)
@@ -145,6 +146,9 @@ public class EntryPoint {
 																		invoicePersonObj.displayListOfInvociesForAPerson(credentialObj.personId, mInvoiceNumbers);
 																		break;
 																	case 3:
+																		invoicePersonObj.changeAllInvoicesToPaid(credentialObj.personId);
+																		break;
+																	case 4:
 																		// Taking back to Level Two
 																		mLevelThree = false;
 																		break;

@@ -372,7 +372,38 @@ public class InvoicePersonLease_Relation {
 		{
 			e.printStackTrace();
 		}
-		
-		
+	}
+	
+	/**
+	 * @param personId
+	 * @action This method will take be invoked when the person wants to pay all his receipts
+	 * @assumption There is no more than one entry for a person in person_accomodation_lease i.e. one person is not active on two
+	 * leases simultaneously.
+	 */
+	public void changeAllInvoicesToPaid(int personId)
+	{
+		PreparedStatement ps = null;
+		Connection conn = ConnectionUtils.getConnection();
+		String query = "Update invoice_person_lease set payment_status = ?, payment_due = 0 WHERE invoice_no = " +
+				"(select invoice_no from invoice_person_lease where payment_due > 0 " +
+				"and person_id = ? and lease_no = (select lease_no from person_accomodation_lease where person_id = ?))";
+		try
+		{
+			ps = conn.prepareStatement(query);
+			ps.setString(1, Constants.PAID_INVOICE);
+			ps.setInt(2, personId);
+			ps.setInt(3, personId);
+			int result = ps.executeUpdate();
+			if(result>0)
+				System.out.println("Your invoices have been paid,Bravo now you can re sign another lease too!!");
+			else
+				System.out.println("No invoices were paid for, check if you have pending invoices with admin");
+			ps.close();
+			ConnectionUtils.closeConnection(conn);
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
 	}
 }
