@@ -702,7 +702,7 @@ public class Lease {
 			 * Query for getting count of free bedrooms Assuming that
 			 * accommodation_id is unique
 			 */
-			String selectQueryBedroom = "SELECT COUNT (B.apt_place_no) AS rooms "
+			String selectQueryBedroom = "SELECT COUNT (B.accomodation_id) AS rooms "
 					+ "FROM bedroom B "
 					+ "WHERE B.accomodation_id  NOT IN "
 					+ "(SELECT accomodation_id "
@@ -721,7 +721,7 @@ public class Lease {
 			 * Query for getting count of free family apartments. Assuming
 			 * accommodation_id is unique.
 			 */
-			String selectQueryFamilyApt = "SELECT COUNT (F.apt_no) AS apartments "
+			String selectQueryFamilyApt = "SELECT COUNT (F.accomodation_id) AS apartments "
 					+ "FROM Family_Apartment F "
 					+ "WHERE F.accomodation_id NOT IN "
 					+ "(SELECT accomodation_id "
@@ -740,7 +740,7 @@ public class Lease {
 			 * Query for getting count of free residence halls. Exactly same as
 			 * the previous two queries.
 			 */
-			String selectQueryResidence = "SELECT COUNT (R.residence_place_no) AS residence "
+			String selectQueryResidence = "SELECT COUNT (R.accomodation_id) AS residence "
 					+ "FROM residence_hall_provides_room R "
 					+ "WHERE R.accomodation_id NOT IN "
 					+ "(SELECT accomodation_id "
