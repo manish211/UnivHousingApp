@@ -44,7 +44,7 @@ public class InvoicePersonLease_Relation {
 		/*Write SQL query to fetch:
 		 * Invoice numbers for a particular person using his person_id*/
 		
-		System.out.println("PERSON ID PASSED : "+personId);
+	//	System.out.println("PERSON ID PASSED : "+personId);
 					
 		invoiceNumbersList.clear();
 	
@@ -61,7 +61,7 @@ public class InvoicePersonLease_Relation {
 			
 			preparedStatement.setInt(1,personId);
 			
-			System.out.println("SELECT QUERY IS: "+selectQuery);
+		//	System.out.println("SELECT QUERY IS: "+selectQuery);
 			
 			rs = preparedStatement.executeQuery();
 			int count = 1;
@@ -145,7 +145,7 @@ public class InvoicePersonLease_Relation {
 			
 			String selectQuery = "SELECT * FROM invoice_person_lease outer_table WHERE person_id = ? AND invoice_no = ?" ;
 			
-			System.out.println("SELECT QUERY IS: "+selectQuery);
+			//System.out.println("SELECT QUERY IS: "+selectQuery);
 					
 			preparedStatement = dbConnection.prepareStatement(selectQuery);
 			
@@ -227,7 +227,7 @@ public class InvoicePersonLease_Relation {
 			selectQuery = selectQuery + " payment_date = (select max(payment_date) from invoice_person_lease inner_table " ;
 			selectQuery = selectQuery + " where outer_table.person_id = inner_table.person_id) and rownum<2" ;
 			
-			System.out.println("SELECT QUERY IS: "+selectQuery);
+	//		System.out.println("SELECT QUERY IS: "+selectQuery);
 					
 			preparedStatement = dbConnection.prepareStatement(selectQuery);
 			
