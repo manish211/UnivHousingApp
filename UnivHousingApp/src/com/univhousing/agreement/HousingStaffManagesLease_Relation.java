@@ -708,8 +708,6 @@ public class HousingStaffManagesLease_Relation {
 			 * PENDING
 			 */
 			dbConnection = ConnectionUtils.getConnection();
-			//dbConnection.setAutoCommit(false);
-			//dbConnection.commit();
 			String selectQuery = "SELECT termination_request_number, person_id "
 					+ "FROM TERMINATION_REQUESTS " + "WHERE STATUS = ?";
 
@@ -795,9 +793,7 @@ public class HousingStaffManagesLease_Relation {
 					+ "FROM invoice_person_lease "
 					+ "WHERE (payment_status <> ?  "
 					+ "AND person_id = ?) ";
-				/*	+ "AND person_id = (SELECT person_id "
-					+ "FROM termination_requests "
-					+ "WHERE termination_request_number = ?))";*/
+
 			rs.close();
 			preparedStatement.close();
 			
@@ -817,19 +813,16 @@ public class HousingStaffManagesLease_Relation {
 				
 				if (damageFees > 0) {
 
-
 					/*
 					 * Query for getting invoice number from 
 					 * invoice_person_lease
 					 */
-					
 					String selectQueryInvoiceNum = "SELECT MAX(invoice_no) as invoice_no "
 							+ "FROM invoice_person_lease ";
 					rs.close();
 					preparedStatement.close();
 
 					preparedStatement = dbConnection.prepareStatement(selectQueryInvoiceNum);
-
 					rs = preparedStatement.executeQuery();
 					rs.next();
 					System.out.println("Breakpoint1");
@@ -885,11 +878,11 @@ public class HousingStaffManagesLease_Relation {
 					p2.close();
 					c2.close();
 				} else {
+					
 					/*
 					 * There are no damage fees. Write a query 
 					 * to remove the entry from person_accommodation_lease
 					 */
-					
 					String getLease = "SELECT lease_no "
 							+ "FROM person_accomodation_lease "
 							+ "WHERE person_id = ?";
@@ -905,7 +898,6 @@ public class HousingStaffManagesLease_Relation {
 					System.out.println("Lease number: " + leaseNumber
 							+ ". PersonID: " + personID);
 					
-					//ResultSet r2 = null;
 					/*
 					 * Delete entry from person_accommodation_lease
 					 */
@@ -930,7 +922,7 @@ public class HousingStaffManagesLease_Relation {
 					PreparedStatement pDeleteInvoice = null;
 					connDeleteInvoice = ConnectionUtils.getConnection();
 					String deleteInvoice = "DELETE FROM invoice_person_lease "
-							+ "WHERE (lease_no = ? AND person_id = ?";
+							+ "WHERE (lease_no = ? AND person_id = ?)";
 					pDeleteInvoice = connDeleteInvoice.prepareStatement(deleteInvoice);
 					pDeleteInvoice.setInt(1, leaseNumber);
 					pDeleteInvoice.setInt(2, personID);
