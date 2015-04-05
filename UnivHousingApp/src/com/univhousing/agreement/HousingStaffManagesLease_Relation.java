@@ -1036,7 +1036,7 @@ public class HousingStaffManagesLease_Relation {
 	}
 
 	public void checkForLeaseCompletion() {
-		
+
 		Connection dbConnection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet rs = null;
@@ -1045,16 +1045,20 @@ public class HousingStaffManagesLease_Relation {
 
 			dbConnection = ConnectionUtils.getConnection();
 
-			String selectQuery = "SELECT * FROM PERSON_ACC_STAFF WHERE REQUEST_STATUS= ? ";
+			String selectQuery = "SELECT * FROM PERSON_ACC_STAFF WHERE REQUEST_STATUS= ? OR  REQUEST_STATUS =? ";
 
 			preparedStatement = dbConnection.prepareStatement(selectQuery);
 			preparedStatement.setString(1, Constants.PROCESSED_STATUS);
-			rs = preparedStatement.executeQuery();
+			preparedStatement.setString(2, Constants.COMPLETED_LEASE_STATUS);
 
+			// taking completed entries as well because if bill unpaid, next
+			// time it should be checked
+			rs = preparedStatement.executeQuery();
+			System.out.println("");
 			while (rs.next()) {
 
 				java.util.Date currentDateUtil = new java.util.Date();
-
+				int personID = rs.getInt("person_id");
 				Date moveInDate = rs.getDate("lease_move_in_date");
 				int duration = Integer.parseInt(rs.getString("Duration"));
 				int requestNumber = rs.getInt("application_request_no");
@@ -1067,12 +1071,6 @@ public class HousingStaffManagesLease_Relation {
 				c.add(Calendar.MONTH, duration * 4);
 				java.util.Date moveOutDateUtils = c.getTime();
 
-				/*
-				 * System.out.println("MoveiN<<<<"+moveInDateUtils);
-				 * System.out.println
-				 * ("MoveOut>>>>>>"+moveOutDateUtils+"<<<<"+currentDateUtil
-				 * +">>>>> REquest # "+requestNumber);
-				 */
 				if (currentDateUtil.compareTo(moveOutDateUtils) >= 0) {
 
 					String selectQ1 = "UPDATE PERSON_ACC_STAFF SET request_status = ? "
@@ -1085,9 +1083,94 @@ public class HousingStaffManagesLease_Relation {
 					preparedStatement.executeUpdate();
 					preparedStatement.close();
 
-					System.out.println("Request number " + requestNumber
-							+ " has completed the LEASE!");
+					System.out.println("Request number <" + requestNumber
+							+ "> with Person Id [" + personID
+							+ "] has completed the LEASE!");
 
+					ResultSet rsToCheckPresentinLeaseAcc = null;
+					String selectQ2 = "SELECT person_id from PERSON_ACCOMODATION_LEASE WHERE person_id=?";
+					preparedStatement = dbConnection.prepareStatement(selectQ2);
+					preparedStatement.setInt(1, personID);
+					rsToCheckPresentinLeaseAcc = preparedStatement
+							.executeQuery();
+
+					if (rsToCheckPresentinLeaseAcc.isBeforeFirst()) {
+
+						boolean flagUnpaid = false;
+						boolean paid = false;
+						rsToCheckPresentinLeaseAcc.next();
+						System.out.println("Cheking if personID [" + personID
+								+ "] has paid his/her dues... ");
+
+						PreparedStatement preparedStatement2 = null;
+						ResultSet rsToCheckIfInvoice = null;
+
+						String selectQ3 = "SELECT PAYMENT_STATUS FROM INVOICE_PERSON_LEASE WHERE person_id= ? ";
+						preparedStatement2 = dbConnection
+								.prepareStatement(selectQ3);
+						preparedStatement2.setInt(1, personID);
+						rsToCheckIfInvoice = preparedStatement2.executeQuery();
+
+						if (rsToCheckIfInvoice.isBeforeFirst()) {
+
+							while (rsToCheckIfInvoice.next()) {
+
+								if (rsToCheckIfInvoice.getString(
+										"payment_status").equals("Outstanding")) {
+
+									flagUnpaid = true;
+									break;
+								}
+
+							}
+
+							paid = true;
+						}
+
+						else {
+
+							System.out
+									.println("The person ["
+											+ personID
+											+ "] has not yet generated the Invioce. Sending Email reminder....\n");
+						}
+
+						if (flagUnpaid) {
+							System.out
+									.println("The person ["
+											+ personID
+											+ "] has still not paid his/her dues. Sending Email reminder....!");
+						} else if (flagUnpaid == false && paid == true) {
+
+							System.out
+									.println("DELETING PID< "
+											+ personID
+											+ "> From lease table. Sending Exit email...");
+
+							PreparedStatement preparedStatement3 = null;
+							ResultSet rsToDelete = null;
+
+							String deleteQuery = "DELETE FROM PERSON_ACCOMODATION_LEASE WHERE person_id=?";
+							preparedStatement3 = dbConnection
+									.prepareStatement(deleteQuery);
+							preparedStatement3.setInt(1, personID);
+							preparedStatement3.executeUpdate();
+
+						}
+
+					}
+
+					else {
+						System.out
+								.println("The person ID ["
+										+ personID
+										+ "] has paid his dues and not present anymore");
+
+					}					
+					
+					
+					
+					
 				}
 
 			}
