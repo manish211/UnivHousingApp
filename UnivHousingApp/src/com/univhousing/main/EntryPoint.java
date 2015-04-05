@@ -92,7 +92,7 @@ public class EntryPoint {
 							{
 								
 								credentialObj.designation = studentObj.getStudentDesignation(credentialObj.personId);
-								
+								personObj.fetchFirstAndLastName(credentialObj.personId);
 								if(credentialObj.designation.equalsIgnoreCase(Constants.STUDENT))
 								{
 									// This is the first Level of Student Hierarchy
@@ -516,6 +516,7 @@ public class EntryPoint {
 							{
 								Guest guestObj = new Guest();
 								credentialObj.personId = guestObj.getPersonIdFromApprovalId(approvalId);
+								personObj.fetchFirstAndLastName(credentialObj.personId);
 								//credentialObj.personId = 3;
 								// This is the first Level of Guest Hierarchy
 								while(mLevelOne)

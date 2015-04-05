@@ -342,5 +342,37 @@ public class Person {
 		
 	}
 
-
+	/**
+	 * @param personId
+	 * @action Displays the first and last name of the person who has logged in
+	 */
+	public void fetchFirstAndLastName(int personId)
+	{
+		String fName = "";
+		String lName = "";
+		PreparedStatement ps = null;
+		Connection conn = ConnectionUtils.getConnection();
+		String query = "SELECT first_name,last_name from person where person_id = ?";
+		ResultSet rs = null;
+		try
+		{
+			ps = conn.prepareStatement(query);
+			ps.setInt(1, personId);
+			rs = ps.executeQuery();
+			
+			while(rs.next())
+			{
+				fName = rs.getString("first_name");
+				lName = rs.getString("last_name");
+			}
+			System.out.println("Welcome "+fName+" "+lName);
+			rs.close();
+			ps.close();
+			ConnectionUtils.closeConnection(conn);
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+	}
 }
