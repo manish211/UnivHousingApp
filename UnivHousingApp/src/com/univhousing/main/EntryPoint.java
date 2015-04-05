@@ -510,9 +510,9 @@ public class EntryPoint {
 							// Do something
 							System.out.println("Enter Approval Id or Press 2 to go Back:");
 							int approvalId = inputObj.nextInt();
-							if(approvalId == 2)
-								return;
-							else
+							if(approvalId != 2)
+/*								//return;
+							else*/
 							{
 								Guest guestObj = new Guest();
 								credentialObj.personId = guestObj.getPersonIdFromApprovalId(approvalId);
