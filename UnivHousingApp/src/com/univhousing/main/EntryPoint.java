@@ -656,6 +656,7 @@ public class EntryPoint {
 																		else
 																		{
 																			System.out.println("No previous leases\n");
+																			break;
 																		}
 																	}
 																	// Setting true so that we can come back to Level Four
