@@ -41,9 +41,11 @@ public class LeaseRequest_Relation {
 
 			boolean isFreshmen = false;
 			String housingOption;
+			String paymentGateway = "";
 			String hallPreference1 = "";
 			String hallPreference2 = "";
 			String hallPreference3 = "";
+			String paymentGatewayOption;
 			String studentName = null;
 			dbConnection = ConnectionUtils.getConnection();
 			String SelectQuery1 = "SELECT S.Student_type, P.First_Name FROM STUDENT S,Person P WHERE S.Person_id=? AND P.person_id=S.person_id";
@@ -161,6 +163,26 @@ public class LeaseRequest_Relation {
 
 			}
 			
+			System.out.println("Please choose your payment gateway");
+			System.out.println("a. Cash\n"
+					+ "b. Credit Card\n"
+					+ "c. Debit Card\n"
+					+ "d. Money Order\n");
+			
+			paymentGatewayOption = inputObj.next();
+			if (paymentGatewayOption.equalsIgnoreCase("a")) {
+				paymentGateway = "Cash";
+			} else if (paymentGatewayOption.equalsIgnoreCase("b")) {
+				paymentGateway = "Credit Card";
+			} else if (paymentGatewayOption.equalsIgnoreCase("c")) {
+				paymentGateway = "Debit Card";
+			} else if (paymentGatewayOption.equalsIgnoreCase("d")) {
+				paymentGateway = "Money Order";
+			} else {
+				System.out.println("Please enter a proper option");
+			}
+			
+			System.out.println("Selected payment gateway: " + paymentGateway);
 			/*SELECTING STAFF NO BLOCK START*/
 			String query3 = "SELECT MAX(staff_no) AS LastStaff FROM ticket_person_staff";
 			int staffNoMax = 0;
@@ -240,8 +262,8 @@ public class LeaseRequest_Relation {
 
 				String reqStatus = Constants.PENDING_STATUS;
 				String selectQuery3 = "INSERT INTO PERSON_ACC_STAFF (application_request_no,accomodation_type,person_id,request_status, "
-						+ "mode_of_payment,lease_move_in_date,duration,PREFERENCE1,PREFERENCE2,PREFERENCE3,staff_no) "
-						+ "VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+						+ "mode_of_payment,lease_move_in_date,duration,PREFERENCE1,PREFERENCE2,PREFERENCE3,staff_no,payment_gateway) "
+						+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 
 				preparedStatement = dbConnection.prepareStatement(selectQuery3);
 				preparedStatement.setInt(1, newApplicationRequestNumber);
@@ -255,6 +277,7 @@ public class LeaseRequest_Relation {
 				preparedStatement.setString(9, hallPreference2);
 				preparedStatement.setString(10, hallPreference3);
 				preparedStatement.setInt(11, staffNo);
+				preparedStatement.setString(12, paymentGateway);
 				preparedStatement.executeUpdate();
 
 				System.out
