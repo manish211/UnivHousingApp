@@ -36,7 +36,7 @@ public class NextOfKin {
 		Connection dbConnection = ConnectionUtils.getConnection();
 		PreparedStatement preparedStatement1 = null;
 		String queryNextOfKin = "";
-		
+		int count = 0;
 		try
 		{
 			queryNextOfKin = "SELECT K.first_name, K.last_name, K.street_name, K.city_name, K.zip_code, K.phone_number, K.gender, K.DOB FROM KIN_STUDENT K WHERE K.student_id = ?";
@@ -46,6 +46,7 @@ public class NextOfKin {
 			
 			while(studentKin.next())
 			{
+				count++;
 				firstName = studentKin.getString("first_name");
 				lastName = studentKin.getString("last_name");
 				streetName = studentKin.getString("street_name");
@@ -65,5 +66,31 @@ public class NextOfKin {
 		}
 	}
 
-
+	public boolean checkIfNextOfKinPresent(int studentId)
+	{
+		ResultSet studentKin = null;
+		Connection dbConnection = ConnectionUtils.getConnection();
+		PreparedStatement preparedStatement1 = null;
+		String queryNextOfKin = "";
+		int count = 0;
+		try
+		{
+			queryNextOfKin = "SELECT K.first_name, K.last_name, K.street_name, K.city_name, K.zip_code, K.phone_number, K.gender, K.DOB FROM KIN_STUDENT K WHERE K.student_id = ?";
+			preparedStatement1 = dbConnection.prepareStatement(queryNextOfKin);
+			preparedStatement1.setInt(1, studentId);
+			studentKin = preparedStatement1.executeQuery();
+			
+			while(studentKin.next())
+			{
+				count++;
+			}
+			if(count>0)
+				return true;
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		return false;
+	}
 }

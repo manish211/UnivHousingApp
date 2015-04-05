@@ -179,7 +179,8 @@ public class EntryPoint {
 																}
 															}
 															// Setting true so that we can come back in the third level
-															mLevelThree = true;															break;
+															mLevelThree = true;	
+															break;
 														case 3:
 															System.out.println("Generating New Request");
 															/*Runtime.getRuntime().exec("clear");*/
@@ -368,7 +369,7 @@ public class EntryPoint {
 														case 3:
 															System.out.println("Shwowing Back");
 															mLevelTwo = false;
-
+															break;
 														default:
 															break;
 													}
@@ -450,6 +451,7 @@ public class EntryPoint {
 														case 3:
 															System.out.println("Shwowing Back");
 															mLevelTwo = false;
+															break;
 														default:
 															break;
 													}
@@ -654,7 +656,8 @@ public class EntryPoint {
 															}
 														}
 														// Setting true so that we can come back in the third level
-														mLevelThree = true;															break;
+														mLevelThree = true;	
+														break;
 													case 3:
 														System.out.println("Generating New Request");
 														/*Runtime.getRuntime().exec("clear");*/
@@ -837,7 +840,7 @@ public class EntryPoint {
 													case 3:
 														System.out.println("Shwowing Back");
 														mLevelTwo = false;
-
+														break;
 													default:
 														break;
 												}
