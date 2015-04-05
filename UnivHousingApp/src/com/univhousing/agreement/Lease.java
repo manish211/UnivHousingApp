@@ -276,7 +276,9 @@ public class Lease {
 		ResultSet rs = null;
 		Connection dbConnection = null;
 		PreparedStatement preparedStatement = null;
-
+		String accomodationType = "";
+		int accomodationId = -1;
+		
 		try {
 			dbConnection = ConnectionUtils.getConnection();
 
@@ -318,6 +320,9 @@ public class Lease {
 						rs.getString("student_type")));
 				System.out.print(String.format("%-15s",
 						rs.getDate("Lease_Move_In_Date")));
+				
+				accomodationType = rs.getString("accomodation_type");
+				accomodationId = rs.getInt("accomodation_id");
 
 			}
 
@@ -327,9 +332,8 @@ public class Lease {
 			 * Strings. This way get into one of the three If loops and print
 			 * the relevant pa=lace# room # information about them.
 			 */
-
-			String accomodationType = rs.getString("accomodation_type");
-			int accomodationId = rs.getInt("accomodation_id");
+			
+			
 
 			/*
 			 * Closing RS and Preparedstatement -- because --> I want to reuse
@@ -419,7 +423,7 @@ public class Lease {
 
 			} else {
 				System.out
-						.println("Error fetching the Residence Related Details. Please Contact the Admin");
+						.println("No records found. Please Contact the Admin");
 			}
 
 		} catch (SQLException e1) {
