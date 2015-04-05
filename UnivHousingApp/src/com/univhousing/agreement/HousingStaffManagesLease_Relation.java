@@ -721,13 +721,16 @@ public class HousingStaffManagesLease_Relation {
 			
 			String selectQueryFees = "SELECT MAX(payment_date) as \"date\""
 					+ "FROM invoice_person_lease "
-					+ "WHERE payment_status <> ? "
-					+ "AND person_id = (SELECT person_id "
+					+ "WHERE (payment_status <> ?  "
+					+ "AND person_id = ?) ";
+				/*	+ "AND person_id = (SELECT person_id "
 					+ "FROM termination_requests "
-					+ "WHERE termination_request_number = ?)";
+					+ "WHERE termination_request_number = ?))";*/
 			rs.close();
 			preparedStatement.close();
-
+			
+			System.out.println("Getting date for person_id: " + personID 
+					+ " and requestNumber: " + requestNumber);
 			preparedStatement = dbConnection.prepareStatement(selectQueryFees);
 			preparedStatement.setString(1, "'Paid'");
 			preparedStatement.setInt(2, requestNumber);
@@ -831,6 +834,9 @@ public class HousingStaffManagesLease_Relation {
 							+ ". PersonID: " + personID);
 					
 					//ResultSet r2 = null;
+					/*
+					 * Delete entry from person_accommodation_lease
+					 */
 					Connection connDeleteEntry = null;
 					PreparedStatement pDeleteEntry = null;
 					
@@ -844,6 +850,25 @@ public class HousingStaffManagesLease_Relation {
 					
 					System.out.println("After deleting from "
 							+ "person_accomodation_lease");
+					
+					/*
+					 * Delete entry from invoice_person_lease
+					 */
+					Connection connDeleteInvoice = null;
+					PreparedStatement pDeleteInvoice = null;
+					connDeleteInvoice = ConnectionUtils.getConnection();
+					String deleteInvoice = "DELETE FROM invoice_person_lease "
+							+ "WHERE (lease_no = ? AND person_id = ?";
+					pDeleteInvoice = connDeleteInvoice.prepareStatement(deleteInvoice);
+					pDeleteInvoice.setInt(1, leaseNumber);
+					pDeleteInvoice.setInt(2, personID);
+					pDeleteInvoice.executeUpdate();
+					System.out.println("After deleting from invoice_person_lease");
+					
+					
+					/*
+					 * Delete entry from lease
+					 */
 					Connection connDeleteLease = null;
 					PreparedStatement pDeleteLease = null;
 					
@@ -859,10 +884,10 @@ public class HousingStaffManagesLease_Relation {
 							+ "lease");
 					connDeleteEntry.close();
 					connDeleteLease.close();
+					connDeleteInvoice.close();
 					pDeleteEntry.close();
 					pDeleteLease.close();
-					
-					
+					pDeleteInvoice.close();
 				}
 			} else {
 				System.out.println("Maximum date: " + maxDate);
