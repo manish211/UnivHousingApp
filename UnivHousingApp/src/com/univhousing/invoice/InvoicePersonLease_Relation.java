@@ -383,23 +383,42 @@ public class InvoicePersonLease_Relation {
 	public void changeAllInvoicesToPaid(int personId)
 	{
 		PreparedStatement ps = null;
+		PreparedStatement ps2 = null;
 		Connection conn = ConnectionUtils.getConnection();
-		String query = "Update invoice_person_lease set payment_status = ?, payment_due = 0 WHERE invoice_no = " +
-				"(select invoice_no from invoice_person_lease where payment_due > 0 " +
-				"and person_id = ? and lease_no = (select lease_no from person_accomodation_lease where person_id = ?))";
+		ResultSet rs = null;
+		int result=0;
 		try
 		{
+		
+		
+		String query1 = "select invoice_no from invoice_person_lease where payment_due > 0 " +
+				"and person_id = ? and lease_no = (select lease_no from person_accomodation_lease where person_id = ?)";
+		
+			ps2 = conn.prepareStatement(query1);
+			ps2.setInt(1, personId);
+			ps2.setInt(2, personId);
+			rs = ps2.executeQuery();
+		
+		
+			while(rs.next()){
+				
+			String query = "Update invoice_person_lease set payment_status = ?, payment_due = 0 WHERE invoice_no = ?";
+
+
+				
 			ps = conn.prepareStatement(query);
 			ps.setString(1, Constants.PAID_INVOICE);
-			ps.setInt(2, personId);
-			ps.setInt(3, personId);
-			int result = ps.executeUpdate();
+			ps.setInt(2,rs.getInt("invoice_no"));
+			result = ps.executeUpdate();
+			
+			}
 			if(result>0)
 				System.out.println("Your invoices have been paid,Bravo now you can re sign another lease too!!");
 			else
-				System.out.println("No invoices were paid for, check if you have pending invoices with admin");
-			ps.close();
+				System.out.println("No invoices were paid for! Please contact the customer support on our Contact Us page!!");
+		//	ps.close();
 			ConnectionUtils.closeConnection(conn);
+			
 		}
 		catch(SQLException e)
 		{
