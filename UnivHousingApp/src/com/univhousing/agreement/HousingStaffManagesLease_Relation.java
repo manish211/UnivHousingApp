@@ -734,6 +734,27 @@ public class HousingStaffManagesLease_Relation {
 	public void getAllNewTerminationRequests(
 			ArrayList<Integer> allTerminationRequestsToMonitor)
 			throws SQLException {
+		
+/*		
+		BEFORE YOU SHOW ALL THE REQUESTS, UPDATE THE STATUS OF EXISTING RECORDS
+		WHOSE STATUS IS PROCESSED AND THE INSPECTION DATE IS LESS THAN THE CURRENT DATE OR SYSDATE.
+*/		
+		String updateStatusQuery = "update termination_requests set status = ? where status = ? and inspection_date < sysdate";
+		PreparedStatement psForUpdate = null;
+		Connection connForUpdate= ConnectionUtils.getConnection();
+		
+		System.out.println("Updating the status of all requests under processing to complete with inspection_date less than today's date");
+		psForUpdate = connForUpdate.prepareStatement(updateStatusQuery);
+		psForUpdate.setString(1, Constants.COMPLETE_STATUS);
+		psForUpdate.setString(2, Constants.PROCESSING_STATUS);
+		psForUpdate.executeUpdate();
+		
+		ConnectionUtils.closeConnection(connForUpdate);
+		
+		System.out.println("\nUpdate successful...Fetching the termination requests. Please wait...\n");
+		
+		
+		
 
 		/* Write SQL Query to fetch all the termination requests */
 		ResultSet rs = null;
