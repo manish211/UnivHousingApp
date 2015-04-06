@@ -874,7 +874,7 @@ public class HousingStaffManagesLease_Relation {
 					+ " and requestNumber: " + requestNumber);
 			preparedStatement = dbConnection.prepareStatement(selectQueryFees);
 			preparedStatement.setString(1, "'Paid'");
-			preparedStatement.setInt(2, requestNumber);
+			preparedStatement.setInt(2, personID);
 			rs = preparedStatement.executeQuery();
 			
 			rs.next();
@@ -1070,7 +1070,7 @@ public class HousingStaffManagesLease_Relation {
 
 				dbConnection.commit();
 				int totalCharges = monthlyHousingRent + monthlyParkingRent +
-						lateFees + incidentalCharges + damageCharges;
+						lateFees + incidentalCharges + damageFees;
 				/*System.out.println(monthlyHousingRent + " " + monthlyParkingRent + " "
 					+ lateFees + " " + incidentalCharges + " " + damageCharges);*/
 				String updateQueryDamage = "UPDATE invoice_person_lease "
