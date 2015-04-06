@@ -810,6 +810,23 @@ public class HousingStaffManagesLease_Relation {
 								.getInt("person_id"), rs.getInt("staff_no")));
 			}
 
+			System.out.println("Enter the inspection date in MM/DD/YYYY format");
+			String inspectionDate = inputObj.next();
+			java.sql.Date sqlInspectionDate = Utils.convertStringToSQLDateFormat(inspectionDate);
+			
+			String updateQueryDate = "UPDATE Termination_Requests "
+					+ "SET inspection_date = ? "
+					+ "WHERE termination_request_number = ?";
+			PreparedStatement pAddInspecDate = null;
+			pAddInspecDate = dbConnection.prepareStatement(updateQueryDate);
+			pAddInspecDate.setDate(1, sqlInspectionDate);
+			pAddInspecDate.setInt(2, requestNumber);
+			
+			pAddInspecDate.executeUpdate();
+			
+			pAddInspecDate.close();
+			
+			
 			int damageFees = 0;
 			System.out.println("Please enter the damage fees:");
 			damageFees = inputObj.nextInt();
@@ -823,6 +840,19 @@ public class HousingStaffManagesLease_Relation {
 			 * Write SQL Query to fetch the latest unpaid invoice and add the
 			 * damageFees to already existing payment_due
 			 */
+			
+			String updateQueryStatus = "UPDATE Termination_Requests "
+					+ "SET status = ? "
+					+ "WHERE termination_request_number = ?";
+			
+			PreparedStatement pUpdateStatus = null;
+			pUpdateStatus = dbConnection.prepareStatement(updateQueryStatus);
+			pUpdateStatus.setString(1, Constants.PROCESSED_STATUS);
+			pUpdateStatus.setInt(2, requestNumber);
+			pUpdateStatus.executeUpdate();
+			
+			pUpdateStatus.close();
+			
 			String selectPersonID = "SELECT person_id "
 					+ "FROM termination_requests "
 					+ "WHERE termination_request_number = ?";
@@ -885,44 +915,48 @@ public class HousingStaffManagesLease_Relation {
 					preparedStatement.setInt(1, personID);
 
 					rs = preparedStatement.executeQuery();
-					rs.next();
-					System.out.println("Breakpoint2");
-					int leaseNumber = rs.getInt("lease_no");
+					boolean isNotEmpty = rs.next();
+					if (isNotEmpty) {
+						System.out.println("Breakpoint2");
+						int leaseNumber = rs.getInt("lease_no");
 
-					PreparedStatement p2 = null;
-					Connection c2 = null;
+						PreparedStatement p2 = null;
+						Connection c2 = null;
 
-					/*
-					 * Write a query to insert an entry into the invoice_person_lease table
-					 */
-					String insertQueryLease = "INSERT INTO invoice_person_lease "
-							+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+						/*
+						 * Write a query to insert an entry into the invoice_person_lease table
+						 */
+						String insertQueryLease = "INSERT INTO invoice_person_lease "
+								+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 
-					Calendar cal = Calendar.getInstance();
-					cal.add(Calendar.DATE, 30);
-					java.util.Date justNowUtils = cal.getTime();
-					String temp = Utils.changeUtilDateToString(justNowUtils);
-					Date oneMonthLater = Utils.convertStringToSQLDateFormat(temp);
-					
-					c2 = ConnectionUtils.getConnection();
-					p2 = c2.prepareStatement(insertQueryLease);
-					p2.setInt(1, 0);
-					p2.setInt(2, 0);
-					p2.setInt(3, 0);
-					p2.setInt(4, 0);
-					p2.setInt(5, invoiceNumber);
-					p2.setDate(6, oneMonthLater);
-					p2.setString(7, "Credit");
-					p2.setInt(8, leaseNumber);
-					p2.setString(9, "Outstanding");
-					p2.setInt(10, damageFees);
-					p2.setInt(11, 0);
-					p2.setInt(12, personID);
+						Calendar cal = Calendar.getInstance();
+						cal.add(Calendar.DATE, 30);
+						java.util.Date justNowUtils = cal.getTime();
+						String temp = Utils.changeUtilDateToString(justNowUtils);
+						Date oneMonthLater = Utils.convertStringToSQLDateFormat(temp);
 
-					int insertRes = p2.executeUpdate();
+						c2 = ConnectionUtils.getConnection();
+						p2 = c2.prepareStatement(insertQueryLease);
+						p2.setInt(1, 0);
+						p2.setInt(2, 0);
+						p2.setInt(3, 0);
+						p2.setInt(4, 0);
+						p2.setInt(5, invoiceNumber);
+						p2.setDate(6, oneMonthLater);
+						p2.setString(7, "Credit");
+						p2.setInt(8, leaseNumber);
+						p2.setString(9, "Outstanding");
+						p2.setInt(10, damageFees);
+						p2.setInt(11, 0);
+						p2.setInt(12, personID);
 
-					p2.close();
-					c2.close();
+						int insertRes = p2.executeUpdate();
+
+						p2.close();
+						c2.close();
+					} else {
+						System.out.println("There is no lease entry for this person");
+					}
 				} else {
 					
 					/*
