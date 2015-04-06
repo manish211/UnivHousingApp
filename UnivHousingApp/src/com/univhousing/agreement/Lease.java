@@ -51,19 +51,21 @@ public class Lease {
 			rs = preparedStatement.executeQuery();
 
 			System.out.println(String.format(
-					"%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s",
-					"NAME", "LEASE NO", "Duration", "Student Type",
+					"%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s",
+					"NAME", "LEASE NO", "Duration", "Student Type", "Housing Type",
 					"Move in Date", "Place No", "Room No", "Street Name",
 					"City", "Postcode"));
 
 			System.out
 					.println("------------------------------------------------------------------------------------------------"
 							+ "-------------------------------------------------------");
-
+			String accomodationType = ""; 
+			int accomodationId = 0;
 			if (rs.isBeforeFirst()) {
 
 				rs.next();
-
+				accomodationType = rs.getString("accomodation_type");
+				accomodationId = rs.getInt("accomodation_id");
 				System.out.print(String.format("%-15s",
 						rs.getString("first_name")));
 				System.out.print(String.format("%-15s",
@@ -72,6 +74,9 @@ public class Lease {
 						rs.getString("duration")));
 				System.out.print(String.format("%-15s",
 						rs.getString("student_type")));
+				System.out.print(String.format("%-15s",
+						accomodationType));
+				
 				System.out.print(String.format("%-15s",
 						rs.getDate("Lease_Move_In_Date")));
 
@@ -85,8 +90,7 @@ public class Lease {
 			 * the relevant pa=lace# room # information about them.
 			 */
 
-			String accomodationType = rs.getString("accomodation_type");
-			int accomodationId = rs.getInt("accomodation_id");
+			
 
 			rs.close();
 			preparedStatement.close();
@@ -297,8 +301,8 @@ public class Lease {
 			rs = preparedStatement.executeQuery();
 
 			System.out.println(String.format(
-					"%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s",
-					"NAME", "LEASE NO", "Duration", "Student Type",
+					"%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s",
+					"NAME", "LEASE NO", "Duration", "Student Type","Housing Type",
 					"Move in Date", "Place No", "Room No", "Street Name",
 					"City", "Postcode"));
 
@@ -309,7 +313,8 @@ public class Lease {
 			if (rs.isBeforeFirst()) {
 
 				rs.next();
-
+				accomodationType = rs.getString("accomodation_type");
+				accomodationId = rs.getInt("accomodation_id");
 				System.out.print(String.format("%-15s",
 						rs.getString("first_name")));
 				System.out.print(String.format("%-15s",
@@ -319,10 +324,11 @@ public class Lease {
 				System.out.print(String.format("%-15s",
 						rs.getString("student_type")));
 				System.out.print(String.format("%-15s",
+						accomodationType));
+				System.out.print(String.format("%-15s",
 						rs.getDate("Lease_Move_In_Date")));
 				
-				accomodationType = rs.getString("accomodation_type");
-				accomodationId = rs.getInt("accomodation_id");
+				
 
 			}
 
