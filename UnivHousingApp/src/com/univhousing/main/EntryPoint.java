@@ -471,7 +471,7 @@ public class EntryPoint {
 												System.out.println("Showing Invoice lease generation");
 												
 												InvoicePersonLease_Relation invoiceObj = new InvoicePersonLease_Relation();
-												invoiceObj.generateLeasesForGivenDate();
+												invoiceObj.generateInvoicesForGivenDate();
 												break;
 											
 											case 7: System.out.println("Checking for the Completed leases");
