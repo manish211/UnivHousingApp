@@ -95,7 +95,7 @@ public class TerminationRequest_Relation {
 			String choice = inputObj.nextLine();	
 			
 			/* SELECTING STAFF NO BLOCK START */
-			String query3 = "SELECT MAX(staff_no) AS LastStaff FROM ticket_person_staff";
+			String query3 = "SELECT MAX(staff_no) AS LastStaff FROM Housing_Staff";
 			int staffNoMax = 0;
 			int staffNoMin = 0;
 			try {
@@ -119,7 +119,7 @@ public class TerminationRequest_Relation {
 
 			// PreparedStatement preparedStatement = null;
 			// Connection conn1 = ConnectionUtils.getConnection();
-			String query4 = "SELECT MIN(staff_no) AS FirstStaff FROM ticket_person_staff";
+			String query4 = "SELECT MIN(staff_no) AS FirstStaff FROM Housing_Staff";
 
 			try {
 				preparedStatement = dbConnection.prepareStatement(query4);

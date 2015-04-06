@@ -84,7 +84,7 @@ public class TicketPersonStaff_Relation {
 		/*Write SQL Query to fetch the maximum and minimum value of the staff no to randomize who gets the ticket*/
 		PreparedStatement ps = null;
 		Connection conn = ConnectionUtils.getConnection();
-		String query3 = "SELECT MAX(staff_no) AS LastStaff FROM ticket_person_staff";
+		String query3 = "SELECT MAX(staff_no) AS LastStaff FROM Housing_Staff";
 		try 
 		{
 			ps = conn.prepareStatement(query3);
@@ -107,7 +107,7 @@ public class TicketPersonStaff_Relation {
 		
 		PreparedStatement ps1 = null;
 		Connection conn1 = ConnectionUtils.getConnection();
-		String query4 = "SELECT MIN(staff_no) AS FirstStaff FROM ticket_person_staff";
+		String query4 = "SELECT MIN(staff_no) AS FirstStaff FROM Housing_Staff";
 		try 
 		{
 			ps1 = conn1.prepareStatement(query4);
