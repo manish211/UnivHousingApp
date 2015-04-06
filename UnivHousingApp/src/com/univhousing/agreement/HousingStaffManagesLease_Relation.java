@@ -9,9 +9,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Scanner;
 
-import oracle.sql.DATE;
-
-import com.sun.corba.se.pept.encoding.InputObject;
 import com.univhousing.main.ConnectionUtils;
 import com.univhousing.main.Constants;
 import com.univhousing.main.Utils;
@@ -377,7 +374,7 @@ public class HousingStaffManagesLease_Relation {
 
 				} else if (availableAcco.get(0).equalsIgnoreCase(
 						Constants.FAMILY_APARTMENT)) {
-					accomodationTypeGiven = availableAcco.get(0);
+					accomodationTypeGiven = availableAcco.get(0);	
 					wasAccomodationApproved = true;
 					
 					String depositeApartment = Constants.FAMILY_APARTMENT_DEPOSITE;

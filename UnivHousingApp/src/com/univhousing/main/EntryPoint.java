@@ -47,6 +47,7 @@ public class EntryPoint {
 
 	public static void main(String[] args) {
 		Student studentObj = null; 
+		
 		Credentials credentialObj = null;
 		Person personObj = null;
 		try {
@@ -423,7 +424,7 @@ public class EntryPoint {
 												System.out.println("Showing Termination Lease Requests");
 												housingLeaseObj.getAllNewTerminationRequests(mAdminLevelTerminationRequests);
 												break;
-												
+
 											case 3:
 												System.out.println("Showing Maintenance Tickets");
 												ticketStaffObj.getAllMaintenanceTickets(mAdminLevelMaintenanceRequests);

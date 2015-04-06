@@ -444,6 +444,21 @@ public class TicketPersonStaff_Relation {
 			}
 			ConnectionUtils.closeConnection(conn1);
 			
+			/*Write SQL Query to set the status of the existing tickets apart from the current ticket from Processing to Complete */
+			
+			String query4 = "UPDATE ticket_person_staff SET ticket_status = ? WHERE ticket_no != ? and ticket_status = ?";
+			PreparedStatement ps4 = null;
+			Connection conn4 = ConnectionUtils.getConnection();
+			
+			System.out.println("Updating all tickets which have status from Processing to Complete apart from current ticket no");
+			ps4 = conn4.prepareStatement(query4);
+			ps4.setString(1, Constants.COMPLETE_STATUS);
+			ps4.setInt(2, ticketNumber);
+			ps4.setString(3, Constants.PROCESSING_STATUS);
+			ps4.executeUpdate();
+			
+			ConnectionUtils.closeConnection(conn4);
+			
 			/*Write SQL Query to set the status of the ticket as Processing*/
 			String query3 = "UPDATE ticket_person_staff SET ticket_status = ? WHERE ticket_no = ?";
 			PreparedStatement ps3 = null;
