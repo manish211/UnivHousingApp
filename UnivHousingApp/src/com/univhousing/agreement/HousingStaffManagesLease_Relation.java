@@ -499,7 +499,7 @@ public class HousingStaffManagesLease_Relation {
 
 				}
 			} else { // if availableAcco ="N"
-
+				wasAccomodationApproved = false;
 				String selectQ1 = "UPDATE PERSON_ACC_STAFF SET request_status = ? "
 						+ "WHERE application_request_no = ?";
 
