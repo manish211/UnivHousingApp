@@ -341,7 +341,7 @@ public class InvoicePersonLease_Relation {
 					break;
 				}
 				int durationOfStay = Integer.parseInt(duration);
-				durationOfStay = durationOfStay*Constants.MONTHS_IN_SEMESTER;
+//				durationOfStay = durationOfStay*Constants.MONTHS_IN_SEMESTER;
 				for(int i = 0; i< durationOfStay; i++)
 				{
 					dateIncrementValue = i*counter + counter;

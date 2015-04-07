@@ -555,7 +555,7 @@ public class HousingStaffManagesLease_Relation {
 	 * @param moveInDate When he wants to move in
 	 * @throws SQLException 
 	 */
-	private void generateInvoices(String modeofPayment, int personID,String duration, Date moveInDate, int newLeaseNumber, int accomodationIdGiven, String accomodationTypeGiven) throws SQLException 
+	/*private void generateInvoices(String modeofPayment, int personID,String duration, Date moveInDate, int newLeaseNumber, int accomodationIdGiven, String accomodationTypeGiven) throws SQLException 
 	{
 		int numberOfInvoices = 0, livingRent = 0, parkingFees = 0, lateFees = 0;
 		int incidentalCharges = 0, invoiceNo = 0, leaseNumber = 0, totalPaymentDue = 0, damageCharges = 0;
@@ -601,7 +601,8 @@ public class HousingStaffManagesLease_Relation {
 		}
 	}
 
-	private int generateInvoiceNo() {
+	*/
+/*	private int generateInvoiceNo() {
 		// TODO Auto-generated method stub
 		PreparedStatement ps = null;
 		Connection conn = ConnectionUtils.getConnection();
@@ -616,7 +617,7 @@ public class HousingStaffManagesLease_Relation {
 	private void getLivingRent(int personID, int leaseNumber) {
 		// TODO Auto-generated method stub
 		
-	}
+	}*/
 
 	/**
 	 * @param accomodationType
