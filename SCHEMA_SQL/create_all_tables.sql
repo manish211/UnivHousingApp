@@ -226,7 +226,7 @@ PRIMARY KEY(person_id),
 FOREIGN KEY(person_id) REFERENCES person,
 FOREIGN KEY(lease_no) REFERENCES lease);
 
-
+	
 CREATE TABLE PERSON_ACC_STAFF (
 application_request_no INTEGER,
 accomodation_type VARCHAR2(50),
@@ -236,9 +236,9 @@ request_status VARCHAR2(50),
 mode_of_payment VARCHAR2(20),
 lease_move_in_date DATE,
 duration VARCHAR2(10),
-PREFERENCE1 VARCHAR2(20),
-PREFERENCE2 VARCHAR2(20),
-PREFERENCE3 VARCHAR2(20),
+PREFERENCE1 VARCHAR2(50),
+PREFERENCE2 VARCHAR2(50),
+PREFERENCE3 VARCHAR2(50),
 payment_gateway varchar2(20),
 PRIMARY KEY(application_request_no),
 FOREIGN KEY (person_id) REFERENCES person);
@@ -277,7 +277,7 @@ designation VARCHAR2(10),
 PRIMARY KEY(person_id),
 FOREIGN KEY(person_id) REFERENCES Person);
 
-CREATE TABLE StudentParkingSpot_Relation (
+CREATE TABLE PersonParkingSpot_Relation (
 lot_no INTEGER,
 spot_no INTEGER,
 student_id INTEGER,
@@ -296,6 +296,15 @@ PRIMARY KEY(accomodation_id))
 
 
 
+CREATE TABLE Private_Accomodation(
+accomodation_id INTEGER,
+accomodation_type varchar2(50),
+private_place_no INTEGER,
+street_name varchar2(50),
+city varchar2(50),
+post_code INTEGER,
+PRIMARY KEY(private_place_no),
+FOREIGN KEY(accomodation_id) REFERENCES Accomodation);
 
 --creating sequence for ticket_person_staff
 

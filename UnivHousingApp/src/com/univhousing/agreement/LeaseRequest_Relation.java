@@ -133,10 +133,31 @@ public class LeaseRequest_Relation {
 
 				if (housingOption.equals("a")) {
 					housingOption = "Private Housing";
-					hallPreference1 = "NA";
-					hallPreference2 = "NA";
-					hallPreference3 = "NA";
-				} else if (housingOption.equals("b")) {
+					ArrayList<String> privateAccoTypes = new ArrayList<String>();
+					privateAccoTypes.add("Private Shared House");
+					privateAccoTypes.add("Private General Apartment");
+					privateAccoTypes.add("Private Family Apartment");
+					System.out.println("Enter your 3 preferences :\n");
+					String[] prefs = new String[100];
+					int count = 0;
+					while(count<3)
+					{
+						System.out.println("Enter preference "+(count+1)+": ");
+						for (int i = 0; i < privateAccoTypes.size(); i++) {
+							System.out.println(i+1+") "+privateAccoTypes.get(i));
+						}
+						int choice = inputObj.nextInt();
+						prefs[count] = privateAccoTypes.get(choice-1);
+						count++;
+					}
+					count = 0;
+					//inputObj.nextLine();
+					
+					hallPreference1 = prefs[0];
+					hallPreference2 = prefs[1];
+					hallPreference3 = prefs[2];
+				} 
+				else if (housingOption.equals("b")) {
 					housingOption = Constants.RESIDENCE_HALL;
 
 					residenceHallNames = getHallNameList();
