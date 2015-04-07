@@ -28,6 +28,7 @@ import com.univhousing.users.Student;
 public class EntryPoint {
 
 	/**
+	 * 
 	 * @param args
 	 */
 	private static boolean mLevelZero = true;
