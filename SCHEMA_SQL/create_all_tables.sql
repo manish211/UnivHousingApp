@@ -153,8 +153,7 @@ accomodation_id INTEGER,
 room_no INTEGER,
 monthly_rent_rate NUMBER(10),
 apt_no INTEGER NOT NULL,
-apt_place_no INTEGER,
-PRIMARY KEY(apt_place_no),
+PRIMARY KEY(bedroom_place_no),
 FOREIGN KEY(accomodation_id) REFERENCES Accomodation);
 
 drop table parking_lot cascade constraints;
