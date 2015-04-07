@@ -41,7 +41,7 @@ public class NextOfKin {
 		int count = 0;
 		try
 		{
-			queryNextOfKin = "SELECT K.first_name, K.last_name, K.street_name, K.city_name, K.zip_code, K.phone_number, K.gender, K.DOB FROM KIN_STUDENT K WHERE K.person_id = ?";
+			queryNextOfKin = "SELECT K.first_name, K.last_name, K.street_name, K.city_name, K.zip_code, K.phone_number, K.gender, K.DOB FROM kin_person K WHERE K.person_id = ?";
 			preparedStatement1 = dbConnection.prepareStatement(queryNextOfKin);
 			preparedStatement1.setInt(1, personId);
 			studentKin = preparedStatement1.executeQuery();
@@ -58,7 +58,7 @@ public class NextOfKin {
 				gender = studentKin.getString("gender");
 				DOB = studentKin.getDate("DOB");
 				
-				System.out.println("Next of Kin's Name: "+firstName+lastName+"\n"+"Address: "+streetName+","+city+","+postCode+"\t");
+				System.out.println("Next of Kin's Name: "+firstName+" "+lastName+"\n"+"Address: "+streetName+","+city+","+postCode+"\t");
 				System.out.println("Phone Number: "+phoneNumber+"\n"+"Gender: "+gender+"\n"+"DOB: "+DOB+"\t");
 			}
 		}
@@ -78,7 +78,7 @@ public class NextOfKin {
 		int count = 0;
 		try
 		{
-			queryNextOfKin = "SELECT K.first_name, K.last_name, K.street_name, K.city_name, K.zip_code, K.phone_number, K.gender, K.DOB FROM KIN_STUDENT K WHERE K.person_id = ?";
+			queryNextOfKin = "SELECT K.first_name, K.last_name, K.street_name, K.city_name, K.zip_code, K.phone_number, K.gender, K.DOB FROM kin_person K WHERE K.person_id = ?";
 			preparedStatement1 = dbConnection.prepareStatement(queryNextOfKin);
 			preparedStatement1.setInt(1, personId);
 			studentKin = preparedStatement1.executeQuery();

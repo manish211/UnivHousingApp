@@ -85,7 +85,7 @@ public class Person {
 				housingStatus = studentProfile.getString("housing_status");
 				studyField = studentProfile.getString("study_field");
 				
-				System.out.println("Name: "+firstName+lastName+"\n"+"Address: "+streetName+","+city+","+postCode+"\t");
+				System.out.println("Name: "+firstName+" "+lastName+"\n"+"Address: "+streetName+","+city+","+postCode+"\t");
 				System.out.println("Phone Number: "+phoneNumber+"\n"+"Gender: "+gender+"\nDOB: "+DOB);
 				System.out.println("Nationality: "+nationality+"\n"+"Smoker: "+smoker);
 				System.out.println("Special Needs: "+specialNeeds+"\n"+"Housing Status: "+housingStatus);
@@ -266,7 +266,7 @@ public class Person {
 				PreparedStatement preparedStatement3 = null;
 				Connection dbConnection3 = ConnectionUtils.getConnection();
 				
-				String query3 = "UPDATE KIN_STUDENT SET first_name = ?, last_name = ?, street_name = ?," +
+				String query3 = "UPDATE kin_person SET first_name = ?, last_name = ?, street_name = ?," +
 						" city_name = ?, zip_code = ?, phone_number = ?, gender = ?, DOB = ? WHERE person_id = ?";
 				preparedStatement3 = dbConnection3.prepareStatement(query3);
 				preparedStatement3.setString(1, newNOKFirstName);
@@ -292,7 +292,7 @@ public class Person {
 				PreparedStatement preparedStatement3 = null;
 				Connection dbConnection3 = ConnectionUtils.getConnection();
 				
-				String query3 = "INSERT INTO KIN_STUDENT (person_id,first_name,last_name,street_name,city_name,zip_code,phone_number,gender,DOB) VALUES(?,?,?,?,?,?,?,?,?)";
+				String query3 = "INSERT INTO kin_person (person_id,first_name,last_name,street_name,city_name,zip_code,phone_number,gender,DOB) VALUES(?,?,?,?,?,?,?,?,?)";
 				preparedStatement3 = dbConnection3.prepareStatement(query3);
 				preparedStatement3.setInt(1, studentId);
 				preparedStatement3.setString(2, newNOKFirstName);
