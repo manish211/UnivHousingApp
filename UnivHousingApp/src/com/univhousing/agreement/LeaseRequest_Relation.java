@@ -15,6 +15,9 @@ import com.univhousing.users.Person;
 
 public class LeaseRequest_Relation {
 
+	public static final int A = 5;
+	public static final int B = 5;
+	public static final int C = 2;
 	public int applicationRequestNo;
 	public String accomodationType;
 	public int personId;
@@ -89,9 +92,34 @@ public class LeaseRequest_Relation {
 
 			/************************************************************************/
 
-			System.out.println("IMPORTANT INFORMATION : One semester is equal to 4 months");
-			System.out.println("Enter the period of leasing[as No of semesters 1 2 or 3 max]: ");
-			String periodOfLeasing = inputObj.nextLine();
+			// System.out.println("IMPORTANT INFORMATION : One semester is equal to 4 months");
+
+			System.out.println("Enter the semesters you want to live ");
+			System.out.println("a> Sem1: [01 Aug - 31 Dec]");
+			System.out.println("b>Sem 2: 01 Jan - 31 May");
+			System.out.println("c>Summer: 01 Jun - 31 Jul");
+			System.out
+					.println("For multiple semesters please enter optios seperated by comma[for example: a,b,c] ");
+
+			String sem = inputObj.nextLine();
+			String[] tempStr = sem.split(",");
+			int periodOfLeaseInt = 0;
+			int totalDuration = 0;
+			for (int i = 0; i < tempStr.length; i++) {
+
+				if (tempStr[i].equalsIgnoreCase("a")) {
+					periodOfLeaseInt = periodOfLeaseInt + A;
+				} else if (tempStr[i].equalsIgnoreCase("b")) {
+					periodOfLeaseInt = periodOfLeaseInt + B;
+				} else if (tempStr[i].equalsIgnoreCase("c")) {
+					periodOfLeaseInt = periodOfLeaseInt + C;
+				}
+
+				totalDuration = periodOfLeaseInt;
+
+			}
+
+			int periodOfLeasing = totalDuration;		
 
 			if (isFreshmen == false) {
 				System.out.println("Welcome " + studentName + "!");
@@ -272,7 +300,7 @@ public class LeaseRequest_Relation {
 				preparedStatement.setString(4, reqStatus);
 				preparedStatement.setString(5, paymentOption);
 				preparedStatement.setDate(6, sqlMoveInDate);
-				preparedStatement.setString(7, periodOfLeasing);
+				preparedStatement.setInt(7, periodOfLeasing);
 				preparedStatement.setString(8, hallPreference1);
 				preparedStatement.setString(9, hallPreference2);
 				preparedStatement.setString(10, hallPreference3);

@@ -1174,7 +1174,7 @@ public class HousingStaffManagesLease_Relation {
 
 				Calendar c = Calendar.getInstance();
 				c.setTime(moveInDateUtils);
-				c.add(Calendar.MONTH, duration * 4);
+				c.add(Calendar.MONTH, duration);
 				java.util.Date moveOutDateUtils = c.getTime();
 
 				if (currentDateUtil.compareTo(moveOutDateUtils) >= 0) {
