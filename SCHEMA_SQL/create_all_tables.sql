@@ -123,7 +123,8 @@ accomodation_id INTEGER,
 street_name VARCHAR2(40),
 city_name VARCHAR2(50),
 zip_code INTEGER,
-PRIMARY KEY(apt_no),
+society_name VARCHAR2(300),
+PRIMARY KEY(apt_no,society_name),
 FOREIGN KEY(accomodation_id) REFERENCES Accomodation);
 
 CREATE TABLE residence_hall_provides_room(
