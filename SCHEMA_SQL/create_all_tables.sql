@@ -124,7 +124,8 @@ street_name VARCHAR2(40),
 city_name VARCHAR2(50),
 zip_code INTEGER,
 society_name VARCHAR2(300),
-PRIMARY KEY(apt_no,society_name),
+apt_name VARCHAR2(100),
+PRIMARY KEY(apt_no),
 FOREIGN KEY(accomodation_id) REFERENCES Accomodation);
 
 CREATE TABLE residence_hall_provides_room(
