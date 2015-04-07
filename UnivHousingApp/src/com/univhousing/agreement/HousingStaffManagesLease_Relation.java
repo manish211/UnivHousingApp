@@ -851,7 +851,7 @@ public class HousingStaffManagesLease_Relation {
 				availableAcco.add(Constants.NOTHING_AVAILABLE);
 				return availableAcco;
 			} else if (type.equalsIgnoreCase(Constants.GENERAL_APARTMENT)) {
-				String selectQueryGenApt = "SELECT COUNT (B.apt_place_no) AS rooms "
+				String selectQueryGenApt = "SELECT COUNT (B.bedroom_place_no) AS rooms "
 						+ "FROM bedroom B "
 						+ "WHERE B.accomodation_id  NOT IN "
 						+ "(SELECT accomodation_id "
