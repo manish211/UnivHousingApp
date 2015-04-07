@@ -16,8 +16,10 @@ CREATE TABLE  Person(person_id INTEGER,
  smoker varchar2(50),
  special_needs varchar2(100),
  housing_status varchar2(10),
- study_field varchar2(20),
-ALT_PHONE_NUMBER INTEGER,
+ study_field varchar2(50),
+ alternate_phone_no INTEGER,
+ comments varchar2(100),
+ country varchar2(50),
 PRIMARY KEY(person_id));
 
 
@@ -179,12 +181,16 @@ permit_id INTEGER UNIQUE,
 zip_code INTEGER,
 FOREIGN KEY(lot_no) REFERENCES parking_lot);
 
+CREATE TABLE parkingSpot_parkingLot(
+lot_no INTEGER,
+spot_no INTEGER,
+PRIMARY KEY(spot_no));
 
 Create table parking_spot_has_class(
 vehicle_type varchar2(50),
 fees number(7,2),
 spot_no number(5), 
-PRIMARY KEY (spot_no,type),
+PRIMARY KEY (spot_no,vehicle_type),
 FOREIGN KEY (spot_no) REFERENCES parkingSpot_parkingLot);
 
 CREATE TABLE invoice_person_lease(
@@ -210,7 +216,7 @@ ticket_no INTEGER,
 ticket_status varchar2(10), 
 ticket_severity varchar2(10),
 description varchar2(200),
-ticket_type vachar2(20),
+ticket_type varchar2(20),
 PRIMARY KEY(ticket_no),
 person_id INTEGER NOT NULL,
 FOREIGN KEY(staff_no) REFERENCES housing_staff,
@@ -272,11 +278,11 @@ FOREIGN KEY(staff_no) REFERENCES housing_staff);
 
 
 CREATE TABLE login_credentials(
-password VARCHAR2(10),
-person_id INTEGER,
-designation VARCHAR2(10),
-PRIMARY KEY(person_id),
-FOREIGN KEY(person_id) REFERENCES Person);
+password VARCHAR2(20),
+login_id INTEGER,
+designation VARCHAR2(20),
+PRIMARY KEY(login_id),
+);
 
 CREATE TABLE PersonParkingSpot_Relation (
 lot_no INTEGER,

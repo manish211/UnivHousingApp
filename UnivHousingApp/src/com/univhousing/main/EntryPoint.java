@@ -45,11 +45,15 @@ public class EntryPoint {
 	private static ArrayList<Integer> mAdminLevelParkingRequests = null;
 	private static Scanner inputObj = new Scanner(System.in);
 	private static int studentId;
+	private static int loginId;
+	private static String password = "";
+	private static String designation = "";
+	private static int personId = 0;
 
 	public static void main(String[] args) {
 		Student studentObj = null; 
 		
-		Credentials credentialObj = null;
+		//Credentials credentialObj = null;
 		Person personObj = null;
 		try {
 			Connection connectionObj = null;
@@ -71,7 +75,7 @@ public class EntryPoint {
 				// Going into infinite loop until exited
 				while(mLevelZero) {
 					studentObj = new Student();
-					credentialObj = new Credentials();
+				//	credentialObj = new Credentials();
 					personObj = new Person();
 
 					System.out.println("\n1. Login");
@@ -83,20 +87,20 @@ public class EntryPoint {
 					{
 						case 1:
 							System.out.print("\nEnter University Id++:");
-							studentId = inputObj.nextInt();
-	
+							loginId = inputObj.nextInt();
+							
 							System.out.print("\nEnter Password:");
-							credentialObj.password = inputObj.next();
+							password = inputObj.next();
+							boolean isAuthenticated = authenticateUser(loginId,password);
 							// Fetch the person id for the student id and use that for login
 							System.out.println("Please wait while we are authenticating you.");
-							credentialObj.personId = studentObj.getPersonIdForStudentId(studentId);
-							if(authenticateUser(credentialObj.personId,credentialObj.password,credentialObj))
+							
+							if(isAuthenticated)
 							{
-								
-								credentialObj.designation = studentObj.getStudentDesignation(credentialObj.personId);
-								personObj.fetchFirstAndLastName(credentialObj.personId);
-								if(credentialObj.designation.equalsIgnoreCase(Constants.STUDENT))
+								if(designation.equalsIgnoreCase(Constants.STUDENT))
 								{
+									// For student loginId is studentId
+									personId = studentObj.getPersonIdForStudentId(loginId);
 									// This is the first Level of Student Hierarchy
 									
 									System.out.println("mLevelOne:="+mLevelOne);
@@ -143,13 +147,13 @@ public class EntryPoint {
 																switch(choice)
 																{
 																	case 1:
-																		invoicePersonObj.displayCurrentInvoice(credentialObj.personId);
+																		invoicePersonObj.displayCurrentInvoice(personId);
 																		break;
 																	case 2:
-																		invoicePersonObj.displayListOfInvociesForAPerson(credentialObj.personId, mInvoiceNumbers);
+																		invoicePersonObj.displayListOfInvociesForAPerson(personId, mInvoiceNumbers);
 																		break;
 																	case 3:
-																		invoicePersonObj.changeAllInvoicesToPaid(credentialObj.personId);
+																		invoicePersonObj.changeAllInvoicesToPaid(personId);
 																		break;
 																	case 4:
 																		// Taking back to Level Two
@@ -173,11 +177,11 @@ public class EntryPoint {
 																switch(choice)
 																{
 																	case 1:
-																		leaseObj.displayCurrentLease(credentialObj.personId);
+																		leaseObj.displayCurrentLease(personId);
 																		break;
 																	case 2:
 																		
-																		leaseObj.displayListOfLeasesForAPerson(credentialObj.personId,mLeaseNumbers);
+																		leaseObj.displayListOfLeasesForAPerson(personId,mLeaseNumbers);
 																		break;
 																	case 3:
 																		// Taking back to Level Two
@@ -204,10 +208,10 @@ public class EntryPoint {
 																switch(choice)
 																{
 																	case 1:
-																		leaseRequestObj.generateNewLeaseRequest(credentialObj.personId);
+																		leaseRequestObj.generateNewLeaseRequest(personId);
 																		break;
 																	case 2:
-																		terminationRequestObj.generateLeaseTerminationRequest(credentialObj.personId);
+																		terminationRequestObj.generateLeaseTerminationRequest(personId);
 																		break;
 																	case 3:
 																		mLevelFour = false;
@@ -230,7 +234,7 @@ public class EntryPoint {
 																switch(choice)
 																{
 																	case 1:
-																		leaseObj.viewAllRequests(credentialObj.personId);
+																		leaseObj.viewAllRequests(personId);
 																		break;
 																	case 2:
 																		boolean isCancelSuccessful = false;
@@ -242,7 +246,7 @@ public class EntryPoint {
 																			requestNumber = inputObj.nextInt();
 																			if(requestNumber == 0)
 																				break;
-																			isCancelSuccessful = leaseObj.cancelRequest(credentialObj.personId, requestNumber);
+																			isCancelSuccessful = leaseObj.cancelRequest(personId, requestNumber);
 																		}
 																		break;
 																	case 3:
@@ -286,27 +290,27 @@ public class EntryPoint {
 													{
 														case 1:System.out.println("Showing new Parking spot\n");
 														
-															parkingLotObj.generateAParkingSpot(credentialObj.personId);
+															parkingLotObj.generateAParkingSpot(personId);
 															break;
 															
 														case 2:System.out.println("Showing View Parking Lot information\n");
-															parkingLotObj.displayInfoForParkingLots(credentialObj.personId);
+															parkingLotObj.displayInfoForParkingLots(personId);
 															break;
 															
 														case 3:System.out.println("Showing View Current Parking Spot\n");
-															parkingLotObj.viewCurrentParkingSpot(credentialObj.personId);
+															parkingLotObj.viewCurrentParkingSpot(personId);
 															break;
 															
 														case 4:System.out.println("Showing Renew Parking Spot\n");
-															parkingLotObj.renewParkingSpot(credentialObj.personId);
+															parkingLotObj.renewParkingSpot(personId);
 															break;
 															
 														case 5: System.out.println("Showing Return Parking Spot\n");
-															parkingLotObj.returnParkingSpot(credentialObj.personId);
+															parkingLotObj.returnParkingSpot(personId);
 															break;
 
 														case 6: System.out.println("Showing View Request Status\n");
-															parkingLotObj.getRequestStatus(credentialObj.personId);
+															parkingLotObj.getRequestStatus(personId);
 															break;
 														case 7:
 															mLevelTwo = false;
@@ -333,12 +337,12 @@ public class EntryPoint {
 													{
 														case 1:
 															System.out.println("Showing New Ticket");
-															ticketObj.raiseNewTicket(credentialObj.personId);
+															ticketObj.raiseNewTicket(personId);
 															break;
 	
 														case 2:
 															System.out.println("Showing View Ticket Status");
-															ticketObj.viewAllTicketStatuses(credentialObj.personId, mTicketNumbers);
+															ticketObj.viewAllTicketStatuses(personId, mTicketNumbers);
 															break;
 
 														case 3:
@@ -366,11 +370,11 @@ public class EntryPoint {
 													switch (choice) 
 													{
 														case 1: System.out.println("Showing View Profile");
-															personObj.viewProfileDetails(credentialObj.personId);
+															personObj.viewProfileDetails(personId);
 															break;
 	
 														case 2: System.out.println("Showing Update Profile");
-														personObj.updateProfile(credentialObj.personId);
+														personObj.updateProfile(personId);
 															break;
 															
 														case 3:
@@ -394,7 +398,7 @@ public class EntryPoint {
 									}
 									mLevelOne =true;
 								}
-								else if(credentialObj.designation.equalsIgnoreCase(Constants.SUPERVISOR))
+								else if(designation.equalsIgnoreCase(Constants.SUPERVISOR))
 								{
 									// Supervior/Admin code goes here.
 									HousingStaffManagesLease_Relation housingLeaseObj = new HousingStaffManagesLease_Relation();
@@ -437,6 +441,11 @@ public class EntryPoint {
 												parkingObj.getAllParkingRequests(mAdminLevelParkingRequests);
 												break;
 											case 5:
+												System.out
+														.println("Enter student ID of the student: ");
+												studentId = inputObj.nextInt();
+												inputObj.nextLine();
+												personId = studentObj.getPersonIdForStudentId(studentId);
 												System.out.println("Showing Profile\n");
 												personObj = new Person();
 
@@ -450,11 +459,11 @@ public class EntryPoint {
 													switch (choice) 
 													{
 														case 1: System.out.println("Showing View Profile");
-															personObj.viewProfileDetails(credentialObj.personId);
+															personObj.viewProfileDetails(personId);
 															break;
 	
 														case 2: System.out.println("Showing Update Profile");
-														personObj.updateProfile(credentialObj.personId);
+														personObj.updateProfile(personId);
 															break;
 															
 														case 3:
@@ -520,9 +529,9 @@ public class EntryPoint {
 							else*/
 							{
 								Guest guestObj = new Guest();
-								credentialObj.personId = guestObj.getPersonIdFromApprovalId(approvalId);
-								personObj.fetchFirstAndLastName(credentialObj.personId);
-								//credentialObj.personId = 3;
+								personId = guestObj.getPersonIdFromApprovalId(approvalId);
+								//personObj.fetchFirstAndLastName(personId);
+								//personId = 3;
 								// This is the first Level of Guest Hierarchy
 								while(mLevelOne)
 								{
@@ -566,10 +575,10 @@ public class EntryPoint {
 															switch(choice)
 															{
 																case 1:
-																	invoicePersonObj.displayCurrentInvoice(credentialObj.personId);
+																	invoicePersonObj.displayCurrentInvoice(personId);
 																	break;
 																case 2:
-																	invoicePersonObj.displayListOfInvociesForAPerson(credentialObj.personId, mInvoiceNumbers);
+																	invoicePersonObj.displayListOfInvociesForAPerson(personId, mInvoiceNumbers);
 																	int count = 1;
 																	/*Runtime.getRuntime().exec("clear");*/
 																	while(mLevelFour)
@@ -593,7 +602,7 @@ public class EntryPoint {
 																			}
 																			else
 																			{
-																				invoicePersonObj.displayInvoiceDetails(credentialObj.personId, mInvoiceNumbers.get(choice-1));
+																				invoicePersonObj.displayInvoiceDetails(personId, mInvoiceNumbers.get(choice-1));
 																			}
 																		}
 																		else
@@ -628,11 +637,11 @@ public class EntryPoint {
 															switch(choice)
 															{
 																case 1:
-																	leaseObj.displayCurrentLease(credentialObj.personId);
+																	leaseObj.displayCurrentLease(personId);
 																	break;
 																case 2:
 																	
-																	leaseObj.displayListOfLeasesForAPerson(credentialObj.personId,mLeaseNumbers);
+																	leaseObj.displayListOfLeasesForAPerson(personId,mLeaseNumbers);
 																	break;
 																case 3:
 																	// Taking back to Level Two
@@ -659,10 +668,10 @@ public class EntryPoint {
 															switch(choice)
 															{
 																case 1:
-																	leaseRequestObj.generateNewLeaseRequest(credentialObj.personId);
+																	leaseRequestObj.generateNewLeaseRequest(personId);
 																	break;
 																case 2:
-																	terminationRequestObj.generateLeaseTerminationRequest(credentialObj.personId);
+																	terminationRequestObj.generateLeaseTerminationRequest(personId);
 																	break;
 																case 3:
 																	mLevelFour = false;
@@ -685,12 +694,12 @@ public class EntryPoint {
 															switch(choice)
 															{
 																case 1:
-																	leaseObj.viewAllRequests(credentialObj.personId);
+																	leaseObj.viewAllRequests(personId);
 																	break;
 																case 2:
 																	System.out.println("Enter the Request Number to cancel: \n");
 																	int requestNumber = inputObj.nextInt();
-																	leaseObj.cancelRequest(credentialObj.personId, requestNumber);
+																	leaseObj.cancelRequest(personId, requestNumber);
 																	break;
 																case 3:
 																	mLevelFour = false;
@@ -733,27 +742,27 @@ public class EntryPoint {
 												{
 													case 1:System.out.println("Showing new Parking spot\n");
 													
-														parkingLotObj.generateAParkingSpot(credentialObj.personId);
+														parkingLotObj.generateAParkingSpot(personId);
 														break;
 														
 													case 2:System.out.println("Showing View Parking Lot information\n");
-														parkingLotObj.displayInfoForParkingLots(credentialObj.personId);
+														parkingLotObj.displayInfoForParkingLots(personId);
 														break;
 														
 													case 3:System.out.println("Showing View Current Parking Spot\n");
-														parkingLotObj.viewCurrentParkingSpot(credentialObj.personId);
+														parkingLotObj.viewCurrentParkingSpot(personId);
 														break;
 														
 													case 4:System.out.println("Showing Renew Parking Spot\n");
-														parkingLotObj.renewParkingSpot(credentialObj.personId);
+														parkingLotObj.renewParkingSpot(personId);
 														break;
 														
 													case 5: System.out.println("Showing Return Parking Spot\n");
-														parkingLotObj.returnParkingSpot(credentialObj.personId);
+														parkingLotObj.returnParkingSpot(personId);
 														break;
 
 													case 6: System.out.println("Showing View Request Status\n");
-														parkingLotObj.getRequestStatus(credentialObj.personId);
+														parkingLotObj.getRequestStatus(personId);
 														break;
 													case 7:
 														mLevelTwo = false;
@@ -780,12 +789,12 @@ public class EntryPoint {
 												{
 													case 1:
 														System.out.println("Showing New Ticket");
-														ticketObj.raiseNewTicket(credentialObj.personId);
+														ticketObj.raiseNewTicket(personId);
 														break;
 
 													case 2:
 														System.out.println("Showing View Ticket Status");
-														ticketObj.viewAllTicketStatuses(credentialObj.personId, mTicketNumbers);
+														ticketObj.viewAllTicketStatuses(personId, mTicketNumbers);
 														break;
 
 													case 3:
@@ -813,13 +822,13 @@ public class EntryPoint {
 												switch (choice) 
 												{
 													case 1: System.out.println("Showing View Profile");
-													// credentialObj.personId is person id
-														personObj.viewProfileDetails(credentialObj.personId);
+													// personId is person id
+														personObj.viewProfileDetails(personId);
 														break;
 
 													case 2: System.out.println("Showing Update Profile");
-													// credentialObj.personId is person id
-													personObj.updateProfile(credentialObj.personId);
+													// personId is person id
+													personObj.updateProfile(personId);
 														break;
 														
 													case 3:
@@ -873,7 +882,7 @@ public class EntryPoint {
 	 * @return True if the user has been authenticated , False if the authentication failed
 	 * @throws SQLException
 	 ***********************************************************************************************/
-	private static boolean authenticateUser(int userId, String password, Credentials credentials) throws SQLException 
+	private static boolean authenticateUser(int userId, String password) throws SQLException 
 	{
 		/* Write SQL query to check if userName and password match the Credentials Table in Database
 		 If matches retrieve designation and person_id
@@ -882,7 +891,7 @@ public class EntryPoint {
 		
 		Connection dbConnection = ConnectionUtils.getConnection();
 		
-		String selectQuery = "SELECT * FROM login_credentials WHERE person_id = ? AND password = ?" ;
+		String selectQuery = "SELECT * FROM login_credentials WHERE login_id = ? AND password = ?" ;
 		
 		PreparedStatement preparedStatement = dbConnection.prepareStatement(selectQuery);
 		
@@ -893,8 +902,10 @@ public class EntryPoint {
 		
 		//If record exists , rs.next() will evaluate to true
 		if(rs.next())
+		{
+			designation = rs.getString("designation");
 			isUserAuthenticated = true;
-		
+		}
 		return isUserAuthenticated;
 			
 	}
