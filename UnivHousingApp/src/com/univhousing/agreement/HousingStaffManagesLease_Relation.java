@@ -282,24 +282,7 @@ public class HousingStaffManagesLease_Relation {
 					 */
 
 					// System.out.println("TEST1");
-					String depositAmountResHall = Constants.RESIDENCE_HALL_DEPOSITE;
-
-					String insertQuery = "INSERT INTO LEASE (lease_no,deposit,mode_of_payment,duration,cutoff_date) "
-							+ "VALUES (?,?,?,?,?)";
-					rs.close();
-					preparedStatement.close();
-
-					preparedStatement = dbConnection
-							.prepareStatement(insertQuery);
-
-					preparedStatement.setInt(1, newLeaseNumber);
-					preparedStatement.setString(2, depositAmountResHall);
-					preparedStatement.setString(3, modeofPayment);
-					preparedStatement.setString(4, duration);
-					preparedStatement.setDate(5, cutOffDate);
-					preparedStatement.executeUpdate();
-					preparedStatement.close();
-
+					
 					// System.out.println("TEST2");
 					int accID = 0;
 					// Chechking if extra credit query is made then we call
@@ -363,6 +346,28 @@ public class HousingStaffManagesLease_Relation {
 						rs.close();
 						preparedStatement.close();
 					}
+					
+					// Adding accomodation id to lease with lease number
+					int depositAmountResHall = returnDeposit(accID,Constants.RESIDENCE_HALL);
+					
+
+					String insertQuery = "INSERT INTO LEASE (lease_no,deposit,mode_of_payment,duration,cutoff_date) "
+							+ "VALUES (?,?,?,?,?)";
+					rs.close();
+					preparedStatement.close();
+
+					preparedStatement = dbConnection
+							.prepareStatement(insertQuery);
+
+					preparedStatement.setInt(1, newLeaseNumber);
+					preparedStatement.setString(2, String.valueOf(depositAmountResHall));
+					preparedStatement.setString(3, modeofPayment);
+					preparedStatement.setString(4, duration);
+					preparedStatement.setDate(5, cutOffDate);
+					preparedStatement.executeUpdate();
+					preparedStatement.close();
+
+					
 					System.out.println(newLeaseNumber);
 					String insertPerAccQuery = "INSERT INTO person_accomodation_lease (accomodation_id,person_id,lease_no,accomodation_type,lease_move_in_date) "
 							+ "VALUES(?,?,?,?,?)";
@@ -397,20 +402,7 @@ public class HousingStaffManagesLease_Relation {
 					accomodationTypeGiven = availableAcco.get(0);
 					wasAccomodationApproved = true;
 
-					String depositeApartment = Constants.GENERAL_APARTMENT_DEPOSITE; // deposite
-
-					String SQL2 = "INSERT INTO LEASE (lease_no,deposit,mode_of_payment,duration,cutoff_date) "
-							+ "VALUES (?,?,?,?,?)";
-
-					preparedStatement = dbConnection.prepareStatement(SQL2);
-					preparedStatement.setInt(1, newLeaseNumber);
-					preparedStatement.setString(2, depositeApartment);
-					preparedStatement.setString(3, modeofPayment);
-					preparedStatement.setString(4, duration);
-					preparedStatement.setDate(5, cutOffDate);
-					preparedStatement.executeUpdate();
-
-					preparedStatement.close();
+					
 
 					int accomodationIDApartment = 0;
 					// If extracredit is true then call procedure for apartment
@@ -464,6 +456,24 @@ public class HousingStaffManagesLease_Relation {
 						preparedStatement.close();
 					}
 
+					// Inserting into lease
+					
+					int depositeApartment = returnDeposit(accomodationIDApartment,Constants.GENERAL_APARTMENT);
+
+					String SQL2 = "INSERT INTO LEASE (lease_no,deposit,mode_of_payment,duration,cutoff_date) "
+							+ "VALUES (?,?,?,?,?)";
+
+					preparedStatement = dbConnection.prepareStatement(SQL2);
+					preparedStatement.setInt(1, newLeaseNumber);
+					preparedStatement.setString(2, String.valueOf(depositeApartment));
+					preparedStatement.setString(3, modeofPayment);
+					preparedStatement.setString(4, duration);
+					preparedStatement.setDate(5, cutOffDate);
+					preparedStatement.executeUpdate();
+
+					preparedStatement.close();
+					
+					
 					String SQL4 = "INSERT INTO PERSON_ACCOMODATION_LEASE (accomodation_id,person_id,lease_no,accomodation_type,lease_move_in_date) "
 							+ "VALUES (?,?,?,?,?)";
 
@@ -498,20 +508,9 @@ public class HousingStaffManagesLease_Relation {
 					accomodationTypeGiven = availableAcco.get(0);
 					wasAccomodationApproved = true;
 
-					String depositeApartment = Constants.FAMILY_APARTMENT_DEPOSITE;
+					//String depositeApartment = Constants.FAMILY_APARTMENT_DEPOSITE;
 
-					String SQLF2 = "INSERT INTO LEASE (lease_no,deposit,mode_of_payment,duration,cutoff_date) "
-							+ "VALUES (?,?,?,?,?)";
-
-					preparedStatement = dbConnection.prepareStatement(SQLF2);
-					preparedStatement.setInt(1, newLeaseNumber);
-					preparedStatement.setString(2, depositeApartment);
-					preparedStatement.setString(3, modeofPayment);
-					preparedStatement.setString(4, duration);
-					preparedStatement.setDate(5, cutOffDate);
-					preparedStatement.executeUpdate();
-
-					preparedStatement.close();
+					
 
 					String SQLF3 = "SELECT Family.accomodation_id FROM Family_Apartment Family "
 							+ "WHERE Family.accomodation_id NOT IN(SELECT PERSON_ACCOMODATION_LEASE.accomodation_id "
@@ -526,6 +525,19 @@ public class HousingStaffManagesLease_Relation {
 					rs.close();
 					preparedStatement.close();
 
+					int depositFamilyApartment = returnDeposit(accomodationIDApartment,Constants.FAMILY_APARTMENT);
+					String SQLF2 = "INSERT INTO LEASE (lease_no,deposit,mode_of_payment,duration,cutoff_date) "
+							+ "VALUES (?,?,?,?,?)";
+
+					preparedStatement = dbConnection.prepareStatement(SQLF2);
+					preparedStatement.setInt(1, newLeaseNumber);
+					preparedStatement.setString(2, String.valueOf(depositFamilyApartment));
+					preparedStatement.setString(3, modeofPayment);
+					preparedStatement.setString(4, duration);
+					preparedStatement.setDate(5, cutOffDate);
+					preparedStatement.executeUpdate();
+
+					preparedStatement.close();
 					String SQL4 = "INSERT INTO PERSON_ACCOMODATION_LEASE (accomodation_id,person_id,lease_no,accomodation_type,lease_move_in_date) "
 							+ "VALUES (?,?,?,?,?)";
 
@@ -1728,5 +1740,49 @@ public class HousingStaffManagesLease_Relation {
 			}
 		}
 
+	}
+	
+	private int returnDeposit(int id, String type)
+	{
+		int securityDeposit = 0;
+		
+		PreparedStatement ps = null;
+		Connection conn = ConnectionUtils.getConnection();
+		ResultSet getDeposit = null;
+		String hallQuery = "SELECT security_depsoit from residence_hall where hall_no = ?";
+		String bedroomQuery = "SELECT security_deposit from general_apartment where apt_no = (SELECT apt_no from bedroom where accomodation_id = ?)";
+		String familyQuery = "SELECT security_deposit from family_apartment where accomodation_id = ?";
+		try
+		{
+			if(type.equalsIgnoreCase(Constants.RESIDENCE_HALL))
+			{
+				ps = conn.prepareStatement(hallQuery);
+				ps.setInt(1, id);
+			}	
+			else if(type.equalsIgnoreCase(Constants.GENERAL_APARTMENT))
+			{
+				ps = conn.prepareStatement(bedroomQuery);
+				ps.setInt(1, id);
+			}
+			else if(type.equalsIgnoreCase(Constants.FAMILY_APARTMENT))
+			{
+				ps = conn.prepareStatement(familyQuery);
+				ps.setInt(1, id);
+			}
+			
+			getDeposit = ps.executeQuery();
+			while(getDeposit.next())
+			{
+				securityDeposit = getDeposit.getInt("security_deposit");
+			}
+			ps.close();
+			ConnectionUtils.closeConnection(conn);
+			getDeposit.close();
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		return securityDeposit;
 	}
 }
