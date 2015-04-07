@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 
 import com.univhousing.main.ConnectionUtils;
@@ -268,9 +269,82 @@ public class LeaseRequest_Relation {
 			
 			
 			/*SELECTING STAFF NI BLOCK END*/
+			boolean tempFlag = true;
+			String moveInDate = "";
 
-			System.out.println("Date you want to enter in MM/dd/YYYY format: ");
-			String moveInDate = inputObj.next();
+			while (tempFlag) {
+
+				System.out
+						.println("Date you want to enter the housing in MM/dd/YYYY format: ");
+				moveInDate = inputObj.next();
+
+				String[] tempDateStr = moveInDate.split("/");
+
+				String dateA = "01";
+				String monthA = "08";
+
+				String dateB = "01";
+				String monthB = "01";
+
+				String dateC = "01";
+				String monthC = "06";
+
+				if (tempStr[0].equalsIgnoreCase("a")) {
+
+					if (tempDateStr[0].equalsIgnoreCase(monthA)
+							&& tempDateStr[1].equalsIgnoreCase(dateA)) {
+						break;
+
+					} else {
+						System.out
+								.println("You have entered wrong move in date for Sem 1, do you still want to proceed[Y/N] ");
+						String choice1 = inputObj.next();
+						if (choice1.equalsIgnoreCase("Y")) {
+							break;
+						}
+
+					}
+
+				}
+
+				if (tempStr[0].equalsIgnoreCase("b")) {
+
+					if (tempDateStr[0].equalsIgnoreCase(monthB)
+							&& tempDateStr[1].equalsIgnoreCase(dateB)) {
+						break;
+
+					} else {
+						System.out
+								.println("You have entered wrong move in date for Sem 2, do you still want to proceed[Y/N] ");
+						String choice1 = inputObj.next();
+						if (choice1.equalsIgnoreCase("Y")) {
+							break;
+						}
+
+					}
+
+				}
+
+				if (tempStr[0].equalsIgnoreCase("c")) {
+
+					if (tempDateStr[0].equalsIgnoreCase(monthC)
+							&& tempDateStr[1].equalsIgnoreCase(dateC)) {
+						break;
+
+					} else {
+						System.out
+								.println("You have entered wrong move in date for Summer Semester, do you still want to proceed[Y/N] ");
+						String choice1 = inputObj.next();
+						if (choice1.equalsIgnoreCase("Y")) {
+							break;
+						}
+
+					}
+
+				}
+
+			}
+
 			java.sql.Date sqlMoveInDate = Utils
 					.convertStringToSQLDateFormat(moveInDate);
 

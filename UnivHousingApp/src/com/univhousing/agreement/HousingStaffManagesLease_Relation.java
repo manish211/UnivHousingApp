@@ -157,18 +157,57 @@ public class HousingStaffManagesLease_Relation {
 				preparedStatement.close();
 */
 			}
+			int flag = 0;
+			String approvalStatus = "";
+			String moveInDateStr = Utils.convertSQLDateToString(moveInDate);
+			String[] tempDateStr = moveInDateStr.split("/");
 
-			System.out.println("Do you want to approve this request? Y/N");
-			String approvalStatus = inputObj.next();
-			
-			
-			
-			
-			/*	START: Check to see if the person is already living on some lease Currently*/
+			String dateA = "01";
+			String monthA = "08";
 
-			
+			String dateB = "01";
+			String monthB = "01";
 
-			//System.out.println("BEFORE>>>>>>>>"+approvalStatus);
+			String dateC = "01";
+			String monthC = "06";
+
+			if (tempDateStr[0].equalsIgnoreCase(monthA)
+					&& tempDateStr[1].equalsIgnoreCase(dateA)) {
+				flag = 0;
+
+			} else if (tempDateStr[0].equalsIgnoreCase(monthB)
+					&& tempDateStr[1].equalsIgnoreCase(dateB)) {
+
+				flag = 0;
+			} else if (tempDateStr[0].equalsIgnoreCase(monthC)
+					&& tempDateStr[1].equalsIgnoreCase(dateC)) {
+
+				flag = 0;
+			}
+
+			else {
+				flag = 1;
+
+			}
+
+			if (flag == 0) {
+
+				System.out.println("Do you want to approve this request? Y/N");
+				approvalStatus = inputObj.next();
+
+			} else {
+				approvalStatus = "N";
+				System.out
+						.println("The person has entered incorrect movein date!");
+
+			}
+
+			/*
+			 * START: Check to see if the person is already living on some lease
+			 * Currently
+			 */
+
+			// System.out.println("BEFORE>>>>>>>>"+approvalStatus);
 
 			if (approvalStatus.equalsIgnoreCase("Y")) {
 				PreparedStatement ps2 = null;
@@ -186,13 +225,10 @@ public class HousingStaffManagesLease_Relation {
 							.println("This is a duplicate Housing Request, Turn his/her status to waiting and inform the person!!!!");
 				}
 			}
-			
 
-		/*	rs.close();
-			preparedStatement.close();
-			*/
-			
-			
+			/*
+			 * rs.close(); preparedStatement.close();
+			 */			
 			
 			
 			/*END: Check to see if the person is already living on some lease Currently*/
@@ -1163,10 +1199,16 @@ public class HousingStaffManagesLease_Relation {
 			System.out.println("");
 			while (rs.next()) {
 
-				java.util.Date currentDateUtil = new java.util.Date();
 				int personID = rs.getInt("person_id");
+				System.out.println("Enter the current Date mm/dd/yyyy <> to check for person"+personID);
+				String currentDateStr = inputObj.nextLine();
+							
+				java.util.Date currentDateUtil = Utils.convertStringToUtilDateFormat(currentDateStr);
+				
+				
 				Date moveInDate = rs.getDate("lease_move_in_date");
 				int duration = Integer.parseInt(rs.getString("Duration"));
+				
 				int requestNumber = rs.getInt("application_request_no");
 				String moveInDateStr = Utils.changeUtilDateToString(moveInDate);
 				java.util.Date moveInDateUtils = Utils
