@@ -99,6 +99,7 @@ hall_number INTEGER,
 street_name VARCHAR2(40),
 city_name VARCHAR2(50),
 zip_code INTEGER,
+security_deposit NUMBER(9,2),
 PRIMARY KEY(hall_number));
 
 
@@ -112,6 +113,7 @@ zip_code INTEGER,
 monthly_rent NUMBER(9,2),
 apt_name VARCHAR2(100),
 society_name VARCHAR2(300),
+security_deposit NUMBER(9,2),
 PRIMARY KEY(apt_no),
 FOREIGN KEY(accomodation_id) REFERENCES Accomodation);
 
@@ -127,6 +129,8 @@ city_name VARCHAR2(50),
 zip_code INTEGER,
 society_name VARCHAR2(300),
 apt_name VARCHAR2(100),
+phone_number INTEGER,
+security_deposit NUMBER(9,2),
 PRIMARY KEY(apt_no),
 FOREIGN KEY(accomodation_id) REFERENCES Accomodation);
 
