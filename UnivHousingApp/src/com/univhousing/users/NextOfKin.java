@@ -19,7 +19,8 @@ public class NextOfKin {
 	public java.sql.Date DOB;
 	public String gender;
 	
-	
+	Student studentObj = new Student();
+	int personId;
 	/**
 	 * @param studentId
 	 * @action Displays the next of kind details when the student is viewing his profile
@@ -32,6 +33,7 @@ public class NextOfKin {
 	zip_code INTEGER,*/
 	public void getNextOfKinDetails(int studentId) 
 	{
+		personId = studentObj.getPersonIdForStudentId(studentId);
 		ResultSet studentKin = null;
 		Connection dbConnection = ConnectionUtils.getConnection();
 		PreparedStatement preparedStatement1 = null;
@@ -39,9 +41,9 @@ public class NextOfKin {
 		int count = 0;
 		try
 		{
-			queryNextOfKin = "SELECT K.first_name, K.last_name, K.street_name, K.city_name, K.zip_code, K.phone_number, K.gender, K.DOB FROM KIN_STUDENT K WHERE K.student_id = ?";
+			queryNextOfKin = "SELECT K.first_name, K.last_name, K.street_name, K.city_name, K.zip_code, K.phone_number, K.gender, K.DOB FROM KIN_STUDENT K WHERE K.person_id = ?";
 			preparedStatement1 = dbConnection.prepareStatement(queryNextOfKin);
-			preparedStatement1.setInt(1, studentId);
+			preparedStatement1.setInt(1, personId);
 			studentKin = preparedStatement1.executeQuery();
 			
 			while(studentKin.next())
@@ -68,6 +70,7 @@ public class NextOfKin {
 
 	public boolean checkIfNextOfKinPresent(int studentId)
 	{
+		personId = studentObj.getPersonIdForStudentId(studentId);
 		ResultSet studentKin = null;
 		Connection dbConnection = ConnectionUtils.getConnection();
 		PreparedStatement preparedStatement1 = null;
@@ -75,9 +78,9 @@ public class NextOfKin {
 		int count = 0;
 		try
 		{
-			queryNextOfKin = "SELECT K.first_name, K.last_name, K.street_name, K.city_name, K.zip_code, K.phone_number, K.gender, K.DOB FROM KIN_STUDENT K WHERE K.student_id = ?";
+			queryNextOfKin = "SELECT K.first_name, K.last_name, K.street_name, K.city_name, K.zip_code, K.phone_number, K.gender, K.DOB FROM KIN_STUDENT K WHERE K.person_id = ?";
 			preparedStatement1 = dbConnection.prepareStatement(queryNextOfKin);
-			preparedStatement1.setInt(1, studentId);
+			preparedStatement1.setInt(1, personId);
 			studentKin = preparedStatement1.executeQuery();
 			
 			while(studentKin.next())
