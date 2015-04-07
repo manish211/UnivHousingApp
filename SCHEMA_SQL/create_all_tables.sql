@@ -110,6 +110,7 @@ street_name VARCHAR2(40),
 city_name VARCHAR2(50),
 zip_code INTEGER,
 monthly_rent NUMBER(9,2),
+apt_name VARCHAR2(100),
 PRIMARY KEY(apt_no),
 FOREIGN KEY(accomodation_id) REFERENCES Accomodation);
 
