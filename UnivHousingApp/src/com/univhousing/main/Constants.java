@@ -36,6 +36,7 @@ public class Constants {
 	public static final String GENERAL_APARTMENT = "Apartment";
 	public static final String FAMILY_APARTMENT = "Family Apartment";
 	public static final String RESIDENCE_HALL = "Residence Hall";
+	public static final String PRIVATE_ACCOMODATION = "Private Housing";
 	public static final String BEDROOM = "Bedroom";
 	public static final String TABLE_GENERAL_APARTMENT = "General_Apartment";
 	public static final String TABLE_FAMILY_APARTMENT = "Family_Apartment";
@@ -57,6 +58,7 @@ public class Constants {
 	public static final int INCIDENTAL_CHARGES= 20;
 	public static final String RESIDENCE_HALL_DEPOSITE = "500";
 	public static final String GENERAL_APARTMENT_DEPOSITE = "1000";
+	public static final String PRIVATE_APARTMENT_DEPOSITE = "1000";
 	public static final String FAMILY_APARTMENT_DEPOSITE = "2000";
 	public static final String PAID_INVOICE = "Paid";
 	public static final String OUTSTANDING_INVOICE = "Outstanding";

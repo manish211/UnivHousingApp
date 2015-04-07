@@ -236,9 +236,9 @@ request_status VARCHAR2(50),
 mode_of_payment VARCHAR2(20),
 lease_move_in_date DATE,
 duration VARCHAR2(10),
-PREFERENCE1 VARCHAR2(20),
-PREFERENCE2 VARCHAR2(20),
-PREFERENCE3 VARCHAR2(20),
+PREFERENCE1 VARCHAR2(50),
+PREFERENCE2 VARCHAR2(50),
+PREFERENCE3 VARCHAR2(50),
 payment_gateway varchar2(20),
 PRIMARY KEY(application_request_no),
 FOREIGN KEY (person_id) REFERENCES person);
@@ -298,7 +298,7 @@ PRIMARY KEY(accomodation_id))
 
 CREATE TABLE Private_Accomodation(
 accomodation_id INTEGER,
-accomodation_type varchar2(20),
+accomodation_type varchar2(50),
 private_place_no INTEGER,
 street_name varchar2(50),
 city varchar2(50),
