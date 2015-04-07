@@ -1,10 +1,12 @@
 package com.univhousing.agreement;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Scanner;
@@ -31,11 +33,12 @@ public class HousingStaffManagesLease_Relation {
 	/**
 	 * @param ArrayList
 	 *            <Integer> allLeaseRequestsToMonitor
+	 * @param extraCredit This parameter tells if this call is for extra credit of regular
 	 * @throws SQLException
 	 * @action This fetches all the new lease requests submitted for approval
 	 */
 	public void getAllNewLeaseRequests(
-		ArrayList<Integer> allLeaseRequestsToMonitor) throws SQLException {
+		ArrayList<Integer> allLeaseRequestsToMonitor, boolean extraCredit) throws SQLException {
 		personObj =  new Person();
 		/* Write SQL Query to fetch all the lease requests pending for approval */
 
@@ -265,9 +268,27 @@ public class HousingStaffManagesLease_Relation {
 					preparedStatement.executeUpdate();
 					preparedStatement.close();
 
-				//	System.out.println("TEST2");	
-					
-					String selectQueryRes = "SELECT accomodation_id "
+				//	System.out.println("TEST2");
+					int accID = 0;
+					// Chechking if extra credit query is made then we call procedure for hall
+					if(extraCredit)
+					{
+						// Call Manish's procedure
+						Connection conn = ConnectionUtils.getConnection();
+						CallableStatement cst = conn.prepareCall("{call get_best_accomodation_id_hall (?,?,?)}");
+						cst.setString(1, Constants.RESIDENCE_HALL);
+						cst.setInt(2, personID);
+						// Now registering out parameter
+						cst.registerOutParameter(3, Types.INTEGER);
+						cst.execute();
+						accID = cst.getInt(3);
+						cst.close();
+						ConnectionUtils.closeConnection(conn);
+					}
+					else
+					{
+						// If no extra credit then normal query to get accomodation id
+						String selectQueryRes = "SELECT accomodation_id "
 							+ "FROM residence_hall_provides_room "
 							+ "WHERE hall_number = (SELECT hall_number "
 							+ "						FROM residence_hall "
@@ -275,18 +296,41 @@ public class HousingStaffManagesLease_Relation {
 							+ "AND accomodation_id NOT IN (SELECT accomodation_id "
 							+ "							FROM person_accomodation_lease)";
 
-					preparedStatement = dbConnection
-							.prepareStatement(selectQueryRes);
-					preparedStatement.setString(1, availableAcco.get(1));
-					rs = preparedStatement.executeQuery();
-					rs.next();
-					int accID = rs.getInt("accomodation_id");
-					accomodationIDGiven = accID;
-					rs.close();
-					preparedStatement.close();
+						preparedStatement = dbConnection
+								.prepareStatement(selectQueryRes);
+						preparedStatement.setString(1, availableAcco.get(1));
+						rs = preparedStatement.executeQuery();
+						rs.next();
+						accID = rs.getInt("accomodation_id");
+						accomodationIDGiven = accID;
+						rs.close();
+						preparedStatement.close();
+					}
+					
 
 					//System.out.println("TEST3");
-					
+					// If the extra credit procedure call returns nothing then call regular query
+					if(accID == -1 || accID == 0)
+					{
+						System.out.println("No best matching accomodation was found");
+						String selectQueryRes = "SELECT accomodation_id "
+							+ "FROM residence_hall_provides_room "
+							+ "WHERE hall_number = (SELECT hall_number "
+							+ "						FROM residence_hall "
+							+ "						WHERE hall_name = ?) "
+							+ "AND accomodation_id NOT IN (SELECT accomodation_id "
+							+ "							FROM person_accomodation_lease)";
+
+						preparedStatement = dbConnection
+								.prepareStatement(selectQueryRes);
+						preparedStatement.setString(1, availableAcco.get(1));
+						rs = preparedStatement.executeQuery();
+						rs.next();
+						accID = rs.getInt("accomodation_id");
+						accomodationIDGiven = accID;
+						rs.close();
+						preparedStatement.close();
+					}
 					System.out.println(newLeaseNumber);
 					String insertPerAccQuery = "INSERT INTO person_accomodation_lease (accomodation_id,person_id,lease_no,accomodation_type,lease_move_in_date) "
 							+ "VALUES(?,?,?,?,?)";
@@ -338,19 +382,58 @@ public class HousingStaffManagesLease_Relation {
 
 					preparedStatement.close();
 
-					String SQL3 = "SELECT bedroom.accomodation_id FROM BEDROOM "
+					int accomodationIDApartment = 0;
+					// If extracredit is true then call procedure for apartment
+					if(extraCredit)
+					{
+						// Call Manish's procedure
+						Connection conn = ConnectionUtils.getConnection();
+						CallableStatement cst = conn.prepareCall("{call get_best_accomodation_id_apt (?,?,?)}");
+						cst.setString(1, Constants.GENERAL_APARTMENT);
+						cst.setInt(2, personID);
+						// Now registering out parameter
+						cst.registerOutParameter(3, Types.INTEGER);
+						cst.execute();
+						accomodationIDApartment = cst.getInt(3);
+						cst.close();
+						ConnectionUtils.closeConnection(conn);
+						
+					}
+					else
+					{
+						// If not extra credit then just call regular query
+						String SQL3 = "SELECT bedroom.accomodation_id FROM BEDROOM "
 							+ "WHERE bedroom.accomodation_id NOT IN(SELECT PERSON_ACCOMODATION_LEASE.accomodation_id "
 							+ "FROM PERSON_ACCOMODATION_LEASE)";
 
-					preparedStatement = dbConnection.prepareStatement(SQL3);
-					rs = preparedStatement.executeQuery();
-					rs.next();
+						preparedStatement = dbConnection.prepareStatement(SQL3);
+						rs = preparedStatement.executeQuery();
+						rs.next();
+	
+						accomodationIDApartment = rs.getInt("accomodation_id");
+						accomodationIDGiven = accomodationIDApartment;
+						rs.close();
+						preparedStatement.close();
+					}
+					
+					if(accomodationIDApartment == -1 || accomodationIDApartment == 0)
+					{
+						// If the extra credit returns nothing then we will run regular query again
+						System.out.println("Sorry no matching accomodations were found");
+						String SQL3 = "SELECT bedroom.accomodation_id FROM BEDROOM "
+							+ "WHERE bedroom.accomodation_id NOT IN(SELECT PERSON_ACCOMODATION_LEASE.accomodation_id "
+							+ "FROM PERSON_ACCOMODATION_LEASE)";
 
-					int accomodationIDApartment = rs.getInt("accomodation_id");
-					accomodationIDGiven = accomodationIDApartment;
-					rs.close();
-					preparedStatement.close();
-
+						preparedStatement = dbConnection.prepareStatement(SQL3);
+						rs = preparedStatement.executeQuery();
+						rs.next();
+	
+						accomodationIDApartment = rs.getInt("accomodation_id");
+						accomodationIDGiven = accomodationIDApartment;
+						rs.close();
+						preparedStatement.close();
+					}
+					
 					String SQL4 = "INSERT INTO PERSON_ACCOMODATION_LEASE (accomodation_id,person_id,lease_no,accomodation_type,lease_move_in_date) "
 							+ "VALUES (?,?,?,?,?)";
 
@@ -400,6 +483,7 @@ public class HousingStaffManagesLease_Relation {
 
 					preparedStatement.close();
 
+					
 					String SQLF3 = "SELECT Family.accomodation_id FROM Family_Apartment Family "
 							+ "WHERE Family.accomodation_id NOT IN(SELECT PERSON_ACCOMODATION_LEASE.accomodation_id "
 							+ "FROM PERSON_ACCOMODATION_LEASE)";
@@ -407,11 +491,12 @@ public class HousingStaffManagesLease_Relation {
 					preparedStatement = dbConnection.prepareStatement(SQLF3);
 					rs = preparedStatement.executeQuery();
 					rs.next();
-
+	
 					int accomodationIDApartment = rs.getInt("accomodation_id");
 					accomodationIDGiven = accomodationIDApartment;
 					rs.close();
 					preparedStatement.close();
+					
 
 					String SQL4 = "INSERT INTO PERSON_ACCOMODATION_LEASE (accomodation_id,person_id,lease_no,accomodation_type,lease_move_in_date) "
 							+ "VALUES (?,?,?,?,?)";

@@ -409,7 +409,8 @@ public class EntryPoint {
 										System.out.println("5. Profile");
 										System.out.println("6. Generate Invoices");
 										System.out.println("7. Check the Completed Leases");
-										System.out.println("8. Back\n");
+										System.out.println("8. Approve Requests by Best Match EXTRA CREDIT");
+										System.out.println("9. Back\n");
 										
 										choice = inputObj.nextInt();
 										
@@ -417,7 +418,7 @@ public class EntryPoint {
 										{
 											case 1:
 												System.out.println("Showing New Lease Requests");
-												housingLeaseObj.getAllNewLeaseRequests(mAdminLevelLeaseRequests);
+												housingLeaseObj.getAllNewLeaseRequests(mAdminLevelLeaseRequests, false);
 												break;
 											
 											case 2:
@@ -477,8 +478,11 @@ public class EntryPoint {
 											case 7: System.out.println("Checking for the Completed leases");
 													housingLeaseObj.checkForLeaseCompletion();
 													break;
-											
 											case 8:
+												System.out.println("Approve Requests by Best Match EXTRA CREDIT");
+												housingLeaseObj.getAllNewLeaseRequests(mAdminLevelLeaseRequests,true);
+												break;
+											case 9:
 												mLevelOne = false;
 												break;
 	

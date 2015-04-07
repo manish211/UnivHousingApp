@@ -345,7 +345,7 @@ public class InvoicePersonLease_Relation {
 				for(int i = 0; i< durationOfStay; i++)
 				{
 					dateIncrementValue = i*counter + counter;
-					System.out.println("Date incremented by : "+dateIncrementValue);
+					//System.out.println("Date incremented by : "+dateIncrementValue);
 					// Calling the PL/SQL Statement
 					//create_invoice(v_person_id,v_accomodation_id,v_increment,v_mode_payment,v_accomodation_type,v_output);
 					CallableStatement cst = conn.prepareCall("{call create_invoice (?,?,?,?,?,?,?)}");
@@ -356,8 +356,10 @@ public class InvoicePersonLease_Relation {
 					cst.setString(5, accomodationType);
 					cst.setInt(6, durationOfStay);
 					// Now registering out parameter
-					cst.registerOutParameter(7, Types.INTEGER,result);
+					cst.registerOutParameter(7, Types.INTEGER);
+					
 					cst.execute();
+					//System.out.println("Value of result: "+cst.getInt(7));
 					cst.close();
 					ps1.close();
 					getAccId.close();
