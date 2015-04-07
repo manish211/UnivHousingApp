@@ -33,7 +33,7 @@ public class Constants {
 	public static final String REJECTED_STATUS = "Rejected";
 	public static final String AVAILABLE = "Yes";
 	public static final String NOT_AVAILABLE = "No";
-	public static final String GENERAL_APARTMENT = "Apartment";
+	public static final String GENERAL_APARTMENT = "General Apartment";
 	public static final String FAMILY_APARTMENT = "Family Apartment";
 	public static final String RESIDENCE_HALL = "Residence Hall";
 	public static final String PRIVATE_ACCOMODATION = "Private Housing";
