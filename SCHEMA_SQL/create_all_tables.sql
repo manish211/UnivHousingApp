@@ -258,8 +258,8 @@ PRIMARY KEY(application_request_no),
 FOREIGN KEY (person_id) REFERENCES person);
 
 
-CREATE TABLE KIN_STUDENT(
-student_id INTEGER NOT NULL,
+CREATE TABLE KIN_PERSON(
+person_id INTEGER NOT NULL,
 first_name VARCHAR2(40),
 last_name VARCHAR2(40),
 street_name VARCHAR2(50),
@@ -268,8 +268,8 @@ zip_code INTEGER,
 phone_number INTEGER,
 gender varchar2(10),
 DOB date,
-PRIMARY KEY(student_id,first_name),
-FOREIGN KEY(student_id) REFERENCES student);
+PRIMARY KEY(person_id,first_name),
+FOREIGN KEY(person_id) REFERENCES person);
 
 CREATE TABLE hall_manages(
 hall_name VARCHAR2(40),
