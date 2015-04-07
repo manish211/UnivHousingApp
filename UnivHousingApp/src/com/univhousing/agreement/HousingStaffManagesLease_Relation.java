@@ -52,26 +52,34 @@ public class HousingStaffManagesLease_Relation {
 		String accomodationTypeGiven = "";
 		int accomodationIDGiven = 0;
 		ArrayList<String> preferences = new ArrayList<String>();
+		ArrayList<String> requestStatus = new ArrayList<String>();
+		requestStatus.clear();
 
 		try {
 
 			dbConnection = ConnectionUtils.getConnection();
-			String selectQuery = "SELECT application_request_no "
-					+ "FROM PERSON_ACC_STAFF " + "WHERE request_status = ?";
+			String selectQuery = "SELECT application_request_no,request_status "
+					+ "FROM PERSON_ACC_STAFF " + "WHERE (request_status = ? "
+							+ "OR request_status = ?) "
+							+ "ORDER BY request_status DESC, "
+							+ "application_request_no";
 
 			preparedStatement = dbConnection.prepareStatement(selectQuery);
 			preparedStatement.setString(1, status);
+			preparedStatement.setString(2, Constants.WAITING_STATUS);
 
 			rs = preparedStatement.executeQuery();
 			while (rs.next()) {
 				allLeaseRequestsToMonitor.add(rs
 						.getInt("application_request_no"));
+				requestStatus.add(rs.getString("request_status"));
 			}
 
 			System.out.println("Displaying all the requests to approve: ");
 			for (int i = 0; i < allLeaseRequestsToMonitor.size(); i++) {
-				System.out.println((i + 1) + ". "
-						+ allLeaseRequestsToMonitor.get(i));
+				System.out.println(String.format("%3d%-2s%-4d%-3s%-10s", (i+1),"."
+						,allLeaseRequestsToMonitor.get(i)," - "
+						,requestStatus.get(i)));
 			}
 			int requestChosen = inputObj.nextInt();
 			int requestNumber = allLeaseRequestsToMonitor
