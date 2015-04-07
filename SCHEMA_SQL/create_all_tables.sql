@@ -268,6 +268,7 @@ zip_code INTEGER,
 phone_number INTEGER,
 gender varchar2(10),
 DOB date,
+relationship varchar2(200),
 PRIMARY KEY(person_id,first_name),
 FOREIGN KEY(person_id) REFERENCES person);
 
