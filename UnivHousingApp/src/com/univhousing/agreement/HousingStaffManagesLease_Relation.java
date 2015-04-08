@@ -173,6 +173,8 @@ public class HousingStaffManagesLease_Relation {
 				 * rs.close(); preparedStatement.close();
 				 */
 			}
+
+			
 			int flag = 0;
 			String approvalStatus = "";
 			String moveInDateStr = Utils.convertSQLDateToString(moveInDate);
@@ -213,13 +215,33 @@ public class HousingStaffManagesLease_Relation {
 				approvalStatus = inputObj.next();
 
 			} else {
+				
 				approvalStatus = "N";
-				System.out
+				/*System.out
 						.println("The person has entered incorrect movein date!");
-
+*/
 			}
 
 
+			
+			PreparedStatement visitorPs = null;
+			ResultSet visitorRs =null;
+			
+			String visitorQuery = "SELECT * FROM GUEST WHERE person_id = ?";
+			visitorPs  = dbConnection.prepareStatement(visitorQuery);
+			visitorPs.setInt(1,personID);
+			visitorRs = visitorPs.executeQuery();
+			
+			if(visitorRs.isBeforeFirst()){
+				
+				System.out.println("Do you want to approve this request? Y/N");
+				approvalStatus = inputObj.next();
+				//approvalStatus="Y";
+			}
+					
+			
+			
+			
 			/*
 			 * START: Check to see if the person is already living on some lease
 			 * Currently
