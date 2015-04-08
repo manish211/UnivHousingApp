@@ -330,3 +330,8 @@ FOREIGN KEY(accomodation_id) REFERENCES Accomodation);
 -- 	nocycle;
 
 
+create table error_table(object_name varchar2(200),
+	error_code varchar2(200),
+	error_message varchar2(500),
+	error_date date);
+
