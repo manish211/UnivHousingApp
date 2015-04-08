@@ -1365,7 +1365,7 @@ public class HousingStaffManagesLease_Relation {
 					+ " and requestNumber: " + requestNumber);
 			
 			preparedStatement = dbConnection.prepareStatement(selectQueryFees);
-			preparedStatement.setString(1, "'Paid'");
+			preparedStatement.setString(1, Constants.PAID_INVOICE);
 			preparedStatement.setInt(2, personID);
 			rs = preparedStatement.executeQuery();
 
@@ -1379,7 +1379,7 @@ public class HousingStaffManagesLease_Relation {
 				
 				
 				totalPenaltyDamageFees = damageFees + penalty;
-				
+				totalPenaltyDamageFees=0; //[MANISH]
 				System.out.println("Marker8");
 				if (totalPenaltyDamageFees > 0) {
 
