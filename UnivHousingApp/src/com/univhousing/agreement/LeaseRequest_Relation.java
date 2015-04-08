@@ -81,6 +81,7 @@ public class LeaseRequest_Relation {
 
 			String SelectQuery2 = "SELECT MAX(application_request_no)as application_request_no FROM PERSON_ACC_STAFF";
 
+			boolean flagGuest = false;
 			preparedStatement = dbConnection.prepareStatement(SelectQuery2);
 			rs = preparedStatement.executeQuery();
 
@@ -91,39 +92,67 @@ public class LeaseRequest_Relation {
 			rs.close();
 			preparedStatement.close();
 
+			
+
+			PreparedStatement visitorPs = null;
+			ResultSet visitorRs =null;
+			
+			String visitorQuery = "SELECT * FROM GUEST WHERE person_id = ?";
+			visitorPs  = dbConnection.prepareStatement(visitorQuery);
+			visitorPs.setInt(1,personId);
+			visitorRs = visitorPs.executeQuery();
+			
+			if(visitorRs.isBeforeFirst()){
+				
+							flagGuest = true;
+				
+			}
+					
+			
+			
+			
+			
 			/************************************************************************/
 
 			// System.out.println("IMPORTANT INFORMATION : One semester is equal to 4 months");
 
-			System.out.println("Enter the semesters you want to live ");
-			System.out.println("a> Sem1: [01 Aug - 31 Dec]");
-			System.out.println("b>Sem 2: 01 Jan - 31 May");
-			System.out.println("c>Summer: 01 Jun - 31 Jul");
-			System.out
-					.println("For multiple semesters please enter optios seperated by comma[for example: a,b,c] ");
+			String[] tempStrArray = null;
+			int periodOfLeasing;
+			if (!flagGuest) {
+				System.out.println("Enter the semesters you want to live ");
+				System.out.println("a> Sem1: [01 Aug - 31 Dec]");
+				System.out.println("b>Sem 2: 01 Jan - 31 May");
+				System.out.println("c>Summer: 01 Jun - 31 Jul");
+				System.out
+						.println("For multiple semesters please enter optios seperated by comma[for example: a,b,c] ");
+				String sem = inputObj.nextLine();
+				tempStrArray = sem.split(",");
+				int periodOfLeaseInt = 0;
+				int totalDuration = 0;
+				for (int i = 0; i < tempStrArray.length; i++) {
 
-			String sem = inputObj.nextLine();
-			String[] tempStr = sem.split(",");
-			int periodOfLeaseInt = 0;
-			int totalDuration = 0;
-			for (int i = 0; i < tempStr.length; i++) {
+					if (tempStrArray[i].equalsIgnoreCase("a")) {
+						periodOfLeaseInt = periodOfLeaseInt + A;
+					} else if (tempStrArray[i].equalsIgnoreCase("b")) {
+						periodOfLeaseInt = periodOfLeaseInt + B;
+					} else if (tempStrArray[i].equalsIgnoreCase("c")) {
+						periodOfLeaseInt = periodOfLeaseInt + C;
+					}
 
-				if (tempStr[i].equalsIgnoreCase("a")) {
-					periodOfLeaseInt = periodOfLeaseInt + A;
-				} else if (tempStr[i].equalsIgnoreCase("b")) {
-					periodOfLeaseInt = periodOfLeaseInt + B;
-				} else if (tempStr[i].equalsIgnoreCase("c")) {
-					periodOfLeaseInt = periodOfLeaseInt + C;
+					totalDuration = periodOfLeaseInt;
+
 				}
-
-				totalDuration = periodOfLeaseInt;
-
+				periodOfLeasing = totalDuration;
+			}
+			
+			else{
+				
+				System.out.println("Enter the duration for which you want stay here as a visitor");
+				periodOfLeasing = inputObj.nextInt();
 			}
 
-			int periodOfLeasing = totalDuration;		
-
 			if (isFreshmen == false) {
-				System.out.println("Welcome " + studentName + "!");
+				System.out.println("Welcome !!");
 				System.out.println("Enter your housing preference\n"
 						+ "a) Private Housing\n" + "b) Residence Hall\n"
 						+ "c) General Apartment\n" + "d) Family Apartment\n"
@@ -299,71 +328,67 @@ public class LeaseRequest_Relation {
 						.println("Date you want to enter the housing in MM/dd/YYYY format: ");
 				moveInDate = inputObj.next();
 
-				String[] tempDateStr = moveInDate.split("/");
+				if (!flagGuest) {
+					String[] tempDateStr = moveInDate.split("/");
+					String dateA = "01";
+					String monthA = "08";
+					String dateB = "01";
+					String monthB = "01";
+					String dateC = "01";
+					String monthC = "06";
+					if (tempStrArray[0].equalsIgnoreCase("a")) {
 
-				String dateA = "01";
-				String monthA = "08";
-
-				String dateB = "01";
-				String monthB = "01";
-
-				String dateC = "01";
-				String monthC = "06";
-
-				if (tempStr[0].equalsIgnoreCase("a")) {
-
-					if (tempDateStr[0].equalsIgnoreCase(monthA)
-							&& tempDateStr[1].equalsIgnoreCase(dateA)) {
-						break;
-
-					} else {
-						System.out
-								.println("You have entered wrong move in date for Sem 1, do you still want to proceed[Y/N] ");
-						String choice1 = inputObj.next();
-						if (choice1.equalsIgnoreCase("Y")) {
+						if (tempDateStr[0].equalsIgnoreCase(monthA)
+								&& tempDateStr[1].equalsIgnoreCase(dateA)) {
 							break;
+
+						} else {
+							System.out
+									.println("You have entered wrong move in date for Sem 1, do you still want to proceed[Y/N] ");
+							String choice1 = inputObj.next();
+							if (choice1.equalsIgnoreCase("Y")) {
+								break;
+							}
+
 						}
 
 					}
+					if (tempStrArray[0].equalsIgnoreCase("b")) {
 
-				}
-
-				if (tempStr[0].equalsIgnoreCase("b")) {
-
-					if (tempDateStr[0].equalsIgnoreCase(monthB)
-							&& tempDateStr[1].equalsIgnoreCase(dateB)) {
-						break;
-
-					} else {
-						System.out
-								.println("You have entered wrong move in date for Sem 2, do you still want to proceed[Y/N] ");
-						String choice1 = inputObj.next();
-						if (choice1.equalsIgnoreCase("Y")) {
+						if (tempDateStr[0].equalsIgnoreCase(monthB)
+								&& tempDateStr[1].equalsIgnoreCase(dateB)) {
 							break;
+
+						} else {
+							System.out
+									.println("You have entered wrong move in date for Sem 2, do you still want to proceed[Y/N] ");
+							String choice1 = inputObj.next();
+							if (choice1.equalsIgnoreCase("Y")) {
+								break;
+							}
+
 						}
 
 					}
+					if (tempStrArray[0].equalsIgnoreCase("c")) {
 
-				}
-
-				if (tempStr[0].equalsIgnoreCase("c")) {
-
-					if (tempDateStr[0].equalsIgnoreCase(monthC)
-							&& tempDateStr[1].equalsIgnoreCase(dateC)) {
-						break;
-
-					} else {
-						System.out
-								.println("You have entered wrong move in date for Summer Semester, do you still want to proceed[Y/N] ");
-						String choice1 = inputObj.next();
-						if (choice1.equalsIgnoreCase("Y")) {
+						if (tempDateStr[0].equalsIgnoreCase(monthC)
+								&& tempDateStr[1].equalsIgnoreCase(dateC)) {
 							break;
+
+						} else {
+							System.out
+									.println("You have entered wrong move in date for Summer Semester, do you still want to proceed[Y/N] ");
+							String choice1 = inputObj.next();
+							if (choice1.equalsIgnoreCase("Y")) {
+								break;
+							}
+
 						}
 
 					}
-
 				}
-
+				break;
 			}
 
 			java.sql.Date sqlMoveInDate = Utils
