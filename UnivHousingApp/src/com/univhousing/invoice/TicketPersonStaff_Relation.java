@@ -393,14 +393,22 @@ public class TicketPersonStaff_Relation {
 			}
 			System.out.println("Total tickets retrieved : "+maintenanceTicketsList.size());
 			
-			System.out.println("Displaying all Maintenance Tickets");
-			for (int i = 0; i < maintenanceTicketsList.size(); i++) 
+			if(maintenanceTicketsList.size()>0)
 			{
-				System.out.println((i+1)+". "+maintenanceTicketsList.get(i));
+				System.out.println("Displaying all Maintenance Tickets");
+				for (int i = 0; i < maintenanceTicketsList.size(); i++) 
+				{
+					System.out.println((i+1)+". "+maintenanceTicketsList.get(i));
+				}
+				System.out.println("Select the ticket you want to: ");
+				int ticketSelected = inputObj.nextInt();
+				ticketNumber = maintenanceTicketsList.get(ticketSelected-1);
 			}
-			System.out.println("Select the ticket you want to: ");
-			int ticketSelected = inputObj.nextInt();
-			ticketNumber = maintenanceTicketsList.get(ticketSelected-1);
+			else
+			{
+				System.out.println("No tickets to display");
+				return;
+			}
 			
 			/*Write SQL Query to fetch the details for one particular ticket and set it's ticket_Status to Processing*/
 			
