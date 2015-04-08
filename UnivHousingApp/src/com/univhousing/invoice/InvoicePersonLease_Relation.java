@@ -311,12 +311,13 @@ public class InvoicePersonLease_Relation {
 		String duration = "" ;
 		int result = 0;
 		String paymentGateway = "";
+		int remainingDays = 0;
 		
 		PreparedStatement ps = null;
 		Connection conn = ConnectionUtils.getConnection();
 		ResultSet getRequestData = null;
 		String query = "select table1.payment_gateway,table1.duration,table1.person_id,table1.lease_move_in_date," +
-				"(table1.lease_move_in_date-sysdate) as remaining_days,table1.mode_of_payment,table1.accomodation_type " +
+				"(sysdate-table1.lease_move_in_date) as remaining_days,table1.mode_of_payment,table1.accomodation_type " +
 				"from person_acc_staff table1,(select person_id,max(lease_move_in_date) max_lease_move_in_date from person_acc_staff " +
 				"inner_table" +	" where request_status = ? group by person_id) table2 where table1.person_id = table2.person_id " +
 				"and table1.lease_move_in_date = table2.max_lease_move_in_date";
@@ -334,7 +335,128 @@ public class InvoicePersonLease_Relation {
 				accomodationType = getRequestData.getString("accomodation_type");
 				duration = getRequestData.getString("duration");
 				paymentGateway = getRequestData.getString("payment_gateway");
+				remainingDays = getRequestData.getInt("remaining_days");
+				
+				int durationOfStay = Integer.parseInt(duration);
+				/*double num;
+				long iPart;
+				double fPart;
 
+				// Get user input
+				num = (double)10/3;
+				iPart = (long) num;
+				fPart = num - iPart;
+				System.out.println(num);
+				System.out.println("Integer part = " + iPart);
+				System.out.println("Fractional part = " + fPart);*/
+				
+				int finalResult = 0;
+				double numberOFInvoices = 0;
+				if(meansOfPayment.equalsIgnoreCase(Constants.PAYMENTOPTION_MONTHLY))
+				{
+					
+					long iPart;
+					double fPart;
+					finalResult = 0;
+					numberOFInvoices = (double)(remainingDays/Constants.DAYS_IN_MONTH);
+					iPart = (long) numberOFInvoices;
+					fPart = numberOFInvoices - iPart;
+					if(fPart>=0.5)
+					{
+						finalResult = (int) (iPart+1);
+					}
+					else if(fPart<0.5)
+					{
+						finalResult = (int) iPart;
+					}
+					System.out.println("Number of days lived: "+remainingDays);
+					System.out.println("Decimal value: "+numberOFInvoices);
+					System.out.println("Number of invoices: "+finalResult);
+				}
+				else if(meansOfPayment.equalsIgnoreCase(Constants.PAYMENTOPTION_SEMESTER))
+				{
+					long iPart;
+					double fPart;
+					finalResult = 0;
+					
+					
+
+					if(((durationOfStay%5) == 0) && ((durationOfStay/5) == 1))
+					{
+						System.out.println("One sem either sem1 or sem2\n");
+						numberOFInvoices = (double)remainingDays/150;
+						iPart = (long) numberOFInvoices;
+						fPart = numberOFInvoices - iPart;
+						if(fPart>=0.5)
+						{
+							finalResult = (int) (iPart+1);
+						}
+						else if(fPart<0.5)
+						{
+							finalResult = (int) iPart;
+						}
+						System.out.println("Number of days lived: "+remainingDays);
+						System.out.println("Decimal value: "+numberOFInvoices);
+						System.out.println("Number of invoices: "+finalResult);
+					}
+					else if(((durationOfStay%5) == 0) && ((durationOfStay/5) == 2))
+					{
+						System.out.println("Two sems including sem1 and sem2\n");
+						numberOFInvoices = (double)remainingDays/300;
+						System.out.println("Debugginh number of invoices"+ numberOFInvoices);
+						iPart = (long) numberOFInvoices;
+						fPart = numberOFInvoices - iPart;
+						if(fPart>=0.5)
+						{
+							finalResult = (int) (iPart+1);
+						}
+						else if(fPart<0.5)
+						{
+							finalResult = (int) iPart;
+						}
+						System.out.println("Number of days lived: "+remainingDays);
+						System.out.println("Decimal value: "+numberOFInvoices);
+						System.out.println("Number of invoices: "+finalResult);
+					}
+					else if(((durationOfStay%2) == 0))
+					{
+						System.out.println("Third sem\n");
+						numberOFInvoices = (double)remainingDays/60;
+						iPart = (long) numberOFInvoices;
+						fPart = numberOFInvoices - iPart;
+						if(fPart>=0.5)
+						{
+							finalResult = (int) (iPart+1);
+						}
+						else if(fPart<0.5)
+						{
+							finalResult = (int) iPart;
+						}
+						System.out.println("Number of days lived: "+remainingDays);
+						System.out.println("Decimal value: "+numberOFInvoices);
+						System.out.println("Number of invoices: "+finalResult);
+					}
+					else if(((durationOfStay%2) != 0) )
+					{
+						System.out.println("Two sems including summer\n");
+						System.out.println("Remainig days "+remainingDays);
+						numberOFInvoices = (double)remainingDays/170;
+						System.out.println("Debugginh "+numberOFInvoices);
+						iPart = (long) numberOFInvoices;
+						fPart = numberOFInvoices - iPart;
+						if(fPart>=0.5)
+						{
+							finalResult = (int) (iPart+1);
+						}
+						else if(fPart<0.5)
+						{
+							finalResult = (int) iPart;
+						}
+						System.out.println("Number of days lived: "+remainingDays);
+						System.out.println("Decimal value: "+numberOFInvoices);
+						System.out.println("Number of invoices: "+finalResult);
+					}
+				}
 				PreparedStatement ps1 = null;
 				Connection conn1 = ConnectionUtils.getConnection();
 				ResultSet getAccId = null;
@@ -348,34 +470,60 @@ public class InvoicePersonLease_Relation {
 					accomodationId = getAccId.getInt("accomodation_id");
 					break;
 				}
-				int durationOfStay = Integer.parseInt(duration);
+				System.out.println("going to generate "+finalResult+" invoices");
 //				durationOfStay = durationOfStay*Constants.MONTHS_IN_SEMESTER;
-				for(int i = 0; i< durationOfStay; i++)
+				
+				
+				PreparedStatement ps2 = null;
+				Connection conn2 = ConnectionUtils.getConnection();
+				ResultSet rs2 = null;
+				String query2 = "select count(*) as permitted_count from invoice_person_lease where lease_no = " +
+						"(select lease_no from person_accomodation_lease where person_id = ? and lease_move_in_date = " +
+						"(select MAX(lease_move_in_date) from person_accomodation_lease where person_id = ?))";
+				ps2 = conn2.prepareStatement(query2);
+				System.out.println("Setting person id as: "+personId);
+				ps2.setInt(1, personId);
+				ps2.setInt(2, personId);
+				rs2 = ps2.executeQuery();
+				int alreadyGeneratedInvoicesCount = 0;
+				while(rs2.next())
 				{
-					dateIncrementValue = i*counter + counter;
-					//System.out.println("Date incremented by : "+dateIncrementValue);
-					// Calling the PL/SQL Statement
-					//create_invoice(v_person_id,v_accomodation_id,v_increment,v_mode_payment,v_accomodation_type,v_output);
-					CallableStatement cst = conn.prepareCall("{call create_invoice (?,?,?,?,?,?,?)}");
-					cst.setInt(1, personId);
-					cst.setInt(2, accomodationId);
-					cst.setInt(3, dateIncrementValue);
-					cst.setString(4, paymentGateway);
-					cst.setString(5, accomodationType);
-					cst.setInt(6, durationOfStay);
-					// Now registering out parameter
-					cst.registerOutParameter(7, Types.INTEGER);
-					
-					cst.execute();
-					//System.out.println("Value of result: "+cst.getInt(7));
-					cst.close();
-					ps1.close();
-					getAccId.close();
-					ConnectionUtils.closeConnection(conn1);
+					alreadyGeneratedInvoicesCount = rs2.getInt("permitted_count");
 				}
-				// Resetting dateIncrementValue to zero
-				System.out.println("------------------");
-				dateIncrementValue = 0;
+				if(alreadyGeneratedInvoicesCount==finalResult)
+				{
+					System.out.println("Invoices have already been generated for him");
+				}
+				else
+				{
+					for(int i = 0; i< finalResult; i++)
+					{
+						dateIncrementValue = i*counter + counter;
+						//System.out.println("Date incremented by : "+dateIncrementValue);
+						// Calling the PL/SQL Statement
+						//create_invoice(v_person_id,v_accomodation_id,v_increment,v_mode_payment,v_accomodation_type,v_output);
+						CallableStatement cst = conn.prepareCall("{call create_invoice (?,?,?,?,?,?,?)}");
+						cst.setInt(1, personId);
+						cst.setInt(2, accomodationId);
+						cst.setInt(3, dateIncrementValue);
+						cst.setString(4, paymentGateway);
+						cst.setString(5, accomodationType);
+						cst.setInt(6, durationOfStay);
+						// Now registering out parameter
+						cst.registerOutParameter(7, Types.INTEGER);
+						
+						cst.execute();
+						//System.out.println("Value of result: "+cst.getInt(7));
+						cst.close();
+						ps1.close();
+						getAccId.close();
+						ConnectionUtils.closeConnection(conn1);
+					}
+					// Resetting dateIncrementValue to zero
+					System.out.println("------------------");
+					dateIncrementValue = 0;
+				}
+				
 			}
 		}
 		catch(SQLException e)

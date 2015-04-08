@@ -417,8 +417,8 @@ public class ParkingLot {
 							
 							//WRITE UPDATE QUERY TO UPDATE PERMIT_ID,AVAILABILITY IN 
 							
-							UPDATE parkingSpot_belongs_parkingLot SET PERMIT_ID= NULL, AVAILABILITY = No where lot_no = ? and spot_no = ?
-									and zip_code = ?
+							/*UPDATE parkingSpot_belongs_parkingLot SET PERMIT_ID= NULL, AVAILABILITY = No where lot_no = ? and spot_no = ?
+									and zip_code = ?*/
 							
 							String insertQuery = "INSERT INTO personparkingspot_relation values(?,?,?,?,?)";
 							preparedStatement = dbConnection.prepareStatement(insertQuery);

@@ -64,5 +64,6 @@ public class Constants {
 	public static final String OUTSTANDING_INVOICE = "Outstanding";
 	public static final String L = "L";
 	public static final String T = "T";
+	public static final int DAYS_IN_MONTH= 30;
 	
 }
