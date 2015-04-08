@@ -315,6 +315,10 @@ public class EntryPoint {
 																			if(requestNumber == 0)
 																				break;
 																			isCancelSuccessful = leaseObj.cancelRequest(personId, requestNumber,whichRequestToCancel);
+																			
+																			if(isCancelSuccessful)
+																				System.out
+																						.println("Cancellation done successfully");
 																		}
 																		break;
 																	case 3:
