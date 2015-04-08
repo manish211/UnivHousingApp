@@ -185,32 +185,90 @@ public class ParkingLot {
 //				Set the table names based on accomodation type
 				//---------------------------------------------------------------------------------//
 				
+				
+				String selectQuery = "";
+				
 				if(accomodation_type.equals(Constants.GENERAL_APARTMENT))
 				{
 					tableName="general_apartment";
+					
+					selectQuery = "select spot_no,lot_no "
+					+" from (select spot_no,lot_no,Decode(accomodation_id,2008,'true','false') bool "
+							 +" from(select p1.spot_no,p1.lot_no,b.accomodation_id as accomodation_id "
+									+" from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2, "
+									+" general_apartment t,bedroom b,parking_lot_apt p3 "
+									+" where p1.availability = 'Yes' and p2.vehicle_type = 'Handicapped' "
+									+" and t.apt_no = b.apt_no "
+									+" and b.apt_no = p3.apt_no "
+									+" and p1.lot_no = p3.lot_no "
+									+" and p1.spot_no = p2.spot_no "
+									+" order by abs(t.zip_code - p1.zip_code) asc) "
+						+" order by bool desc) "
+					+" where rownum<2 ";
 				}
 				else if(accomodation_type.equals(Constants.FAMILY_APARTMENT))
 				{
 					tableName="family_apartment";
+					
+					selectQuery = "select spot_no,lot_no "
+					+" from (select spot_no,lot_no,Decode(accomodation_id,2022,'true','false') bool "
+							 +" from(select p1.spot_no,p1.lot_no,t.accomodation_id as accomodation_id "
+									+" from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2, "
+									+" family_apartment t,parking_lot_apt p3 "
+									+" where p1.availability = 'Yes' and p2.vehicle_type = 'Handicapped' "
+									+" and t.apt_no =  p3.apt_no "
+									+" and p1.lot_no = p3.lot_no "
+									+" and p1.spot_no = p2.spot_no "
+									+" order by abs(t.zip_code - p1.zip_code) asc) " 
+						+" order by bool desc) "
+					+" where rownum<2 ";
 				}
 				else if(accomodation_type.equals(Constants.RESIDENCE_HALL))
 				{
 					tableName="residence_hall";
+					
+					selectQuery = "select spot_no,lot_no "
+							+" from (select spot_no,lot_no,Decode(accomodation_id,2002,'true','false') bool "
+							 +" from(select p1.spot_no,p1.lot_no,rhpr.accomodation_id as accomodation_id "
+									+" from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2, "
+									+" residence_hall t,residence_hall_provides_room rhpr, parking_lot_residence_hall p3 "
+									+" where p1.availability = 'Yes' and p2.vehicle_type = 'Handicapped' "
+									+" and t.hall_number =  rhpr.hall_number "
+									+" and rhpr.hall_number = p3.hall_number "
+									+" and p1.lot_no = p3.lot_no "
+									+" and p1.spot_no = p2.spot_no "
+									+" order by abs(t.zip_code - p1.zip_code) asc) "
+						+" order by bool desc) "
+					+" where rownum<2 ";
 				}
 				else if(accomodation_type.equals(Constants.BEDROOM))
 				{
 					tableName="bedroom";
+					
+					selectQuery = "select spot_no,lot_no "
+							+" from (select spot_no,lot_no,Decode(accomodation_id,2008,'true','false') bool "
+							+" from(select p1.spot_no,p1.lot_no,b.accomodation_id as accomodation_id "
+									+" from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2, "
+									+" general_apartment t,bedroom b,parking_lot_apt p3 "
+									+" where p1.availability = 'Yes' and p2.vehicle_type = 'Handicapped' "
+									+" and t.apt_no = b.apt_no "
+									+" and b.apt_no = p3.apt_no "
+									+" and p1.lot_no = p3.lot_no "
+									+" and p1.spot_no = p2.spot_no "
+									+" order by abs(t.zip_code - p1.zip_code) asc) "
+						+" order by bool desc) "
+					+" where rownum<2 ";
 				}
 				
 				//----------------------------------------------------------------------------------//
 				try{
 					dbConnection = ConnectionUtils.getConnection();
 					
-					String selectQuery = "select spot_no,lot_no from(select p1.spot_no,p1.lot_no " ;
+					/*String selectQuery = "select spot_no,lot_no from(select p1.spot_no,p1.lot_no " ;
 					selectQuery = selectQuery + " from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2,"+tableName+" t,parking_lot pl " ;
 					selectQuery = selectQuery + " where p2.vehicle_type = ? and p1.availability = ? " ;
-					selectQuery = selectQuery + " order by abs(t.zip_code - pl.zip_code) asc) where rownum<2" ;
-							
+					selectQuery = selectQuery + " order by abs(t.zip_code - pl.zip_code) asc) where rownum<2" ;*/
+					
 					preparedStatement = dbConnection.prepareStatement(selectQuery);
 					
 //					System.out.println("selectQuery:="+selectQuery);
