@@ -100,6 +100,12 @@ public class HousingStaffManagesLease_Relation {
 			}
 			
 			int requestChosen = inputObj.nextInt();
+			
+			while(requestChosen>allLeaseRequestsToMonitor.size())
+			{
+				System.out.println("Enter your choice again:");
+				requestChosen = inputObj.nextInt();
+			}
 			int requestNumber = allLeaseRequestsToMonitor.get(requestChosen - 1);
 			/* Write SQL Query to fetch all the details of the requestNumber */
 			// ResultSet requestDetails = null;
