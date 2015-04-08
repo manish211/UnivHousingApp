@@ -1051,6 +1051,11 @@ public class HousingStaffManagesLease_Relation {
 			}
 			
 			int requestChosen = inputObj.nextInt();
+			while(requestChosen > allTerminationRequestsToMonitor.size())
+			{
+				System.out.println("Enter correct serial number");
+				requestChosen = inputObj.nextInt();
+			}
 			int requestNumber = allTerminationRequestsToMonitor
 					.get(requestChosen - 1);
 
@@ -1212,22 +1217,25 @@ public class HousingStaffManagesLease_Relation {
 			System.out.println("Marker3");
 			//Get the accomodation type for the person who raised that termination request.
 			
-			int accomodationId;
-			String accomodation_type;
+			int accomodationId = 0;
+			String accomodation_type = "";
 	
 			
 			try{
 				
-				 selectPersonID = "select tr.person_id,accomodation_type,accomodation_id from termination_requests tr,person_accomodation_lease pal "
-						+ " where termination_request_number = ? and tr.person_id = pal.person_id " ;
-				
+				 selectPersonID = "select tr.person_id,pal.accomodation_type,pal.accomodation_id from termination_requests tr,person_accomodation_lease pal "
+						+ " where tr.termination_request_number = ? and tr.person_id = pal.person_id " ;
+				System.out.println("Checking for request numbe "+requestNumber);
 				preparedStatement = dbConnection.prepareStatement(selectPersonID);
 				preparedStatement.setInt(1, requestNumber);
 				rs = preparedStatement.executeQuery();
-				rs.next();
-				personID = rs.getInt("person_id");
-				accomodation_type = rs.getString("accomodation_type");
-				accomodationId = rs.getInt("accomodation_id");
+				while(rs.next())
+				{
+					personID = rs.getInt("person_id");
+					accomodation_type = rs.getString("accomodation_type");
+					accomodationId = rs.getInt("accomodation_id");
+				}
+				
 			
 			}catch(Exception e){
 				System.out.println("Update of termination requests table failed.");
@@ -1247,7 +1255,7 @@ public class HousingStaffManagesLease_Relation {
 			
 			if(accomodation_type.equals(Constants.FAMILY_APARTMENT))
 			{
-				 selectMonthlyRent = "select monthly_rent_rate from family_apartment where accomodation_id= ?" ;
+				 selectMonthlyRent = "select monthly_rent from family_apartment where accomodation_id= ?" ;
 			}
 			else if(accomodation_type.equals(Constants.RESIDENCE_HALL))
 			{
@@ -1279,10 +1287,13 @@ public class HousingStaffManagesLease_Relation {
 				preparedStatement.setInt(1, accomodationId);
 				rs = preparedStatement.executeQuery();
 				rs.next(); //what if this returns no records
-				monthlyRent = rs.getDouble("monthly_rent_rate");
+				if(accomodation_type.equals(Constants.FAMILY_APARTMENT))
+					monthlyRent = rs.getDouble("monthly_rent");
+				else
+					monthlyRent = rs.getDouble("monthly_rent_rate");
 				
 			}catch(Exception e){
-				System.out.println("Update of termination requests table failed.");
+				e.printStackTrace();
 				return;
 			}
 			finally{
