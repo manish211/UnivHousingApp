@@ -155,6 +155,7 @@ public class TicketPersonStaff_Relation {
 				{
 					ticketNo++;
 				}
+				
 			}
 
 			ConnectionUtils.closeConnection(dbConnection);
@@ -170,6 +171,7 @@ public class TicketPersonStaff_Relation {
 		 * Ticket has to be raised with a staff no who it will be assigned to, so 
 		 * we can do random generation of staff no. or we can write logic to choose staff no.*/
 		
+		System.out.println("Please Note Ticket No:"+ticketNo);
 		PreparedStatement preparedStatement1 = null;
 		Connection dbConnection1 = ConnectionUtils.getConnection();
 		String query1 = "INSERT INTO ticket_person_staff (staff_no,ticket_no,ticket_status,ticket_severity,person_id,description,ticket_type) VALUES (?,?,?,?,?,?,?)";
