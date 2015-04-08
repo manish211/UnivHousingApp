@@ -46,9 +46,9 @@ public class Constants {
 	public static final String PARKING_SPOTS_FULL = "Your parking spot request has been denied due to unavailability of parking spaces";
 	public static final String HANDICAPPED = "Handicapped";
 	public static final String BIKE = "Bike";
-	public static final String COMPACT_CARS = "Compact cars";
-	public static final String STANDARD_CARS = "Standard cars";
-	public static final String LARGE_CARS = "Large cars";
+	public static final String COMPACT_CARS = "Small Car";
+	public static final String STANDARD_CARS = "Standard Car";
+	public static final String LARGE_CARS = "Large Car";
 	public static final String STATUS_CANCELED ="Cancelled";
 	public static final String NOTHING_AVAILABLE = "Nothing Available";
 	public static final String FRESHMEN = "Freshmen";

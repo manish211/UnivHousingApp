@@ -48,7 +48,7 @@ public class ParkingLot {
 			while(inputInvalid)
 			{
 				System.out.println("Please enter your vehicle type:\n" +
-						"Bike, Compact Cars, Standard Cars, Large Cars");
+						"Bike, Small Car, Standard Cars, Large Car");
 				inputObj.nextLine();
 				vehicleType = inputObj.nextLine();
 //				vehicleType = vehicleType.replaceAll("[\n\r]", "");
