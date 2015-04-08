@@ -1481,6 +1481,25 @@ public class HousingStaffManagesLease_Relation {
 					System.out.println("Lease number: " + leaseNumber
 							+ ". PersonID: " + personID);
 
+					if(!checkIfPersonLeaseExistsInHistory(personID,leaseNumber))
+					{
+						/*Write SQL Query to put the terminated lease request into person_accomodation_lease_hist*/
+						Connection histconn = ConnectionUtils.getConnection();
+						PreparedStatement preHist = null;
+						System.out.println("Creating backup for personID "+ personID);
+						/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+						String historyQuery = "Insert into person_accomodation_lease_hist values " +
+								"(select * from person_accomodation_lease where person_id = ?)";
+						preHist = histconn.prepareStatement(historyQuery);
+						preHist.setInt(1, personID);
+						preHist.executeUpdate();
+						preHist.close();
+						ConnectionUtils.closeConnection(histconn);
+					}
+					else
+					{
+						System.out.println("Already backed up for this person");
+					}
 					/*
 					 * Delete entry from person_accommodation_lease
 					 */
@@ -1745,6 +1764,53 @@ public class HousingStaffManagesLease_Relation {
 											+ personID
 											+ "> From lease table. Sending Exit email...");
 
+							/*Write SQL Query to fetch the lease_no for the person id from person_accomodation_lease table*/
+							int leaseNumber = 0;
+							PreparedStatement ps1 = null;
+							ResultSet rs1 = null;
+							Connection conn1 = ConnectionUtils.getConnection();
+							String query1 = "select lease_no from person_accomodation_lease where person_id = ?";
+							
+							ps1 = conn1.prepareStatement(query1);
+							ps1.setInt(1, personID);
+							rs1 = ps1.executeQuery();
+							
+							while(rs1.next())
+							{
+								leaseNumber = rs1.getInt("lease_no");
+								break;
+							}
+							
+							if(leaseNumber == 0)
+							{
+								System.out.println("Person is not currently on lease");
+							}
+							else
+							{
+								if(!checkIfPersonLeaseExistsInHistory(personID,leaseNumber))
+								{
+									/*Write SQL Query to put the terminated lease request into person_accomodation_lease_hist*/
+									Connection histconn = ConnectionUtils.getConnection();
+									PreparedStatement preHist = null;
+									System.out.println("Creating backup for personID "+ personID);
+									/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+									String historyQuery = "Insert into person_accomodation_lease_hist values " +
+											"(select * from person_accomodation_lease where person_id = ?)";
+									preHist = histconn.prepareStatement(historyQuery);
+									preHist.setInt(1, personID);
+									preHist.executeUpdate();
+									preHist.close();
+									ConnectionUtils.closeConnection(histconn);
+								}
+								else
+								{
+									System.out.println("Already backed up for this person");
+								}
+							}
+							
+							
+							
+							
 							PreparedStatement preparedStatement3 = null;
 							ResultSet rsToDelete = null;
 
@@ -1831,5 +1897,37 @@ public class HousingStaffManagesLease_Relation {
 			e.printStackTrace();
 		}
 		return securityDeposit;
+	}
+	
+	public boolean checkIfPersonLeaseExistsInHistory(int personId, int leaseNumber)
+	{
+		try
+		{
+			int count = 0;
+			/*Write SQL Query to put the terminated lease request into person_accomodation_lease_hist*/
+			Connection conn = ConnectionUtils.getConnection();
+			PreparedStatement ps = null;
+			ResultSet rs = null;
+			System.out.println("Chekcing if lease_no "+ leaseNumber+" and personId "+personId+ " backup already exists");
+			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			String historyQuery = "select count(*) as does_exist from person_accomodation_lease_hist where person_id = ? and lease_no = ?";
+			ps = conn.prepareStatement(historyQuery);
+			ps.setInt(1, personId);
+			ps.setInt(2, leaseNumber);
+			rs = ps.executeQuery();
+			while(rs.next())
+			{
+				count = rs.getInt("does_exist");
+				if(count>0)
+					return true;
+			}
+			ps.close();
+			ConnectionUtils.closeConnection(conn);
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		return false;
 	}
 }

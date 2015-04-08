@@ -240,6 +240,17 @@ PRIMARY KEY(person_id),
 FOREIGN KEY(person_id) REFERENCES person,
 FOREIGN KEY(lease_no) REFERENCES lease);
 
+CREATE TABLE person_accomodation_lease_hist( 
+accomodation_id INTEGER,
+person_id INTEGER,
+lease_no INTEGER,
+accomodation_type VARCHAR2(40),
+permit_id INTEGER,
+lease_move_in_date date,
+PRIMARY KEY(person_id,lease_no),
+FOREIGN KEY(person_id) REFERENCES person,
+FOREIGN KEY(lease_no) REFERENCES lease);
+
 	
 CREATE TABLE PERSON_ACC_STAFF (
 application_request_no INTEGER,

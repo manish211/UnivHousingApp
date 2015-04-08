@@ -39,7 +39,7 @@ public class Lease {
 
 			String selectQuery = "SELECT T1_person.first_name, T2_lease_person.lease_no, T3_lease.duration, T4_Student.Student_Type, "
 					+ " T2_lease_person.Lease_Move_In_Date, T2_lease_person.accomodation_type, T2_lease_person.accomodation_id "
-					+ "FROM PERSON T1_person, PERSON_ACCOMODATION_LEASE T2_lease_person,LEASE T3_lease, STUDENT T4_Student "
+					+ "FROM PERSON T1_person, PERSON_ACCOMODATION_LEASE_HIST T2_lease_person,LEASE T3_lease, STUDENT T4_Student "
 					+ "WHERE T1_person.person_id = ? AND T2_lease_person.lease_no=? "
 					+ "AND T1_person.person_id = T2_lease_person.person_id "
 					+ "AND	T3_lease.lease_no = T2_lease_person.lease_no "
@@ -220,9 +220,10 @@ public class Lease {
 			
 			String selectQuery = "select pal.lease_no,pal.lease_move_in_date,"
 			+" add_months(pal.lease_move_in_date,l.duration) end_date "
-			+" from person_accomodation_lease pal,lease l "
+			+" from person_accomodation_lease_hist pal,lease l "
 			+" where pal.person_id = ? "
 			+" and pal.lease_no = l.lease_no ";
+
 
 			preparedStatement = dbConnection.prepareStatement(selectQuery);
 			preparedStatement.setInt(1, personId);
