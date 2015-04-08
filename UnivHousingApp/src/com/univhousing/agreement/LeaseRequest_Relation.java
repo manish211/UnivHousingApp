@@ -9,10 +9,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
+import com.univhousing.accomodation.ResidenceHall;
 import com.univhousing.main.ConnectionUtils;
 import com.univhousing.main.Constants;
 import com.univhousing.main.Utils;
 import com.univhousing.users.Person;
+import com.univhousing.users.Student;
 
 public class LeaseRequest_Relation {
 
@@ -25,6 +27,8 @@ public class LeaseRequest_Relation {
 	public int staffNo;
 	public ArrayList<String> residenceHallNames = null;
 	Person personObj ;
+	Student studentObj = new Student();
+	ResidenceHall residentObj = new ResidenceHall();
 	/**
 	 * @param personId
 	 * @throws ParseException
@@ -188,8 +192,10 @@ public class LeaseRequest_Relation {
 				} 
 				else if (housingOption.equals("b")) {
 					housingOption = Constants.RESIDENCE_HALL;
+					
 
-					residenceHallNames = getHallNameList();
+					residenceHallNames = getHallNameList(personId);
+					
 
 					hallPreference1 = residenceHallNames.get(0);
 					hallPreference2 = residenceHallNames.get(1);
@@ -224,7 +230,7 @@ public class LeaseRequest_Relation {
 				if (housingOption.equals("a")) {
 					housingOption = Constants.RESIDENCE_HALL;
 
-					residenceHallNames = getHallNameList();
+					residenceHallNames = getHallNameList(personId);
 					hallPreference1 = residenceHallNames.get(0);
 					hallPreference2 = residenceHallNames.get(1);
 					hallPreference3 = residenceHallNames.get(2);
@@ -349,6 +355,10 @@ public class LeaseRequest_Relation {
 							if (choice1.equalsIgnoreCase("Y")) {
 								break;
 							}
+							else
+							{
+								continue;
+							}
 
 						}
 
@@ -459,7 +469,7 @@ public class LeaseRequest_Relation {
 
 	/* RETRIEVING SELECTING THE SPECIFIC RESIDENCE HALLS */
 
-	private ArrayList<String> getHallNameList() {
+	private ArrayList<String> getHallNameList(int personId) {
 		Scanner inputObj = new Scanner(System.in);
 		ArrayList<String> hallList = new ArrayList<String>();
 		ArrayList<String> hallOptions = new ArrayList<String>(3);
@@ -476,10 +486,24 @@ public class LeaseRequest_Relation {
 			int preferenceCounter = 1;
 			preparedStatement = dbConnection.prepareStatement(selectQuery1);
 			rs = preparedStatement.executeQuery();
-
+			String hallNameToAdd = "";
+			boolean studentEligibility = studentObj.isElligibleForGraduateResidentHall(personId);
+			boolean hallEligibility;
 			while (rs.next()) {
-
-				hallList.add(rs.getString("HALL_NAME"));
+				hallNameToAdd = rs.getString("HALL_NAME");
+				hallEligibility = residentObj.isGraduateHall(hallNameToAdd);
+				if(hallEligibility)
+				{
+					if(studentEligibility)
+					{
+						hallList.add(hallNameToAdd);
+					}
+				}
+				else
+				{
+					hallList.add(hallNameToAdd);
+				}
+				
 			}
 
 			while (preferenceCounter < 4) {

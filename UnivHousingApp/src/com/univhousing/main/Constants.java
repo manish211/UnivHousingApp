@@ -6,6 +6,7 @@ public class Constants {
 	public static final String USERNAME = "sbhatt";
 	public static final String PASSWORD = "sudhanshu123";
 	public static final String STUDENT = "Student";
+	public static final String GRADUATE_STUDENTS = "Graduate Students";
 	public static final String SUPERVISOR = "Supervisor";
 	public static final String GUEST = "Guest";
 	public static final int TICKET_DEFAULT_VALUE = 5000;
@@ -65,5 +66,6 @@ public class Constants {
 	public static final String L = "L";
 	public static final String T = "T";
 	public static final int DAYS_IN_MONTH= 30;
+	public static final String GRADUATE = "Graduate";
 	
 }

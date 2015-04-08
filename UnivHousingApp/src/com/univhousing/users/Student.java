@@ -229,4 +229,30 @@ public class Student {
 		return studentDesignation;
 	}
 
+	public boolean isElligibleForGraduateResidentHall(int personId)
+	{
+		System.out.println(" PErson id is : "+personId);
+		String studentType = "";
+		try
+		{
+			PreparedStatement ps = null;
+			Connection conn = ConnectionUtils.getConnection();
+			ResultSet rs = null;
+			String query = "select student_type from student where person_id = ?";
+			ps = conn.prepareStatement(query);
+			ps.setInt(1, personId);
+			rs = ps.executeQuery();
+			while(rs.next())
+			{
+				studentType = rs.getString("student_type");
+			}
+			if(studentType.equalsIgnoreCase(Constants.GRADUATE))
+				return true;
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		return false;
+	}
 }
