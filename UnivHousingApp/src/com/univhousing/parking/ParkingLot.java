@@ -24,7 +24,7 @@ public class ParkingLot {
 	Scanner inputObj = new Scanner(System.in);
 	Guest   guestObj = new Guest();
 
-	public void generateAParkingSpot(int personId)
+	public void generateAParkingSpot(int personId) throws SQLException
 	{
 		int studentId;
 		boolean isStudentAccomodated = false;
@@ -199,7 +199,7 @@ public class ParkingLot {
 							 +" from(select p1.spot_no,p1.lot_no,b.accomodation_id as accomodation_id "
 									+" from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2, "
 									+" general_apartment t,bedroom b,parking_lot_apt p3 "
-									+" where p1.availability = 'Yes' and p2.vehicle_type = 'Handicapped' "
+									+" where p1.availability = ? and p2.vehicle_type = ? "
 									+" and t.apt_no = b.apt_no "
 									+" and b.apt_no = p3.apt_no "
 									+" and p1.lot_no = p3.lot_no "
@@ -217,7 +217,7 @@ public class ParkingLot {
 							 +" from(select p1.spot_no,p1.lot_no,t.accomodation_id as accomodation_id "
 									+" from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2, "
 									+" family_apartment t,parking_lot_apt p3 "
-									+" where p1.availability = 'Yes' and p2.vehicle_type = 'Handicapped' "
+									+" where p1.availability = ? and p2.vehicle_type = ? "
 									+" and t.apt_no =  p3.apt_no "
 									+" and p1.lot_no = p3.lot_no "
 									+" and p1.spot_no = p2.spot_no "
@@ -234,7 +234,7 @@ public class ParkingLot {
 							 +" from(select p1.spot_no,p1.lot_no,rhpr.accomodation_id as accomodation_id "
 									+" from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2, "
 									+" residence_hall t,residence_hall_provides_room rhpr, parking_lot_residence_hall p3 "
-									+" where p1.availability = 'Yes' and p2.vehicle_type = 'Handicapped' "
+									+" where p1.availability = ? and p2.vehicle_type = ? "
 									+" and t.hall_number =  rhpr.hall_number "
 									+" and rhpr.hall_number = p3.hall_number "
 									+" and p1.lot_no = p3.lot_no "
@@ -242,6 +242,8 @@ public class ParkingLot {
 									+" order by abs(t.zip_code - p1.zip_code) asc) "
 						+" order by bool desc) "
 					+" where rownum<2 ";
+					
+					System.out.println("selectQuery:="+selectQuery);
 				}
 				else if(accomodation_type.equals(Constants.BEDROOM))
 				{
@@ -252,7 +254,7 @@ public class ParkingLot {
 							+" from(select p1.spot_no,p1.lot_no,b.accomodation_id as accomodation_id "
 									+" from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2, "
 									+" general_apartment t,bedroom b,parking_lot_apt p3 "
-									+" where p1.availability = 'Yes' and p2.vehicle_type = 'Handicapped' "
+									+" where p1.availability = ? and p2.vehicle_type = ? "
 									+" and t.apt_no = b.apt_no "
 									+" and b.apt_no = p3.apt_no "
 									+" and p1.lot_no = p3.lot_no "
@@ -277,12 +279,12 @@ public class ParkingLot {
 					
 					String handicappedField ;
 					
-					preparedStatement.setString(2,Constants.AVAILABLE);
+					preparedStatement.setString(1,Constants.AVAILABLE);
 					
 					if(handicappedInfo.equals("Y"))
-						preparedStatement.setString(1,Constants.HANDICAPPED);
+						preparedStatement.setString(2,Constants.HANDICAPPED);
 					else
-						preparedStatement.setString(1,vehicleType);
+						preparedStatement.setString(2,vehicleType);
 //						System.out.println("Marker1");
 						
 					rs = preparedStatement.executeQuery();
@@ -291,24 +293,26 @@ public class ParkingLot {
 //					System.out.println("selectQuery:="+selectQuery);
 //					System.out.println("preparedStatement:="+preparedStatement.toString());
 					boolean isRecordAlreadyPresent = false;
+					int lot_no = 0;
+					int spot_no = 0;
 					
 					if(rs.isBeforeFirst())
 					{
 						rs.next();
-						int lot_no = rs.getInt("lot_no");
-						int spot_no = rs.getInt("spot_no");
+						lot_no = rs.getInt("lot_no");
+						spot_no = rs.getInt("spot_no");
 						
 						//----------------------------------
 						ResultSet rs1 = null;
 						try{
 							
-						String selectQuery1 = "select count(*) as total from studentparkingspot_relation " ;
-						selectQuery1= selectQuery1 + " where lot_no = ? and spot_no = ? and student_id = ? and request_status = ? ";
+						String selectQuery1 = "select count(*) as total from personparkingspot_relation " ;
+						selectQuery1= selectQuery1 + " where lot_no = ? and spot_no = ? and person_id = ? and request_status = ? ";
 						
 						preparedStatement = dbConnection.prepareStatement(selectQuery1);
 						preparedStatement.setInt(1,lot_no);
 						preparedStatement.setInt(2,spot_no);
-						preparedStatement.setInt(3,studentObj.studentId);
+						preparedStatement.setInt(3,personId);
 						preparedStatement.setString(4,Constants.PENDING_STATUS);
 						
 //						System.out.println("===========================================================");
@@ -362,12 +366,61 @@ public class ParkingLot {
 								return;
 							}
 							
-							String insertQuery = "INSERT INTO studentparkingspot_relation values(?,?,?,?,ParkingRequest_seq.nextval)";
+						//-------------------------------------
+							
+							int max_request_no =0;
+							
+							try
+							{
+								Connection dbConnection1 = ConnectionUtils.getConnection();
+								PreparedStatement preparedStatement1 = null;
+								ResultSet rsReq = null;
+								String selectMaxQuery = "SELECT max(request_no) as max_request_no FROM personparkingspot_relation" ;
+								
+								preparedStatement1 = dbConnection1.prepareStatement(selectMaxQuery);
+								
+								max_request_no = 0;
+								rsReq = preparedStatement1.executeQuery();
+								
+								int count = 1;
+
+								//If record exists , rs.next() will evaluate to true
+								if(rsReq.isBeforeFirst())
+								{
+									while(rsReq.next())
+									{
+										max_request_no = rsReq.getInt("max_request_no");
+									}
+								
+								}
+								rsReq.close();
+						        preparedStatement1.close();
+						        dbConnection1.close();
+							}
+							catch(SQLException e1){
+								System.out.println("SQLException: "+ e1.getMessage());
+								System.out.println("VendorError: "+ e1.getErrorCode());
+								return;
+							}
+							catch(Exception e3)
+							{
+								System.out.println("General Exception Case. Printing stack trace below:\n");
+								e3.printStackTrace();
+								return;
+							}
+							
+							
+								
+						//-------------------------------------
+							
+							
+							String insertQuery = "INSERT INTO personparkingspot_relation values(?,?,?,?,?)";
 							preparedStatement = dbConnection.prepareStatement(insertQuery);
 							preparedStatement.setInt(1,lot_no);
 							preparedStatement.setInt(2,spot_no);
-							preparedStatement.setInt(3,studentObj.studentId);
+							preparedStatement.setInt(3,personId);
 							preparedStatement.setString(4,Constants.PENDING_STATUS);
+							preparedStatement.setInt(5,max_request_no+1);
 							
 							int numOfRowsInserted = preparedStatement.executeUpdate();
 							
@@ -381,12 +434,12 @@ public class ParkingLot {
 							else
 							{
 								System.out.println("\n\n ==================================================================================================================\n");
-								System.out.println("\nOne record inserted into studentparkingspot_relation successfully\n");
+								System.out.println("\nOne record inserted into personparkingspot_relation successfully\n");
 								System.out.println("==================================================================================================================\n");
 							}
 						}
 					
-				}catch(SQLException e1){
+			}catch(SQLException e1){
 					
 					if(e1.getMessage().toLowerCase().contains("ORA-00001".toLowerCase()))
 					{

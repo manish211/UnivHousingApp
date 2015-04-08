@@ -295,13 +295,13 @@ PRIMARY KEY(login_id),
 CREATE TABLE PersonParkingSpot_Relation (
 lot_no INTEGER,
 spot_no INTEGER,
-student_id INTEGER,
+person_id INTEGER,
 request_status VARCHAR2(20),
 request_no INTEGER,
 PRIMARY KEY(request_no),
 FOREIGN KEY(lot_no) REFERENCES parking_lot,
 FOREIGN KEY(spot_no) REFERENCES parkingSpot_parkingLot,
-FOREIGN KEY(student_id) REFERENCES Student);
+FOREIGN KEY(person_id) REFERENCES person);
 
 CREATE TABLE Accomodation (
 accomodation_id INTEGER,
