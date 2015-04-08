@@ -315,9 +315,10 @@ public class InvoicePersonLease_Relation {
 		PreparedStatement ps = null;
 		Connection conn = ConnectionUtils.getConnection();
 		ResultSet getRequestData = null;
-		String query = "select table1.payment_gateway,table1.duration,table1.person_id,table1.lease_move_in_date,table1.mode_of_payment,table1.accomodation_type " +
-				"from person_acc_staff table1,(select person_id,max(lease_move_in_date) max_lease_move_in_date from person_acc_staff inner_table" +
-				" where request_status = ? group by person_id) table2 where table1.person_id = table2.person_id " +
+		String query = "select table1.payment_gateway,table1.duration,table1.person_id,table1.lease_move_in_date," +
+				"(table1.lease_move_in_date-sysdate) as remaining_days,table1.mode_of_payment,table1.accomodation_type " +
+				"from person_acc_staff table1,(select person_id,max(lease_move_in_date) max_lease_move_in_date from person_acc_staff " +
+				"inner_table" +	" where request_status = ? group by person_id) table2 where table1.person_id = table2.person_id " +
 				"and table1.lease_move_in_date = table2.max_lease_move_in_date";
 		try
 		{

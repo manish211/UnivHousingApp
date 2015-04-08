@@ -23,7 +23,7 @@ public class HousingStaffManagesLease_Relation {
 	public int duration;
 	public Date cutOffDate;
 	public String modeOfPayment;
-	public float depsoit;
+	public float deposit;
 	public Date date;
 	public int staffNo;
 
@@ -84,16 +84,23 @@ public class HousingStaffManagesLease_Relation {
 				requestStatus.add(rs.getString("request_status"));
 			}
 
-			System.out.println("Displaying all the requests to approve: ");
-			for (int i = 0; i < allLeaseRequestsToMonitor.size(); i++) {
-				System.out.println(String.format("%3d%-2s%-4d%-3s%-10s",
-						(i + 1), ".", allLeaseRequestsToMonitor.get(i), " - ",
-						requestStatus.get(i)));
+			if(allLeaseRequestsToMonitor.size()>0)
+			{
+				System.out.println("Displaying all the requests to approve: ");
+				for (int i = 0; i < allLeaseRequestsToMonitor.size(); i++) {
+					System.out.println(String.format("%3d%-2s%-4d%-3s%-10s",
+							(i + 1), ".", allLeaseRequestsToMonitor.get(i), " - ",
+							requestStatus.get(i)));
+				}
 			}
+			else
+			{
+				System.out.println("No leases to approve.");
+				return;
+			}
+			
 			int requestChosen = inputObj.nextInt();
-			int requestNumber = allLeaseRequestsToMonitor
-					.get(requestChosen - 1);
-
+			int requestNumber = allLeaseRequestsToMonitor.get(requestChosen - 1);
 			/* Write SQL Query to fetch all the details of the requestNumber */
 			// ResultSet requestDetails = null;
 			String selectQueryDetails = "SELECT APPLICATION_REQUEST_NO, PERSON_ID, "
@@ -1008,12 +1015,20 @@ public class HousingStaffManagesLease_Relation {
 				allPersonID.add(rs.getInt("person_id"));
 			}
 
-			System.out.println("Displaying all the requests to approve: ");
-			for (int i = 0; i < allTerminationRequestsToMonitor.size(); i++) {
-				System.out.println((i + 1) + ". "
-						+ allTerminationRequestsToMonitor.get(i) + " - "
-						+ allPersonID.get(i));
+			if(allTerminationRequestsToMonitor.size()>0)
+			{
+				System.out.println("Displaying all the requests to approve: ");
+				for (int i = 0; i < allTerminationRequestsToMonitor.size(); i++) {
+					System.out.println((i + 1) + ". "
+							+ allTerminationRequestsToMonitor.get(i) + " - "
+							+ allPersonID.get(i));
+				}
 			}
+			else
+			{
+				return;
+			}
+			
 			int requestChosen = inputObj.nextInt();
 			int requestNumber = allTerminationRequestsToMonitor
 					.get(requestChosen - 1);
@@ -1262,7 +1277,7 @@ public class HousingStaffManagesLease_Relation {
 					+ " from termination_requests tr,lease l,person_accomodation_lease pal "
 					+" where tr.person_id = pal.person_id "
 					+" and pal.lease_no = l.lease_no " 
-					+" and tr.termination_request_number = ? " ;
+					+" and tr.termination_request_number = ? ";
 			
 			int remainingDays;
 			
@@ -1749,7 +1764,7 @@ public class HousingStaffManagesLease_Relation {
 		PreparedStatement ps = null;
 		Connection conn = ConnectionUtils.getConnection();
 		ResultSet getDeposit = null;
-		String hallQuery = "SELECT security_depsoit from residence_hall where hall_no = ?";
+		String hallQuery = "SELECT security_deposit from residence_hall where hall_number = (select hall_number from residence_hall_provides_room where accomodation_id = ?)";
 		String bedroomQuery = "SELECT security_deposit from general_apartment where apt_no = (SELECT apt_no from bedroom where accomodation_id = ?)";
 		String familyQuery = "SELECT security_deposit from family_apartment where accomodation_id = ?";
 		try
