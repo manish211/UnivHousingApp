@@ -51,7 +51,7 @@ public class Constants {
 	public static final String LARGE_CARS = "Large Car";
 	public static final String STATUS_CANCELED ="Cancelled";
 	public static final String NOTHING_AVAILABLE = "Nothing Available";
-	public static final String FRESHMEN = "Freshmen";
+	public static final String FRESHMEN = "Freshman";
 	public static final String PAYMENTOPTION_MONTHLY= "Month";
 	public static final String PAYMENTOPTION_SEMESTER= "Semester";
 	public static final int MONTHS_IN_SEMESTER= 4;

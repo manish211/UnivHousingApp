@@ -14,6 +14,7 @@ import java.util.Scanner;
 import com.univhousing.main.ConnectionUtils;
 import com.univhousing.main.Constants;
 import com.univhousing.main.Utils;
+import com.univhousing.users.Guest;
 import com.univhousing.users.Person;
 
 
@@ -31,6 +32,8 @@ public class HousingStaffManagesLease_Relation {
 	Scanner inputObj = new Scanner(System.in);
 	Person personObj;
 	int personID = 0;
+	Guest guestObj = new Guest();
+	LeaseRequest_Relation obj = new LeaseRequest_Relation();
 
 	/**
 	 * @param ArrayList
@@ -59,6 +62,7 @@ public class HousingStaffManagesLease_Relation {
 		int newLeaseNumber = 0;
 		String accomodationTypeGiven = "";
 		int accomodationIDGiven = 0;
+		String startSemester = "";
 		ArrayList<String> preferences = new ArrayList<String>();
 		ArrayList<String> requestStatus = new ArrayList<String>();
 		requestStatus.clear();
@@ -111,7 +115,7 @@ public class HousingStaffManagesLease_Relation {
 			// ResultSet requestDetails = null;
 			String selectQueryDetails = "SELECT APPLICATION_REQUEST_NO, PERSON_ID, "
 					+ "ACCOMODATION_TYPE, MODE_OF_PAYMENT, LEASE_MOVE_IN_DATE,"
-					+ "DURATION, PREFERENCE1, PREFERENCE2, PREFERENCE3 "
+					+ "DURATION, PREFERENCE1, PREFERENCE2, PREFERENCE3, start_semester "
 					+ "FROM PERSON_ACC_STAFF "
 					+ "WHERE application_request_no = ?";
 			preparedStatement.close();
@@ -154,6 +158,7 @@ public class HousingStaffManagesLease_Relation {
 				duration = rs.getString("DURATION");
 				personID = rs.getInt("person_id");
 				moveInDate = rs.getDate("LEASE_MOVE_IN_DATE");
+				startSemester = rs.getString("start_semester");
 
 				String moveInDateStr = Utils.convertSQLDateToString(moveInDate);
 
@@ -185,9 +190,10 @@ public class HousingStaffManagesLease_Relation {
 			String approvalStatus = "";
 			String moveInDateStr = Utils.convertSQLDateToString(moveInDate);
 			String[] tempDateStr = moveInDateStr.split("/");
+			
+			
 
-
-			String dateA = "01";
+			/*String dateA = "01";
 			String monthA = "08";
 
 			String dateB = "01";
@@ -213,40 +219,27 @@ public class HousingStaffManagesLease_Relation {
 			else {
 				flag = 1;
 
-			}
-
-			if (flag == 0) {
-
+			}*/
+			boolean isValidDate; 
+			if(guestObj.checkPersonIsGuest(personID))
+			{
 				System.out.println("Do you want to approve this request? Y/N");
 				approvalStatus = inputObj.next();
-
-			} else {
-				
-				approvalStatus = "N";
-				/*System.out
-						.println("The person has entered incorrect movein date!");
-*/
 			}
-
-
-			
-			PreparedStatement visitorPs = null;
-			ResultSet visitorRs =null;
-			
-			String visitorQuery = "SELECT * FROM GUEST WHERE person_id = ?";
-			visitorPs  = dbConnection.prepareStatement(visitorQuery);
-			visitorPs.setInt(1,personID);
-			visitorRs = visitorPs.executeQuery();
-			
-			if(visitorRs.isBeforeFirst()){
-				
-				System.out.println("Do you want to approve this request? Y/N");
-				approvalStatus = inputObj.next();
-				//approvalStatus="Y";
+			else
+			{
+				isValidDate = obj.checkAnyCorrectDate(tempDateStr,startSemester);
+				if(isValidDate)
+				{
+					System.out.println("Do you want to approve this request? Y/N");
+					approvalStatus = inputObj.next();
+				}
+				else
+				{
+					System.out.println("Not a valid date");
+					approvalStatus = "N";
+				}
 			}
-					
-			
-			
 			
 			/*
 			 * START: Check to see if the person is already living on some lease
