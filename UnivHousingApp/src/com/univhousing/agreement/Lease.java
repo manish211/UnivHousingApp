@@ -78,7 +78,7 @@ public class Lease {
 
 			preparedStatement = dbConnection.prepareStatement(selectQuery);
 			preparedStatement.setInt(1, personId);
-			preparedStatement.setInt(2, leaseNumber);
+		//	preparedStatement.setInt(2, leaseNumber);
 			rs = preparedStatement.executeQuery();
 
 			System.out.println(String.format(
