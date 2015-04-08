@@ -264,6 +264,8 @@ public class InvoicePersonLease_Relation {
 					System.out.print(rs.getDouble("damage_charges")+"\t\t");
 					System.out.print(rs.getInt("person_id")+"\t\t");
 					
+					
+					
 					System.out.println("==============================================================================================\n\n");
 				}
 			else
