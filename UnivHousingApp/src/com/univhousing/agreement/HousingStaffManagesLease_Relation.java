@@ -17,7 +17,6 @@ import com.univhousing.main.Utils;
 import com.univhousing.users.Guest;
 import com.univhousing.users.Person;
 
-
 public class HousingStaffManagesLease_Relation {
 
 	public int leaseNo;
@@ -88,29 +87,26 @@ public class HousingStaffManagesLease_Relation {
 				requestStatus.add(rs.getString("request_status"));
 			}
 
-			if(allLeaseRequestsToMonitor.size()>0)
-			{
+			if (allLeaseRequestsToMonitor.size() > 0) {
 				System.out.println("Displaying all the requests to approve: ");
 				for (int i = 0; i < allLeaseRequestsToMonitor.size(); i++) {
 					System.out.println(String.format("%3d%-2s%-4d%-3s%-10s",
-							(i + 1), ".", allLeaseRequestsToMonitor.get(i), " - ",
-							requestStatus.get(i)));
+							(i + 1), ".", allLeaseRequestsToMonitor.get(i),
+							" - ", requestStatus.get(i)));
 				}
-			}
-			else
-			{
+			} else {
 				System.out.println("No leases to approve.");
 				return;
 			}
-			
+
 			int requestChosen = inputObj.nextInt();
-			
-			while(requestChosen>allLeaseRequestsToMonitor.size())
-			{
+
+			while (requestChosen > allLeaseRequestsToMonitor.size()) {
 				System.out.println("Enter your choice again:");
 				requestChosen = inputObj.nextInt();
 			}
-			int requestNumber = allLeaseRequestsToMonitor.get(requestChosen - 1);
+			int requestNumber = allLeaseRequestsToMonitor
+					.get(requestChosen - 1);
 			/* Write SQL Query to fetch all the details of the requestNumber */
 			// ResultSet requestDetails = null;
 			String selectQueryDetails = "SELECT APPLICATION_REQUEST_NO, PERSON_ID, "
@@ -185,67 +181,54 @@ public class HousingStaffManagesLease_Relation {
 				 */
 			}
 
-			
 			int flag = 0;
 			String approvalStatus = "";
 			String moveInDateStr = Utils.convertSQLDateToString(moveInDate);
 			String[] tempDateStr = moveInDateStr.split("/");
-			
-			
 
-			/*String dateA = "01";
-			String monthA = "08";
-
-			String dateB = "01";
-			String monthB = "01";
-
-			String dateC = "01";
-			String monthC = "06";
-
-			if (tempDateStr[0].equalsIgnoreCase(monthA)
-					&& tempDateStr[1].equalsIgnoreCase(dateA)) {
-				flag = 0;
-
-			} else if (tempDateStr[0].equalsIgnoreCase(monthB)
-					&& tempDateStr[1].equalsIgnoreCase(dateB)) {
-
-				flag = 0;
-			} else if (tempDateStr[0].equalsIgnoreCase(monthC)
-					&& tempDateStr[1].equalsIgnoreCase(dateC)) {
-
-				flag = 0;
-			}
-
-			else {
-				flag = 1;
-
-			}*/
-			boolean isValidDate; 
-			if(guestObj.checkPersonIsGuest(personID))
-			{
+			/*
+			 * String dateA = "01"; String monthA = "08";
+			 * 
+			 * String dateB = "01"; String monthB = "01";
+			 * 
+			 * String dateC = "01"; String monthC = "06";
+			 * 
+			 * if (tempDateStr[0].equalsIgnoreCase(monthA) &&
+			 * tempDateStr[1].equalsIgnoreCase(dateA)) { flag = 0;
+			 * 
+			 * } else if (tempDateStr[0].equalsIgnoreCase(monthB) &&
+			 * tempDateStr[1].equalsIgnoreCase(dateB)) {
+			 * 
+			 * flag = 0; } else if (tempDateStr[0].equalsIgnoreCase(monthC) &&
+			 * tempDateStr[1].equalsIgnoreCase(dateC)) {
+			 * 
+			 * flag = 0; }
+			 * 
+			 * else { flag = 1;
+			 * 
+			 * }
+			 */
+			boolean isValidDate;
+			if (guestObj.checkPersonIsGuest(personID)) {
 				System.out.println("Do you want to approve this request? Y/N");
 				approvalStatus = inputObj.next();
-			}
-			else
-			{
-				isValidDate = obj.checkAnyCorrectDate(tempDateStr,startSemester);
-				if(isValidDate)
-				{
-					System.out.println("Do you want to approve this request? Y/N");
+			} else {
+				isValidDate = obj.checkAnyCorrectDate(tempDateStr,
+						startSemester);
+				if (isValidDate) {
+					System.out
+							.println("Do you want to approve this request? Y/N");
 					approvalStatus = inputObj.next();
-				}
-				else
-				{
+				} else {
 					System.out.println("Not a valid date");
 					approvalStatus = "N";
 				}
 			}
-			
+
 			/*
 			 * START: Check to see if the person is already living on some lease
 			 * Currently
 			 */
-
 
 			// System.out.println("BEFORE>>>>>>>>"+approvalStatus);
 			if (approvalStatus.equalsIgnoreCase("Y")) {
@@ -265,7 +248,6 @@ public class HousingStaffManagesLease_Relation {
 				}
 			}
 
-
 			if (approvalStatus.equalsIgnoreCase("Y")) {
 
 				/*
@@ -284,7 +266,6 @@ public class HousingStaffManagesLease_Relation {
 
 				// boolean accAvailability =
 				// checkIfAccomodationTypeAvailable(preferences);
-
 				ArrayList<String> availableAcco = checkIfAccomodationTypeAvailable(preferences);
 				selectQuery = "SELECT MAX(lease_no) AS lease_no "
 						+ "FROM Lease";
@@ -310,7 +291,6 @@ public class HousingStaffManagesLease_Relation {
 					 */
 
 					// System.out.println("TEST1");
-					
 					// System.out.println("TEST2");
 					int accID = 0;
 					// Chechking if extra credit query is made then we call
@@ -374,10 +354,10 @@ public class HousingStaffManagesLease_Relation {
 						rs.close();
 						preparedStatement.close();
 					}
-					
+
 					// Adding accomodation id to lease with lease number
-					int depositAmountResHall = returnDeposit(accID,Constants.RESIDENCE_HALL);
-					
+					int depositAmountResHall = returnDeposit(accID,
+							Constants.RESIDENCE_HALL);
 
 					String insertQuery = "INSERT INTO LEASE (lease_no,deposit,mode_of_payment,duration,cutoff_date) "
 							+ "VALUES (?,?,?,?,?)";
@@ -388,14 +368,14 @@ public class HousingStaffManagesLease_Relation {
 							.prepareStatement(insertQuery);
 
 					preparedStatement.setInt(1, newLeaseNumber);
-					preparedStatement.setString(2, String.valueOf(depositAmountResHall));
+					preparedStatement.setString(2, String
+							.valueOf(depositAmountResHall));
 					preparedStatement.setString(3, modeofPayment);
 					preparedStatement.setString(4, duration);
 					preparedStatement.setDate(5, cutOffDate);
 					preparedStatement.executeUpdate();
 					preparedStatement.close();
 
-					
 					System.out.println(newLeaseNumber);
 					String insertPerAccQuery = "INSERT INTO person_accomodation_lease (accomodation_id,person_id,lease_no,accomodation_type,lease_move_in_date) "
 							+ "VALUES(?,?,?,?,?)";
@@ -429,8 +409,6 @@ public class HousingStaffManagesLease_Relation {
 						Constants.GENERAL_APARTMENT)) {
 					accomodationTypeGiven = availableAcco.get(0);
 					wasAccomodationApproved = true;
-
-					
 
 					int accomodationIDApartment = 0;
 					// If extracredit is true then call procedure for apartment
@@ -485,23 +463,25 @@ public class HousingStaffManagesLease_Relation {
 					}
 
 					// Inserting into lease
-					
-					int depositeApartment = returnDeposit(accomodationIDApartment,Constants.GENERAL_APARTMENT);
+
+					int depositeApartment = returnDeposit(
+							accomodationIDApartment,
+							Constants.GENERAL_APARTMENT);
 
 					String SQL2 = "INSERT INTO LEASE (lease_no,deposit,mode_of_payment,duration,cutoff_date) "
 							+ "VALUES (?,?,?,?,?)";
 
 					preparedStatement = dbConnection.prepareStatement(SQL2);
 					preparedStatement.setInt(1, newLeaseNumber);
-					preparedStatement.setString(2, String.valueOf(depositeApartment));
+					preparedStatement.setString(2, String
+							.valueOf(depositeApartment));
 					preparedStatement.setString(3, modeofPayment);
 					preparedStatement.setString(4, duration);
 					preparedStatement.setDate(5, cutOffDate);
 					preparedStatement.executeUpdate();
 
 					preparedStatement.close();
-					
-					
+
 					String SQL4 = "INSERT INTO PERSON_ACCOMODATION_LEASE (accomodation_id,person_id,lease_no,accomodation_type,lease_move_in_date) "
 							+ "VALUES (?,?,?,?,?)";
 
@@ -536,9 +516,8 @@ public class HousingStaffManagesLease_Relation {
 					accomodationTypeGiven = availableAcco.get(0);
 					wasAccomodationApproved = true;
 
-					//String depositeApartment = Constants.FAMILY_APARTMENT_DEPOSITE;
-
-					
+					// String depositeApartment =
+					// Constants.FAMILY_APARTMENT_DEPOSITE;
 
 					String SQLF3 = "SELECT Family.accomodation_id FROM Family_Apartment Family "
 							+ "WHERE Family.accomodation_id NOT IN(SELECT PERSON_ACCOMODATION_LEASE.accomodation_id "
@@ -553,13 +532,15 @@ public class HousingStaffManagesLease_Relation {
 					rs.close();
 					preparedStatement.close();
 
-					int depositFamilyApartment = returnDeposit(accomodationIDApartment,Constants.FAMILY_APARTMENT);
+					int depositFamilyApartment = returnDeposit(
+							accomodationIDApartment, Constants.FAMILY_APARTMENT);
 					String SQLF2 = "INSERT INTO LEASE (lease_no,deposit,mode_of_payment,duration,cutoff_date) "
 							+ "VALUES (?,?,?,?,?)";
 
 					preparedStatement = dbConnection.prepareStatement(SQLF2);
 					preparedStatement.setInt(1, newLeaseNumber);
-					preparedStatement.setString(2, String.valueOf(depositFamilyApartment));
+					preparedStatement.setString(2, String
+							.valueOf(depositFamilyApartment));
 					preparedStatement.setString(3, modeofPayment);
 					preparedStatement.setString(4, duration);
 					preparedStatement.setDate(5, cutOffDate);
@@ -637,10 +618,9 @@ public class HousingStaffManagesLease_Relation {
 					 * ps.setDate(8, dmf); ps.executeUpdate(); ps.close();
 					 * ConnectionUtils.closeConnection(conn);
 					 */
-				}//////////////////////////////////////////////////////////////////////
-				else if(availableAcco.get(0).equalsIgnoreCase(
-						Constants.PRIVATE_ACCOMODATION))
-				{
+				}// ////////////////////////////////////////////////////////////////////
+				else if (availableAcco.get(0).equalsIgnoreCase(
+						Constants.PRIVATE_ACCOMODATION)) {
 
 					accomodationTypeGiven = availableAcco.get(0);
 					wasAccomodationApproved = true;
@@ -662,10 +642,10 @@ public class HousingStaffManagesLease_Relation {
 
 					int accomodationIDApartment = 0;
 					// If extracredit is true then call procedure for apartment
-					
+
 					// If not extra credit then just call regular query
-					String SQL3 = "SELECT P.accomodation_id FROM private_accomodation P WHERE P.accomodation_type = ? AND" +
-							" P.accomodation_id NOT IN(SELECT PL.accomodation_id FROM PERSON_ACCOMODATION_LEASE PL)";
+					String SQL3 = "SELECT P.accomodation_id FROM private_accomodation P WHERE P.accomodation_type = ? AND"
+							+ " P.accomodation_id NOT IN(SELECT PL.accomodation_id FROM PERSON_ACCOMODATION_LEASE PL)";
 
 					preparedStatement = dbConnection.prepareStatement(SQL3);
 					preparedStatement.setString(1, preferences.get(1));
@@ -675,8 +655,8 @@ public class HousingStaffManagesLease_Relation {
 					accomodationIDApartment = rs.getInt("accomodation_id");
 					accomodationIDGiven = accomodationIDApartment;
 					rs.close();
-					preparedStatement.close();	
-					///////////////////////////////////
+					preparedStatement.close();
+					// /////////////////////////////////
 
 					String SQL4 = "INSERT INTO PERSON_ACCOMODATION_LEASE (accomodation_id,person_id,lease_no,accomodation_type,lease_move_in_date) "
 							+ "VALUES (?,?,?,?,?)";
@@ -707,9 +687,7 @@ public class HousingStaffManagesLease_Relation {
 					 * and allocate a room to the applicant
 					 */
 
-				
-				}
-				else if (availableAcco.get(0).equalsIgnoreCase(
+				} else if (availableAcco.get(0).equalsIgnoreCase(
 						Constants.NOTHING_AVAILABLE)) {
 					wasAccomodationApproved = false;
 					String selectQ1 = "UPDATE PERSON_ACC_STAFF SET request_status = ? "
@@ -924,13 +902,11 @@ public class HousingStaffManagesLease_Relation {
 				}
 				availableAcco.add(Constants.NOTHING_AVAILABLE);
 				return availableAcco;
-			}
-			else if(type.equalsIgnoreCase(Constants.PRIVATE_ACCOMODATION))
-			{
+			} else if (type.equalsIgnoreCase(Constants.PRIVATE_ACCOMODATION)) {
 
 				for (int i = 0; i < 3; i++) {
-					String selectQueryPref = "select count(accomodation_id) as apartments from private_accomodation where accomodation_type = ?" +
-							" AND accomodation_id NOT IN(select accomodation_id from person_accomodation_lease)";
+					String selectQueryPref = "select count(accomodation_id) as apartments from private_accomodation where accomodation_type = ?"
+							+ " AND accomodation_id NOT IN(select accomodation_id from person_accomodation_lease)";
 
 					preparedStatement = dbConnection
 							.prepareStatement(selectQueryPref);
@@ -950,16 +926,15 @@ public class HousingStaffManagesLease_Relation {
 				}
 				availableAcco.add(Constants.NOTHING_AVAILABLE);
 				return availableAcco;
-			
-			}
-			else {
+
+			} else {
 				availableAcco.add(Constants.NOTHING_AVAILABLE);
 				return availableAcco;
 			}
 		} catch (SQLException e1) {
 			System.out.println("SQLException: " + e1.getMessage());
 			System.out.println("VendorError: " + e1.getErrorCode());
-			
+
 		} catch (Exception e3) {
 			System.out
 					.println("General Exception Case. Printing stack trace below:\n");
@@ -1036,23 +1011,19 @@ public class HousingStaffManagesLease_Relation {
 				allPersonID.add(rs.getInt("person_id"));
 			}
 
-			if(allTerminationRequestsToMonitor.size()>0)
-			{
+			if (allTerminationRequestsToMonitor.size() > 0) {
 				System.out.println("Displaying all the requests to approve: ");
 				for (int i = 0; i < allTerminationRequestsToMonitor.size(); i++) {
 					System.out.println((i + 1) + ". "
 							+ allTerminationRequestsToMonitor.get(i) + " - "
 							+ allPersonID.get(i));
 				}
-			}
-			else
-			{
+			} else {
 				return;
 			}
-			
+
 			int requestChosen = inputObj.nextInt();
-			while(requestChosen > allTerminationRequestsToMonitor.size())
-			{
+			while (requestChosen > allTerminationRequestsToMonitor.size()) {
 				System.out.println("Enter correct serial number");
 				requestChosen = inputObj.nextInt();
 			}
@@ -1067,62 +1038,62 @@ public class HousingStaffManagesLease_Relation {
 			preparedStatement.close();
 			rs.close();
 
-			try{
-				
-					preparedStatement = dbConnection
-							.prepareStatement(selectQueryDetails);
-					preparedStatement.setInt(1, requestNumber);
-					rs = preparedStatement.executeQuery();
-		
-					System.out.println(String.format(
-							"%-50s%-13s%-11s%-15s%-18s%-5s%-10s", "Reason",
-							"Term_req_no", "Status", "Term Date", "Inspection Date",
-							"P_ID", "Staff No."));
+			try {
+
+				preparedStatement = dbConnection
+						.prepareStatement(selectQueryDetails);
+				preparedStatement.setInt(1, requestNumber);
+				rs = preparedStatement.executeQuery();
+
+				System.out.println(String.format(
+						"%-50s%-13s%-11s%-15s%-18s%-5s%-10s", "Reason",
+						"Term_req_no", "Status", "Term Date",
+						"Inspection Date", "P_ID", "Staff No."));
+				System.out
+						.println("-----------------------------------------------"
+								+ "---------------------------------------------------------"
+								+ "--------------------");
+
+				while (rs.next()) {
 					System.out
-							.println("-----------------------------------------------"
-									+ "---------------------------------------------------------"
-									+ "--------------------");
-		
-					while (rs.next()) {
-						System.out.println(String.format(
-								"%-50s%-13s%-11s%-15s%-18s%-5s%-10s", rs
-										.getString("reason"), rs
-										.getInt("termination_request_number"), rs
-										.getString("status"), rs
-										.getDate("termination_date"), rs
-										.getDate("inspection_date"), rs
-										.getInt("person_id"), rs.getInt("staff_no")));
-					}
-			
-			}catch(SQLException e1){
-				System.out.println("SQLException: "+ e1.getMessage());
-				System.out.println("VendorError: "+ e1.getErrorCode());
+							.println(String.format(
+									"%-50s%-13s%-11s%-15s%-18s%-5s%-10s", rs
+											.getString("reason"),
+									rs.getInt("termination_request_number"), rs
+											.getString("status"), rs
+											.getDate("termination_date"), rs
+											.getDate("inspection_date"), rs
+											.getInt("person_id"), rs
+											.getInt("staff_no")));
+				}
+
+			} catch (SQLException e1) {
+				System.out.println("SQLException: " + e1.getMessage());
+				System.out.println("VendorError: " + e1.getErrorCode());
 				return;
 			}
 
-
-			catch(Exception e3)
-			{
-				System.out.println("General Exception Case. Printing stack trace below:\n");
+			catch (Exception e3) {
+				System.out
+						.println("General Exception Case. Printing stack trace below:\n");
 				e3.printStackTrace();
 				return;
-				
+
+			} finally {
+				try {
+					rs.close();
+					preparedStatement.close();
+					// dbConnection.close();
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+
+				}
+
 			}
-			finally{
-					try {
-				        rs.close();
-				        preparedStatement.close();
-//				        dbConnection.close();
-				        
-				      } catch (SQLException e) {
-				        e.printStackTrace();
-				       
-				      }
-					
-			}	
-					
-					
-			System.out.println("Enter the inspection date in MM/DD/YYYY format");
+
+			System.out
+					.println("Enter the inspection date in MM/DD/YYYY format");
 
 			String inspectionDate = inputObj.next();
 			java.sql.Date sqlInspectionDate = Utils
@@ -1131,30 +1102,28 @@ public class HousingStaffManagesLease_Relation {
 			String updateQueryDate = "UPDATE Termination_Requests "
 					+ "SET inspection_date = ? "
 					+ "WHERE termination_request_number = ?";
-			
+
 			System.out.println("Marker31");
 			PreparedStatement pAddInspecDate = null;
 			pAddInspecDate = dbConnection.prepareStatement(updateQueryDate);
 
+			try {
 
-
-			
-			try{
-				
 				pAddInspecDate.setDate(1, sqlInspectionDate);
 				pAddInspecDate.setInt(2, requestNumber);
-				
+
 				pAddInspecDate.executeUpdate();
-			
-			}catch(Exception e){
-				System.out.println("Update of termination requests table failed.");
+
+			} catch (Exception e) {
+				System.out
+						.println("Update of termination requests table failed.");
 				return;
 			}
 			System.out.println("Marker32");
-				pAddInspecDate.close();
-			
-				System.out.println("Marker33");
-			
+			pAddInspecDate.close();
+
+			System.out.println("Marker33");
+
 			System.out.println("Marker1");
 
 			int damageFees = 0;
@@ -1170,7 +1139,6 @@ public class HousingStaffManagesLease_Relation {
 			 * Write SQL Query to fetch the latest unpaid invoice and add the
 			 * damageFees to already existing payment_due
 			 */
-
 
 			String updateQueryStatus = "UPDATE Termination_Requests "
 					+ "SET status = ? "
@@ -1197,173 +1165,165 @@ public class HousingStaffManagesLease_Relation {
 			rs.next();
 			int personID = rs.getInt("person_id");
 
+			try {
 
-			
-			try{
-				
-				pUpdateStatus = dbConnection.prepareStatement(updateQueryStatus);
+				pUpdateStatus = dbConnection
+						.prepareStatement(updateQueryStatus);
 				pUpdateStatus.setString(1, Constants.PROCESSED_STATUS);
 				pUpdateStatus.setInt(2, requestNumber);
 				pUpdateStatus.executeUpdate();
-			}catch(Exception e){
-				System.out.println("Update of termination requests table failed.");
+			} catch (Exception e) {
+				System.out
+						.println("Update of termination requests table failed.");
 				return;
-			}
-			finally{
+			} finally {
 				pUpdateStatus.close();
 			}
-			
-			
+
 			System.out.println("Marker3");
-			//Get the accomodation type for the person who raised that termination request.
-			
+			// Get the accomodation type for the person who raised that
+			// termination request.
+
 			int accomodationId = 0;
 			String accomodation_type = "";
-	
-			
-			try{
-				
-				 selectPersonID = "select tr.person_id,pal.accomodation_type,pal.accomodation_id from termination_requests tr,person_accomodation_lease pal "
-						+ " where tr.termination_request_number = ? and tr.person_id = pal.person_id " ;
-				System.out.println("Checking for request numbe "+requestNumber);
-				preparedStatement = dbConnection.prepareStatement(selectPersonID);
+
+			try {
+
+				selectPersonID = "select tr.person_id,pal.accomodation_type,pal.accomodation_id from termination_requests tr,person_accomodation_lease pal "
+						+ " where tr.termination_request_number = ? and tr.person_id = pal.person_id ";
+				System.out.println("Checking for request numbe "
+						+ requestNumber);
+				preparedStatement = dbConnection
+						.prepareStatement(selectPersonID);
 				preparedStatement.setInt(1, requestNumber);
 				rs = preparedStatement.executeQuery();
-				while(rs.next())
-				{
+				while (rs.next()) {
 					personID = rs.getInt("person_id");
 					accomodation_type = rs.getString("accomodation_type");
 					accomodationId = rs.getInt("accomodation_id");
 				}
-				
-			
-			}catch(Exception e){
-				System.out.println("Update of termination requests table failed.");
+
+			} catch (Exception e) {
+				System.out
+						.println("Update of termination requests table failed.");
 				return;
-			}
-			finally{
+			} finally {
 				rs.close();
 				preparedStatement.close();
 			}
-			
-			
+
 			String selectMonthlyRent;
-			
+
 			System.out.println("Marker4");
-			
-			//if accomodation type is family apartment : get the monthly rent for that accomodation id from family_apartment table
-			
-			if(accomodation_type.equals(Constants.FAMILY_APARTMENT))
-			{
-				 selectMonthlyRent = "select monthly_rent from family_apartment where accomodation_id= ?" ;
-			}
-			else if(accomodation_type.equals(Constants.RESIDENCE_HALL))
-			{
-				//if accomodation type is residence hall : get the monthly rent for that accomodation id from residence_hall_provides_room table
-				
-				 selectMonthlyRent = "select monthly_rent_rate  from residence_hall_provides_room where accomodation_id = ?" ;
-			}
-			else if(accomodation_type.equals(Constants.GENERAL_APARTMENT) || accomodation_type.equals(Constants.BEDROOM))
-			{
-				//if accomodation type is general apartment/Apartment or Bedroom : get the monthly rent for that accomodation id from residence_hall_provides_room table
-				
-				 selectMonthlyRent = "select monthly_rent_rate from bedroom where accomodation_id = ?" ;
-				
-			}
-			else
-			{
-				System.out.println("Data Corruption: The apartment type is invalid for this person. Please contact Admin.");
+
+			// if accomodation type is family apartment : get the monthly rent
+			// for that accomodation id from family_apartment table
+
+			if (accomodation_type.equals(Constants.FAMILY_APARTMENT)) {
+				selectMonthlyRent = "select monthly_rent from family_apartment where accomodation_id= ?";
+			} else if (accomodation_type.equals(Constants.RESIDENCE_HALL)) {
+				// if accomodation type is residence hall : get the monthly rent
+				// for that accomodation id from residence_hall_provides_room
+				// table
+
+				selectMonthlyRent = "select monthly_rent_rate  from residence_hall_provides_room where accomodation_id = ?";
+			} else if (accomodation_type.equals(Constants.GENERAL_APARTMENT)
+					|| accomodation_type.equals(Constants.BEDROOM)) {
+				// if accomodation type is general apartment/Apartment or
+				// Bedroom : get the monthly rent for that accomodation id from
+				// residence_hall_provides_room table
+
+				selectMonthlyRent = "select monthly_rent_rate from bedroom where accomodation_id = ?";
+
+			} else {
+				System.out
+						.println("Data Corruption: The apartment type is invalid for this person. Please contact Admin.");
 				return;
 			}
-			System.out.println("selectMonthlyRent Query:="+selectMonthlyRent);
-			System.out.println("Marker5 with accomodationId:= "+accomodationId);
-			
-			
+			System.out.println("selectMonthlyRent Query:=" + selectMonthlyRent);
+			System.out.println("Marker5 with accomodationId:= "
+					+ accomodationId);
+
 			double monthlyRent;
-			
-			try
-			{
-				preparedStatement = dbConnection.prepareStatement(selectMonthlyRent);
+
+			try {
+				preparedStatement = dbConnection
+						.prepareStatement(selectMonthlyRent);
 				preparedStatement.setInt(1, accomodationId);
 				rs = preparedStatement.executeQuery();
-				rs.next(); //what if this returns no records
-				if(accomodation_type.equals(Constants.FAMILY_APARTMENT))
+				rs.next(); // what if this returns no records
+				if (accomodation_type.equals(Constants.FAMILY_APARTMENT))
 					monthlyRent = rs.getDouble("monthly_rent");
 				else
 					monthlyRent = rs.getDouble("monthly_rent_rate");
-				
-			}catch(Exception e){
+
+			} catch (Exception e) {
 				e.printStackTrace();
 				return;
-			}
-			finally{
+			} finally {
 				rs.close();
 				preparedStatement.close();
 			}
-			
-			//Now get the remaining days 
+
+			// Now get the remaining days
 			System.out.println("Marker6");
-			
+
 			String selectRemainingDays = "select pal.person_id, "
 					+ "  (add_months(pal.lease_move_in_date,l.duration) - tr.termination_date) "
 					+ " from termination_requests tr,lease l,person_accomodation_lease pal "
-					+" where tr.person_id = pal.person_id "
-					+" and pal.lease_no = l.lease_no " 
-					+" and tr.termination_request_number = ? ";
-			
+					+ " where tr.person_id = pal.person_id "
+					+ " and pal.lease_no = l.lease_no "
+					+ " and tr.termination_request_number = ? ";
+
 			int remainingDays;
-			
-			try
-			{
-				preparedStatement = dbConnection.prepareStatement(selectRemainingDays);
+
+			try {
+				preparedStatement = dbConnection
+						.prepareStatement(selectRemainingDays);
 				preparedStatement.setInt(1, requestNumber);
 				rs = preparedStatement.executeQuery();
 				rs.next();
 				personID = rs.getInt("person_id");
-				System.out.println("Marker77 before1:="+requestNumber);
+				System.out.println("Marker77 before1:=" + requestNumber);
 				remainingDays = rs.getInt(2);
-			
-			}catch(Exception e){
-				System.out.println("Update of termination requests table failed.");
+
+			} catch (Exception e) {
+				System.out
+						.println("Update of termination requests table failed.");
 				return;
-			}
-			finally{
+			} finally {
 				rs.close();
 				preparedStatement.close();
 			}
-			
-//			int remainingDays = rs.getInt("remaining_days");
-			
+
+			// int remainingDays = rs.getInt("remaining_days");
+
 			double penalty = 0.0;
-			
-			double remainingAmount = (remainingDays*monthlyRent)/30;
-			
-			System.out.println("remainingDays:= "+remainingDays);
-			System.out.println("monthlyRent:= "+monthlyRent);
-			System.out.println("remainingAmount:= "+remainingAmount);
-			
-			if( remainingDays < 60)  //when termination date is after the cut-off date
+
+			double remainingAmount = (remainingDays * monthlyRent) / 30;
+
+			System.out.println("remainingDays:= " + remainingDays);
+			System.out.println("monthlyRent:= " + monthlyRent);
+			System.out.println("remainingAmount:= " + remainingAmount);
+
+			if (remainingDays < 60) // when termination date is after the
+									// cut-off date
 			{
 				penalty = remainingAmount;
-				System.out.println("Penalty:= "+penalty);
+				System.out.println("Penalty:= " + penalty);
+			} else {
+				penalty = 0.2 * remainingAmount;
+				System.out.println("Penalty:= " + penalty);
 			}
-			else
-			{
-				penalty = 0.2*remainingAmount;
-				System.out.println("Penalty:= "+penalty);
-			}
-			
 
 			String selectQueryFees = "SELECT MAX(payment_date) as \"date\""
 					+ "FROM invoice_person_lease "
 					+ "WHERE (payment_status <> ?  " + "AND person_id = ?) ";
 
+			System.out.println("Getting date for person_id: " + personID
 
-			
-			System.out.println("Getting date for person_id: " + personID 
+			+ " and requestNumber: " + requestNumber);
 
-					+ " and requestNumber: " + requestNumber);
-			
 			preparedStatement = dbConnection.prepareStatement(selectQueryFees);
 			preparedStatement.setString(1, Constants.PAID_INVOICE);
 			preparedStatement.setInt(2, personID);
@@ -1372,17 +1332,16 @@ public class HousingStaffManagesLease_Relation {
 			rs.next();
 			Date maxDate = rs.getDate("date");
 			System.out.println("Maximum date: " + maxDate);
+
 			if (maxDate == null) {
 				System.out.println("No outstanding charges");
 				System.out.println("Damage fees: " + damageFees);
 
-				
-				
 				totalPenaltyDamageFees = damageFees + penalty;
-				totalPenaltyDamageFees=0; //[MANISH]
+				totalPenaltyDamageFees = 0; // [MANISH]
 				System.out.println("Marker8");
-				if (totalPenaltyDamageFees > 0) {
 
+				if (totalPenaltyDamageFees > 0) {
 
 					/*
 					 * Query for getting invoice number from
@@ -1410,9 +1369,9 @@ public class HousingStaffManagesLease_Relation {
 					preparedStatement = dbConnection
 							.prepareStatement(selectQueryLeaseNum);
 					preparedStatement.setInt(1, personID);
-					
+
 					System.out.println("Marker9");
-					
+
 					rs = preparedStatement.executeQuery();
 					boolean isNotEmpty = rs.next();
 					if (isNotEmpty) {
@@ -1452,7 +1411,7 @@ public class HousingStaffManagesLease_Relation {
 						p2.setInt(11, 0);
 						p2.setInt(12, personID);
 
-						int insertRes = p2.executeUpdate();	
+						int insertRes = p2.executeUpdate();
 
 						p2.close();
 						c2.close();
@@ -1481,23 +1440,25 @@ public class HousingStaffManagesLease_Relation {
 					System.out.println("Lease number: " + leaseNumber
 							+ ". PersonID: " + personID);
 
-					if(!checkIfPersonLeaseExistsInHistory(personID,leaseNumber))
-					{
-						/*Write SQL Query to put the terminated lease request into person_accomodation_lease_hist*/
+					if (!checkIfPersonLeaseExistsInHistory(personID,
+							leaseNumber)) {
+						/*
+						 * Write SQL Query to put the terminated lease request
+						 * into person_accomodation_lease_hist
+						 */
 						Connection histconn = ConnectionUtils.getConnection();
 						PreparedStatement preHist = null;
-						System.out.println("Creating backup for personID "+ personID);
-						/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-						String historyQuery = "Insert into person_accomodation_lease_hist " +
-								" select * from person_accomodation_lease where person_id = ?";
+						System.out.println("Creating backup for personID "
+								+ personID);
+						// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+						String historyQuery = "Insert into person_accomodation_lease_hist "
+								+ "select * from person_accomodation_lease where person_id = ?";
 						preHist = histconn.prepareStatement(historyQuery);
 						preHist.setInt(1, personID);
 						preHist.executeUpdate();
 						preHist.close();
 						ConnectionUtils.closeConnection(histconn);
-					}
-					else
-					{
+					} else {
 						System.out.println("Already backed up for this person");
 					}
 					/*
@@ -1602,10 +1563,13 @@ public class HousingStaffManagesLease_Relation {
 
 				dbConnection.commit();
 
-				double totalCharges = monthlyHousingRent + monthlyParkingRent +
-						lateFees + incidentalCharges + totalPenaltyDamageFees;
-				/*System.out.println(monthlyHousingRent + " " + monthlyParkingRent + " "
-					+ lateFees + " " + incidentalCharges + " " + damageCharges);*/
+				double totalCharges = monthlyHousingRent + monthlyParkingRent
+						+ lateFees + incidentalCharges + totalPenaltyDamageFees;
+				/*
+				 * System.out.println(monthlyHousingRent + " " +
+				 * monthlyParkingRent + " " + lateFees + " " + incidentalCharges
+				 * + " " + damageCharges);
+				 */
 
 				String updateQueryDamage = "UPDATE invoice_person_lease "
 						+ "SET payment_due = ?"
@@ -1669,15 +1633,17 @@ public class HousingStaffManagesLease_Relation {
 			while (rs.next()) {
 
 				int personID = rs.getInt("person_id");
-				System.out.println("Enter the current Date mm/dd/yyyy <> to check for person"+personID);
+				System.out
+						.println("Enter the current Date mm/dd/yyyy <> to check for person"
+								+ personID);
 				String currentDateStr = inputObj.nextLine();
-							
-				java.util.Date currentDateUtil = Utils.convertStringToUtilDateFormat(currentDateStr);
-				
-				
+
+				java.util.Date currentDateUtil = Utils
+						.convertStringToUtilDateFormat(currentDateStr);
+
 				Date moveInDate = rs.getDate("lease_move_in_date");
 				int duration = Integer.parseInt(rs.getString("Duration"));
-				
+
 				int requestNumber = rs.getInt("application_request_no");
 				String moveInDateStr = Utils.changeUtilDateToString(moveInDate);
 				java.util.Date moveInDateUtils = Utils
@@ -1764,53 +1730,57 @@ public class HousingStaffManagesLease_Relation {
 											+ personID
 											+ "> From lease table. Sending Exit email...");
 
-							/*Write SQL Query to fetch the lease_no for the person id from person_accomodation_lease table*/
+							/*
+							 * Write SQL Query to fetch the lease_no for the
+							 * person id from person_accomodation_lease table
+							 */
 							int leaseNumber = 0;
 							PreparedStatement ps1 = null;
 							ResultSet rs1 = null;
 							Connection conn1 = ConnectionUtils.getConnection();
 							String query1 = "select lease_no from person_accomodation_lease where person_id = ?";
-							
+
 							ps1 = conn1.prepareStatement(query1);
 							ps1.setInt(1, personID);
 							rs1 = ps1.executeQuery();
-							
-							while(rs1.next())
-							{
+
+							while (rs1.next()) {
 								leaseNumber = rs1.getInt("lease_no");
 								break;
 							}
-							
-							if(leaseNumber == 0)
-							{
-								System.out.println("Person is not currently on lease");
-							}
-							else
-							{
-								if(!checkIfPersonLeaseExistsInHistory(personID,leaseNumber))
-								{
-									/*Write SQL Query to put the terminated lease request into person_accomodation_lease_hist*/
-									Connection histconn = ConnectionUtils.getConnection();
+
+							if (leaseNumber == 0) {
+								System.out
+										.println("Person is not currently on lease");
+							} else {
+								if (!checkIfPersonLeaseExistsInHistory(
+										personID, leaseNumber)) {
+									/*
+									 * Write SQL Query to put the terminated
+									 * lease request into
+									 * person_accomodation_lease_hist
+									 */
+									Connection histconn = ConnectionUtils
+											.getConnection();
 									PreparedStatement preHist = null;
-									System.out.println("Creating backup for personID "+ personID);
-									/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-									String historyQuery = "Insert into person_accomodation_lease_hist values " +
-											"(select * from person_accomodation_lease where person_id = ?)";
-									preHist = histconn.prepareStatement(historyQuery);
+									System.out
+											.println("Creating backup for personID "
+													+ personID);
+									// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+									String historyQuery = "Insert into person_accomodation_lease_hist "
+											+ "select * from person_accomodation_lease where person_id = ?";
+									preHist = histconn
+											.prepareStatement(historyQuery);
 									preHist.setInt(1, personID);
 									preHist.executeUpdate();
 									preHist.close();
 									ConnectionUtils.closeConnection(histconn);
-								}
-								else
-								{
-									System.out.println("Already backed up for this person");
+								} else {
+									System.out
+											.println("Already backed up for this person");
 								}
 							}
-							
-							
-							
-							
+
 							PreparedStatement preparedStatement3 = null;
 							ResultSet rsToDelete = null;
 
@@ -1854,78 +1824,68 @@ public class HousingStaffManagesLease_Relation {
 		}
 
 	}
-	
-	private int returnDeposit(int id, String type)
-	{
+
+	private int returnDeposit(int id, String type) {
 		int securityDeposit = 0;
-		
+
 		PreparedStatement ps = null;
 		Connection conn = ConnectionUtils.getConnection();
 		ResultSet getDeposit = null;
 		String hallQuery = "SELECT security_deposit from residence_hall where hall_number = (select hall_number from residence_hall_provides_room where accomodation_id = ?)";
 		String bedroomQuery = "SELECT security_deposit from general_apartment where apt_no = (SELECT apt_no from bedroom where accomodation_id = ?)";
 		String familyQuery = "SELECT security_deposit from family_apartment where accomodation_id = ?";
-		try
-		{
-			if(type.equalsIgnoreCase(Constants.RESIDENCE_HALL))
-			{
+		try {
+			if (type.equalsIgnoreCase(Constants.RESIDENCE_HALL)) {
 				ps = conn.prepareStatement(hallQuery);
 				ps.setInt(1, id);
-			}	
-			else if(type.equalsIgnoreCase(Constants.GENERAL_APARTMENT))
-			{
+			} else if (type.equalsIgnoreCase(Constants.GENERAL_APARTMENT)) {
 				ps = conn.prepareStatement(bedroomQuery);
 				ps.setInt(1, id);
-			}
-			else if(type.equalsIgnoreCase(Constants.FAMILY_APARTMENT))
-			{
+			} else if (type.equalsIgnoreCase(Constants.FAMILY_APARTMENT)) {
 				ps = conn.prepareStatement(familyQuery);
 				ps.setInt(1, id);
 			}
-			
+
 			getDeposit = ps.executeQuery();
-			while(getDeposit.next())
-			{
+			while (getDeposit.next()) {
 				securityDeposit = getDeposit.getInt("security_deposit");
 			}
 			ps.close();
 			ConnectionUtils.closeConnection(conn);
 			getDeposit.close();
-		}
-		catch(SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return securityDeposit;
 	}
-	
-	public boolean checkIfPersonLeaseExistsInHistory(int personId, int leaseNumber)
-	{
-		try
-		{
+
+	public boolean checkIfPersonLeaseExistsInHistory(int personId,
+			int leaseNumber) {
+		try {
 			int count = 0;
-			/*Write SQL Query to put the terminated lease request into person_accomodation_lease_hist*/
+			/*
+			 * Write SQL Query to put the terminated lease request into
+			 * person_accomodation_lease_hist
+			 */
 			Connection conn = ConnectionUtils.getConnection();
 			PreparedStatement ps = null;
 			ResultSet rs = null;
-			System.out.println("Chekcing if lease_no "+ leaseNumber+" and personId "+personId+ " backup already exists");
-			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			System.out.println("Chekcing if lease_no " + leaseNumber
+					+ " and personId " + personId + " backup already exists");
+			// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			String historyQuery = "select count(*) as does_exist from person_accomodation_lease_hist where person_id = ? and lease_no = ?";
 			ps = conn.prepareStatement(historyQuery);
 			ps.setInt(1, personId);
 			ps.setInt(2, leaseNumber);
 			rs = ps.executeQuery();
-			while(rs.next())
-			{
+			while (rs.next()) {
 				count = rs.getInt("does_exist");
-				if(count>0)
+				if (count > 0)
 					return true;
 			}
 			ps.close();
 			ConnectionUtils.closeConnection(conn);
-		}
-		catch(SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return false;
