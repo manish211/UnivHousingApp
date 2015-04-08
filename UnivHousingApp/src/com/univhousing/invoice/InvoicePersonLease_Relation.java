@@ -87,6 +87,10 @@ public class InvoicePersonLease_Relation {
 					System.out.println(count+". "+item.intValue());
 					count++;
 				}
+				System.out.println("Enter the invoice you want to see: ");
+				int choice = inputObj.nextInt();
+				displayInvoiceDetails(personId, invoiceNumbersList.get(choice-1));
+				//inputObj.nextLine();
 			}
 			else
 			{
@@ -98,10 +102,7 @@ public class InvoicePersonLease_Relation {
 			int choice = inputObj.nextInt();
 			if(choice == 0)
 				return;
-			else
-			{
-				displayInvoiceDetails(personId, invoiceNumbersList.get(choice-1));
-			}
+			
 			System.out.println("==============================================================================================\n\n");
 			
 		}catch(SQLException e1){
