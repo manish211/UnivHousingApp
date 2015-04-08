@@ -55,7 +55,15 @@ public class InvoicePersonLease_Relation {
 		try{
 			dbConnection = ConnectionUtils.getConnection();
 			
-			String selectQuery = "SELECT * FROM invoice_person_lease WHERE person_id = ? " ;
+//			String selectQuery = "SELECT * FROM invoice_person_lease WHERE person_id = ? " ;
+			
+			String selectQuery = "select ipl.invoice_no,pal.lease_move_in_date, "
+			+ " DECODE(l.mode_of_payment,'Month',add_months(pal.lease_move_in_date,1),add_months(pal.lease_move_in_date,l.duration)) end_date "
+			+ " from person_accomodation_lease pal,invoice_person_lease ipl,lease l "
+			+ " where pal.person_id = ipl.person_id "
+			+ " and ipl.person_id = ? "
+			+ " and pal.lease_no = ipl.lease_no "
+			+ " and ipl.lease_no = l.lease_no ";
 								
 			preparedStatement = dbConnection.prepareStatement(selectQuery);
 			
@@ -72,21 +80,20 @@ public class InvoicePersonLease_Relation {
 				System.out.println("==============================================================================================");
 				System.out.println("INVOICE_NO");
 				System.out.println("==============================================================================================");
-				
-			
 			
 			while(rs.next())
 				{
 					
 					invoiceNumbersList.add(rs.getInt("invoice_no"));
+					System.out.println(count+". "+"INVOICE NO:"+rs.getInt("invoice_no")+" PERIOD:: (START:"+rs.getDate("lease_move_in_date")+" END:"+rs.getDate("end_date")+")");
+					count++;
 				}
 			
-			
-				for(Integer item : invoiceNumbersList)
+				/*for(Integer item : invoiceNumbersList)
 				{
 					System.out.println(count+". "+item.intValue());
 					count++;
-				}
+				}*/
 				
 				
 				//inputObj.nextLine();

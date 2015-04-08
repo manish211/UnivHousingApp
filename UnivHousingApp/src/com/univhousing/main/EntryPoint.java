@@ -91,6 +91,8 @@ public class EntryPoint {
 					}
 					
 					choice = inputObj.nextInt();
+					
+					System.out.println("You entered :"+choice);
 
 					switch (choice) 
 					{

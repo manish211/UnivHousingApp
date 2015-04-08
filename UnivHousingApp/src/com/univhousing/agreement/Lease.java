@@ -216,7 +216,13 @@ public class Lease {
 
 			dbConnection = ConnectionUtils.getConnection();
 
-			String selectQuery = "SELECT * FROM person_accomodation_lease P  WHERE P.person_id=?";
+//			String selectQuery = "SELECT * FROM person_accomodation_lease P  WHERE P.person_id=?";
+			
+			String selectQuery = "select pal.lease_no,pal.lease_move_in_date,"
+			+" add_months(pal.lease_move_in_date,l.duration) end_date "
+			+" from person_accomodation_lease pal,lease l "
+			+" where pal.person_id = ? "
+			+" and pal.lease_no = l.lease_no ";
 
 			preparedStatement = dbConnection.prepareStatement(selectQuery);
 			preparedStatement.setInt(1, personId);
@@ -231,17 +237,20 @@ public class Lease {
 			}
 
 			leaseNumbers.clear();
+			int count = 1;
 
 			while (rs.next()) {
 
 				leaseNumbers.add(rs.getInt("lease_no"));
+				System.out.println(count+". "+"LEASE NO:"+rs.getInt("lease_no")+" PERIOD:: (START:"+rs.getDate("lease_move_in_date")+" END:"+rs.getDate("end_date")+")");
+				count++;
 
 			}
-			int count = 1;
-			for (Integer item : leaseNumbers) {
+//			int count = 1;
+			/*for (Integer item : leaseNumbers) {
 				System.out.println(count + ". " + item.intValue());
 				count++;
-			}
+			}*/
 			count = 0;
 			System.out.println("0. Back\n");
 			int choice = inputObj.nextInt();

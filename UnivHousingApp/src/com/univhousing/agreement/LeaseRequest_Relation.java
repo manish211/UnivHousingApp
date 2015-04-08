@@ -111,12 +111,29 @@ public class LeaseRequest_Relation {
 			if (!guestObj.checkPersonIsGuest(personId)) 
 			{
 				System.out.println("Enter the semesters you want to live ");
-				System.out.println("a> Sem1: [01 Aug - 31 Dec]");
-				System.out.println("b>Sem 2: 01 Jan - 31 May");
-				System.out.println("c>Summer: 01 Jun - 31 Jul");
+				System.out.println("=======================================");
+				System.out.println("a> Sem-1	: [01 Aug - 31 Dec]");
+				System.out.println("b> Sem-2	: [01 Jan - 31 May]");
+				System.out.println("c> Summer	: [01 Jun - 31 Jul]");
 				System.out
-						.println("For multiple semesters please enter optios seperated by comma[for example: a,b,c] ");
+						.println("For multiple semesters please enter options seperated by comma[for example: a,b,c] ");
+				
 				String sem = inputObj.nextLine();
+//				inputObj.nextLine();
+				
+				while(!sem.equalsIgnoreCase("a") && !sem.equalsIgnoreCase("b") && 
+						!sem.equalsIgnoreCase("c") && !sem.equalsIgnoreCase("a,b") && !sem.equalsIgnoreCase("b,a")
+						&& !sem.equalsIgnoreCase("a,c") && !sem.equalsIgnoreCase("c,a")
+						 && !sem.equalsIgnoreCase("b,c") && !sem.equalsIgnoreCase("c,b")
+						 && !sem.equalsIgnoreCase("a,b,c") && !sem.equalsIgnoreCase("a,c,b")
+						 && !sem.equalsIgnoreCase("b,c,a") && !sem.equalsIgnoreCase("b,a,c")
+						 && !sem.equalsIgnoreCase("c,b,a") && !sem.equalsIgnoreCase("c,a,b"))
+				{
+					System.out.println("Please enter a valid input:");
+					sem = inputObj.nextLine();
+				}
+				
+				
 				tempStrArray = sem.split(",");
 				int periodOfLeaseInt = 0;
 				int totalDuration = 0;
