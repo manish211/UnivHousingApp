@@ -254,6 +254,7 @@ PREFERENCE1 VARCHAR2(50),
 PREFERENCE2 VARCHAR2(50),
 PREFERENCE3 VARCHAR2(50),
 payment_gateway varchar2(20),
+start_semester varchar2(300),
 PRIMARY KEY(application_request_no),
 FOREIGN KEY (person_id) REFERENCES person);
 
