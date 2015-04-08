@@ -41,7 +41,7 @@ public class ParkingLot {
 			handicappedInfo = inputObj.next();
 		}
 		
-		if(handicappedInfo.equals("N"))
+		if(handicappedInfo.equalsIgnoreCase("N"))
 		{
 			boolean inputInvalid = true;
 			
@@ -49,27 +49,28 @@ public class ParkingLot {
 			{
 				System.out.println("Please enter your vehicle type:\n" +
 						"Bike, Compact Cars, Standard Cars, Large Cars");
-				vehicleType = inputObj.next();
+				inputObj.nextLine();
+				vehicleType = inputObj.nextLine();
 //				vehicleType = vehicleType.replaceAll("[\n\r]", "");
 				System.out.println("vehicleType:"+vehicleType.toLowerCase());
 				
-				if(vehicleType.toLowerCase().equals(Constants.BIKE))
+				if(vehicleType.equalsIgnoreCase(Constants.BIKE))
 				{
 					vehicleType = Constants.BIKE;
 					inputInvalid = false;
 					System.out.println("here");
 				}					
-				else if(vehicleType.toLowerCase().equals(Constants.COMPACT_CARS))
+				else if(vehicleType.equalsIgnoreCase(Constants.COMPACT_CARS))
 				{
 					vehicleType = Constants.COMPACT_CARS;
 					inputInvalid = false;
 				}
-				else if(vehicleType.toLowerCase().equals(Constants.STANDARD_CARS))
+				else if(vehicleType.equalsIgnoreCase(Constants.STANDARD_CARS))
 				{
 					vehicleType = Constants.STANDARD_CARS;
 					inputInvalid = false;
 				}
-				else if(vehicleType.toLowerCase().equals(Constants.LARGE_CARS))
+				else if(vehicleType.equalsIgnoreCase(Constants.LARGE_CARS))
 				{
 					vehicleType = Constants.LARGE_CARS;
 					inputInvalid = false;
@@ -194,9 +195,9 @@ public class ParkingLot {
 				{
 					tableName="general_apartment";
 					
-					selectQuery = "select spot_no,lot_no,p1.zip_code "
-					+" from (select spot_no,lot_no,Decode(accomodation_id,"+accomodationId+",'true','false') bool "
-							 +" from(select p1.spot_no,p1.lot_no,b.accomodation_id as accomodation_id "
+					selectQuery = "select spot_no,lot_no,zip_code "
+					+" from (select spot_no,lot_no,Decode(accomodation_id,"+accomodationId+",'true','false') bool,zip_code "
+							 +" from(select p1.spot_no,p1.lot_no,b.accomodation_id as accomodation_id,p1.zip_code "
 									+" from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2, "
 									+" general_apartment t,bedroom b,parking_lot_apt p3 "
 									+" where p1.availability = ? and p2.vehicle_type = ? "
@@ -212,9 +213,9 @@ public class ParkingLot {
 				{
 					tableName="family_apartment";
 					
-					selectQuery = "select spot_no,lot_no,p1.zip_code "
-					+" from (select spot_no,lot_no,Decode(accomodation_id,"+accomodationId+",'true','false') bool "
-							 +" from(select p1.spot_no,p1.lot_no,t.accomodation_id as accomodation_id "
+					selectQuery = "select spot_no,lot_no,zip_code "
+					+" from (select spot_no,lot_no,Decode(accomodation_id,"+accomodationId+",'true','false') bool,zip_code "
+							 +" from(select p1.spot_no,p1.lot_no,t.accomodation_id as accomodation_id,p1.zip_code "
 									+" from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2, "
 									+" family_apartment t,parking_lot_apt p3 "
 									+" where p1.availability = ? and p2.vehicle_type = ? "
@@ -229,9 +230,9 @@ public class ParkingLot {
 				{
 					tableName="residence_hall";
 					
-					selectQuery = "select spot_no,lot_no,p1.zip_code "
-							+" from (select spot_no,lot_no,Decode(accomodation_id,"+accomodationId+",'true','false') bool "
-							 +" from(select p1.spot_no,p1.lot_no,rhpr.accomodation_id as accomodation_id "
+					selectQuery = "select spot_no,lot_no,zip_code "
+							+" from (select spot_no,lot_no,Decode(accomodation_id,"+accomodationId+",'true','false') bool,zip_code "
+							 +" from(select p1.spot_no,p1.lot_no,rhpr.accomodation_id as accomodation_id,p1.zip_code "
 									+" from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2, "
 									+" residence_hall t,residence_hall_provides_room rhpr, parking_lot_residence_hall p3 "
 									+" where p1.availability = ? and p2.vehicle_type = ? "
@@ -249,9 +250,9 @@ public class ParkingLot {
 				{
 					tableName="bedroom";
 					
-					selectQuery = "select spot_no,lot_no,p1.zip_code "
-							+" from (select spot_no,lot_no,Decode(accomodation_id,"+accomodationId+",'true','false') bool "
-							+" from(select p1.spot_no,p1.lot_no,b.accomodation_id as accomodation_id "
+					selectQuery = "select spot_no,lot_no,zip_code "
+							+" from (select spot_no,lot_no,Decode(accomodation_id,"+accomodationId+",'true','false') bool,zip_code "
+							+" from(select p1.spot_no,p1.lot_no,b.accomodation_id as accomodation_id,p1.zip_code "
 									+" from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2, "
 									+" general_apartment t,bedroom b,parking_lot_apt p3 "
 									+" where p1.availability = ? and p2.vehicle_type = ? "
@@ -297,7 +298,11 @@ public class ParkingLot {
 					int spot_no = 0;
 					int zipCode = 0;
 					
-					if(rs.isBeforeFirst())
+					if(!rs.isBeforeFirst())
+					{
+						System.out.println("No data found . Please check the configuration and other related tables");
+					}
+					else
 					{
 						rs.next();
 						lot_no = rs.getInt("lot_no");
@@ -365,6 +370,7 @@ public class ParkingLot {
 							
 							if(isRecordAlreadyPresent)
 							{
+								System.out.println("Record already present");
 								return;
 							}
 							
@@ -417,18 +423,32 @@ public class ParkingLot {
 							
 							//WRITE UPDATE QUERY TO UPDATE PERMIT_ID,AVAILABILITY IN 
 							
-							/*UPDATE parkingSpot_belongs_parkingLot SET PERMIT_ID= NULL, AVAILABILITY = No where lot_no = ? and spot_no = ?
-									and zip_code = ?*/
+
+							String updateQuery = "UPDATE parkingSpot_belongs_parkingLot SET PERMIT_ID = NULL, AVAILABILITY = ?"
+									+ " where lot_no = ? and spot_no = ? and zip_code = ? ";
+
 							
-							String insertQuery = "INSERT INTO personparkingspot_relation values(?,?,?,?,?)";
-							preparedStatement = dbConnection.prepareStatement(insertQuery);
-							preparedStatement.setInt(1,lot_no);
-							preparedStatement.setInt(2,spot_no);
-							preparedStatement.setInt(3,personId);
-							preparedStatement.setString(4,Constants.PENDING_STATUS);
-							preparedStatement.setInt(5,max_request_no+1);
+							preparedStatement = dbConnection.prepareStatement(updateQuery);
+							preparedStatement.setString(1, Constants.NOT_AVAILABLE);
+							preparedStatement.setInt(2,lot_no);
+							preparedStatement.setInt(3,spot_no);
+							preparedStatement.setInt(4,zipCode);
 							
-							int numOfRowsInserted = preparedStatement.executeUpdate();
+							int numOfRowsUpdated = preparedStatement.executeUpdate();
+							int numOfRowsInserted=0;
+							
+							if(numOfRowsUpdated !=0)
+							{
+								String insertQuery = "INSERT INTO personparkingspot_relation values(?,?,?,?,?)";
+								preparedStatement = dbConnection.prepareStatement(insertQuery);
+								preparedStatement.setInt(1,lot_no);
+								preparedStatement.setInt(2,spot_no);
+								preparedStatement.setInt(3,personId);
+								preparedStatement.setString(4,Constants.PENDING_STATUS);
+								preparedStatement.setInt(5,max_request_no+1);
+							
+								numOfRowsInserted = preparedStatement.executeUpdate();
+							}	
 							
 							System.out.println("Marker3");
 							if(numOfRowsInserted == 0)
@@ -863,7 +883,7 @@ public class ParkingLot {
 								
 						preparedStatementAvail = dbConnectionAvail.prepareStatement(updateAvailabilityQuery);
 						
-						preparedStatementAvail.setString(1,"YES");
+						preparedStatementAvail.setString(1,Constants.AVAILABLE);
 						preparedStatementAvail.setInt(2,spotNumber);
 						
 						int rowsUpdatedAvailability = preparedStatementAvail.executeUpdate();
@@ -941,8 +961,8 @@ public class ParkingLot {
 		try{
 			dbConnection = ConnectionUtils.getConnection();
 			
-			String selectQuery = "select s1.student_id,s1.request_status,s1.lot_no,s1.spot_no from studentParkingSpot_Relation s1,Student s2" ;
-			selectQuery = selectQuery + " where s1.student_id = s2.student_id and s2.person_id = ?" ;
+			String selectQuery = "select s2.student_id,s1.request_status,s1.lot_no,s1.spot_no from personParkingSpot_Relation s1,Student s2" ;
+			selectQuery = selectQuery + " where s1.person_id = s2.person_id and s2.person_id = ?" ;
 					
 			preparedStatement = dbConnection.prepareStatement(selectQuery);
 			
@@ -1147,7 +1167,7 @@ public class ParkingLot {
 
 				spotNumber = approveRequestAndFetchSpotNumber(requestNumber, spotNumber);
 				
-				getTheMaxPermitIdFromTable(permitId);
+				permitId = getTheMaxPermitIdFromTable();
 				
 				/*Write SQL Query to update permit_id in parkingSpot_belongs_parkingLot and person_accomodation_lease*/
 				
@@ -1202,8 +1222,9 @@ public class ParkingLot {
 	 * @return The maximum permit Id fetched from the table and this wil be used to get the next permit id to be alloted
 	 * @throws SQLException
 	 */
-	private int getTheMaxPermitIdFromTable(int permitId) throws SQLException {
+	private int getTheMaxPermitIdFromTable() throws SQLException {
 		
+		int permitId=0;
 		PreparedStatement ps2 = null;
 		Connection conn2 = ConnectionUtils.getConnection();
 		String query2 = "SELECT MAX(permit_id) AS MAX_PERMIT_ID FROM person_accomodation_lease";
@@ -1240,7 +1261,10 @@ public class ParkingLot {
 		String query11 = "SELECT spot_no FROM PersonParkingSpot_Relation WHERE request_no = ?";
 		ps11 = conn11.prepareStatement(query11);
 		ps11.setInt(1, requestNumber);
-		ps11.executeUpdate();
+		ResultSet rs=ps11.executeQuery();
+		
+		rs.next();
+		spotNumber = rs.getInt("spot_no");
 		
 		return spotNumber;
 	}
