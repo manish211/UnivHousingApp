@@ -194,7 +194,7 @@ public class ParkingLot {
 				{
 					tableName="general_apartment";
 					
-					selectQuery = "select spot_no,lot_no "
+					selectQuery = "select spot_no,lot_no,p1.zip_code "
 					+" from (select spot_no,lot_no,Decode(accomodation_id,"+accomodationId+",'true','false') bool "
 							 +" from(select p1.spot_no,p1.lot_no,b.accomodation_id as accomodation_id "
 									+" from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2, "
@@ -212,7 +212,7 @@ public class ParkingLot {
 				{
 					tableName="family_apartment";
 					
-					selectQuery = "select spot_no,lot_no "
+					selectQuery = "select spot_no,lot_no,p1.zip_code "
 					+" from (select spot_no,lot_no,Decode(accomodation_id,"+accomodationId+",'true','false') bool "
 							 +" from(select p1.spot_no,p1.lot_no,t.accomodation_id as accomodation_id "
 									+" from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2, "
@@ -229,7 +229,7 @@ public class ParkingLot {
 				{
 					tableName="residence_hall";
 					
-					selectQuery = "select spot_no,lot_no "
+					selectQuery = "select spot_no,lot_no,p1.zip_code "
 							+" from (select spot_no,lot_no,Decode(accomodation_id,"+accomodationId+",'true','false') bool "
 							 +" from(select p1.spot_no,p1.lot_no,rhpr.accomodation_id as accomodation_id "
 									+" from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2, "
@@ -249,7 +249,7 @@ public class ParkingLot {
 				{
 					tableName="bedroom";
 					
-					selectQuery = "select spot_no,lot_no "
+					selectQuery = "select spot_no,lot_no,p1.zip_code "
 							+" from (select spot_no,lot_no,Decode(accomodation_id,"+accomodationId+",'true','false') bool "
 							+" from(select p1.spot_no,p1.lot_no,b.accomodation_id as accomodation_id "
 									+" from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2, "
@@ -295,12 +295,14 @@ public class ParkingLot {
 					boolean isRecordAlreadyPresent = false;
 					int lot_no = 0;
 					int spot_no = 0;
+					int zipCode = 0;
 					
 					if(rs.isBeforeFirst())
 					{
 						rs.next();
 						lot_no = rs.getInt("lot_no");
 						spot_no = rs.getInt("spot_no");
+						zipCode = rs.getInt("zip_code");
 						
 						//----------------------------------
 						ResultSet rs1 = null;
@@ -413,6 +415,10 @@ public class ParkingLot {
 								
 						//-------------------------------------
 							
+							//WRITE UPDATE QUERY TO UPDATE PERMIT_ID,AVAILABILITY IN 
+							
+							UPDATE parkingSpot_belongs_parkingLot SET PERMIT_ID= NULL, AVAILABILITY = No where lot_no = ? and spot_no = ?
+									and zip_code = ?
 							
 							String insertQuery = "INSERT INTO personparkingspot_relation values(?,?,?,?,?)";
 							preparedStatement = dbConnection.prepareStatement(insertQuery);
@@ -516,7 +522,7 @@ public class ParkingLot {
 					
 			preparedStatement = dbConnection.prepareStatement(selectQuery);
 			
-			preparedStatement.setString(1,"YES");
+			preparedStatement.setString(1,Constants.AVAILABLE);
 			
 			rs = preparedStatement.executeQuery();
 
