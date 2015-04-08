@@ -52,33 +52,32 @@ public class Lease {
 
 			System.out.println(String.format(
 					"%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s",
-					"NAME", "LEASE NO", "Duration", "Student Type", "Housing Type",
-					"Move in Date", "Place No", "Room No", "Street Name",
-					"City", "Postcode"));
+					"NAME", "LEASE NO", "Duration", "Student Type",
+					"Housing Type", "Move in Date", "Place No", "Room No",
+					"Street Name", "City", "Postcode"));
 
 			System.out
 					.println("------------------------------------------------------------------------------------------------"
 							+ "-------------------------------------------------------");
-			String accomodationType = ""; 
+			String accomodationType = "";
 			int accomodationId = 0;
 			if (rs.isBeforeFirst()) {
 
 				rs.next();
 				accomodationType = rs.getString("accomodation_type");
 				accomodationId = rs.getInt("accomodation_id");
-				System.out.print(String.format("%-15s",
-						rs.getString("first_name")));
-				System.out.print(String.format("%-15s",
-						rs.getString("lease_no")));
-				System.out.print(String.format("%-15s",
-						rs.getString("duration")));
-				System.out.print(String.format("%-15s",
-						rs.getString("student_type")));
-				System.out.print(String.format("%-15s",
-						accomodationType));
-				
-				System.out.print(String.format("%-15s",
-						rs.getDate("Lease_Move_In_Date")));
+				System.out.print(String.format("%-15s", rs
+						.getString("first_name")));
+				System.out.print(String.format("%-15s", rs
+						.getString("lease_no")));
+				System.out.print(String.format("%-15s", rs
+						.getString("duration")));
+				System.out.print(String.format("%-15s", rs
+						.getString("student_type")));
+				System.out.print(String.format("%-15s", accomodationType));
+
+				System.out.print(String.format("%-15s", rs
+						.getDate("Lease_Move_In_Date")));
 
 			}
 
@@ -89,8 +88,6 @@ public class Lease {
 			 * Strings. This way get into one of the three If loops and print
 			 * the relevant pa=lace# room # information about them.
 			 */
-
-			
 
 			rs.close();
 			preparedStatement.close();
@@ -115,10 +112,12 @@ public class Lease {
 					rs.next();
 
 					System.out.println(String.format(
-							"%-15s%-10s%-20s%-15s%-15s",
-							rs.getInt("bedroom_place_no"),
-							rs.getInt("room_no"), rs.getString("street_name"),
-							rs.getString("city_name"), rs.getInt("zip_code")));
+							"%-15s%-10s%-20s%-15s%-15s", rs
+									.getInt("bedroom_place_no"), rs
+									.getInt("room_no"), rs
+									.getString("street_name"), rs
+									.getString("city_name"), rs
+									.getInt("zip_code")));
 
 				}
 
@@ -143,8 +142,9 @@ public class Lease {
 					rs.next();
 					System.out.println(String.format(
 							"%-15s%-15s%-15s%-15s%-15s", rs.getInt("apt_no"),
-							"-NA-", rs.getString("street_name"),
-							rs.getString("city_name"), rs.getInt("zip_code")));
+							"-NA-", rs.getString("street_name"), rs
+									.getString("city_name"), rs
+									.getInt("zip_code")));
 
 				}
 
@@ -166,10 +166,12 @@ public class Lease {
 					rs.next();
 
 					System.out.println(String.format(
-							"%-15s%-15s%-15s%-15s%-15s",
-							rs.getInt("residence_place_no"),
-							rs.getInt("room_no"), rs.getString("street_name"),
-							rs.getString("city_name"), rs.getInt("zip_code")));
+							"%-15s%-15s%-15s%-15s%-15s", rs
+									.getInt("residence_place_no"), rs
+									.getInt("room_no"), rs
+									.getString("street_name"), rs
+									.getString("city_name"), rs
+									.getInt("zip_code")));
 
 				}
 
@@ -246,7 +248,12 @@ public class Lease {
 			if (choice == 0)
 				return;
 			else {
-				displayLeaseDetails(personId, leaseNumbers.get(choice - 1));
+				if (leaseNumbers.size() > 0)
+					displayLeaseDetails(personId, leaseNumbers.get(choice - 1));
+				else {
+					System.out.println("No former leases");
+					return;
+				}
 			}
 
 		} catch (SQLException e1) {
@@ -282,7 +289,7 @@ public class Lease {
 		PreparedStatement preparedStatement = null;
 		String accomodationType = "";
 		int accomodationId = -1;
-		
+
 		try {
 			dbConnection = ConnectionUtils.getConnection();
 
@@ -302,9 +309,9 @@ public class Lease {
 
 			System.out.println(String.format(
 					"%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s",
-					"NAME", "LEASE NO", "Duration", "Student Type","Housing Type",
-					"Move in Date", "Place No", "Room No", "Street Name",
-					"City", "Postcode"));
+					"NAME", "LEASE NO", "Duration", "Student Type",
+					"Housing Type", "Move in Date", "Place No", "Room No",
+					"Street Name", "City", "Postcode"));
 
 			System.out
 					.println("------------------------------------------------------------------------------------------------"
@@ -315,20 +322,17 @@ public class Lease {
 				rs.next();
 				accomodationType = rs.getString("accomodation_type");
 				accomodationId = rs.getInt("accomodation_id");
-				System.out.print(String.format("%-15s",
-						rs.getString("first_name")));
-				System.out.print(String.format("%-15s",
-						rs.getString("lease_no")));
-				System.out.print(String.format("%-15s",
-						rs.getString("duration")));
-				System.out.print(String.format("%-15s",
-						rs.getString("student_type")));
-				System.out.print(String.format("%-15s",
-						accomodationType));
-				System.out.print(String.format("%-15s",
-						rs.getDate("Lease_Move_In_Date")));
-				
-				
+				System.out.print(String.format("%-15s", rs
+						.getString("first_name")));
+				System.out.print(String.format("%-15s", rs
+						.getString("lease_no")));
+				System.out.print(String.format("%-15s", rs
+						.getString("duration")));
+				System.out.print(String.format("%-15s", rs
+						.getString("student_type")));
+				System.out.print(String.format("%-15s", accomodationType));
+				System.out.print(String.format("%-15s", rs
+						.getDate("Lease_Move_In_Date")));
 
 			}
 
@@ -338,8 +342,6 @@ public class Lease {
 			 * Strings. This way get into one of the three If loops and print
 			 * the relevant pa=lace# room # information about them.
 			 */
-			
-			
 
 			/*
 			 * Closing RS and Preparedstatement -- because --> I want to reuse
@@ -369,10 +371,12 @@ public class Lease {
 					rs.next();
 
 					System.out.println(String.format(
-							"%-15s%-10s%-20s%-15s%-15s",
-							rs.getInt("bedroom_place_no"),
-							rs.getInt("room_no"), rs.getString("street_name"),
-							rs.getString("city_name"), rs.getInt("zip_code")));
+							"%-15s%-10s%-20s%-15s%-15s", rs
+									.getInt("bedroom_place_no"), rs
+									.getInt("room_no"), rs
+									.getString("street_name"), rs
+									.getString("city_name"), rs
+									.getInt("zip_code")));
 
 				}
 
@@ -397,8 +401,9 @@ public class Lease {
 					rs.next();
 					System.out.println(String.format(
 							"%-15s%-15s%-15s%-15s%-15s", rs.getInt("apt_no"),
-							"-NA-", rs.getString("street_name"),
-							rs.getString("city_name"), rs.getInt("zip_code")));
+							"-NA-", rs.getString("street_name"), rs
+									.getString("city_name"), rs
+									.getInt("zip_code")));
 
 				}
 
@@ -420,10 +425,12 @@ public class Lease {
 					rs.next();
 
 					System.out.println(String.format(
-							"%-15s%-15s%-15s%-15s%-15s",
-							rs.getInt("residence_place_no"),
-							rs.getInt("room_no"), rs.getString("street_name"),
-							rs.getString("city_name"), rs.getInt("zip_code")));
+							"%-15s%-15s%-15s%-15s%-15s", rs
+									.getInt("residence_place_no"), rs
+									.getInt("room_no"), rs
+									.getString("street_name"), rs
+									.getString("city_name"), rs
+									.getInt("zip_code")));
 
 				}
 
@@ -493,8 +500,8 @@ public class Lease {
 
 			while (viewRequestsSet.next()) {
 				System.out.print(String.format("%-15s%-20s%-15s",
-						"Termination",
-						viewRequestsSet.getInt("termination_request_number"),
+						"Termination", viewRequestsSet
+								.getInt("termination_request_number"),
 						viewRequestsSet.getString("status")));
 				System.out.println("");
 
@@ -543,8 +550,8 @@ public class Lease {
 	 * @throws SQLException
 	 * @action Deletes the requestNumber for the personID
 	 */
-	public boolean cancelRequest(int personId, int requestNumber)
-			throws SQLException {
+	public boolean cancelRequest(int personId, int requestNumber,
+			String requestType) throws SQLException {
 
 		// viewAllRequests(personId);
 
@@ -556,71 +563,77 @@ public class Lease {
 		 * Write SQL Query to delete the requestNumber mentioned by the PersonId
 		 * and set the status as "Cancelled"
 		 */
-
 		try {
-			dbConnection = ConnectionUtils.getConnection();
-
-			/*
-			 * First check if the entry is in the termination table.
-			 */
-			String selectQuery = "SELECT * "
-					+ "FROM Termination_Requests T "
-					+ "WHERE T.person_id = ? AND T.termination_request_number = ?";
-
-			preparedStatement = dbConnection.prepareStatement(selectQuery);
-			preparedStatement.setInt(1, personId);
-			preparedStatement.setInt(2, requestNumber);
-
-			rs = preparedStatement.executeQuery();
-
-			/*
-			 * Check if the entry is in the Termination_requests table or the
-			 * StudentParkingSpot_Relation table.
-			 */
-			if (rs.next()) {
-				String updateQuery = "UPDATE Termination_Requests "
-						+ "SET status = ? "
-						+ "WHERE person_id = ? AND termination_request_number = ?";
-
-				// System.out.println(rs.getInt("termination_request_number"));
-				rs.close();
-				preparedStatement.close();
-
-				preparedStatement = dbConnection.prepareStatement(updateQuery);
-				preparedStatement.setString(1, Constants.STATUS_CANCELED);
-				preparedStatement.setInt(2, personId);
-				preparedStatement.setInt(3, requestNumber);
-
-				int update = preparedStatement.executeUpdate();
-				// System.out.println("Update returned " + update);
-				
-				System.out.println("The request # "+requestNumber+" is cancelled!" );
-
-				isCancelSuccessful = true;
-
-			} else {
+			if (requestType.equalsIgnoreCase(Constants.T)) {
+				dbConnection = ConnectionUtils.getConnection();
 
 				/*
-				 * Since the entry is not in the termination table, it must be
-				 * in the PERSON_ACC_STAFF table
+				 * First check if the entry is in the termination table.
 				 */
-				preparedStatement.close();
-				rs.close();
+				String selectQuery = "SELECT * "
+						+ "FROM Termination_Requests T "
+						+ "WHERE T.person_id = ? AND T.termination_request_number = ?";
 
-				String selectQuery1 = "SELECT * "
-						+ "FROM PERSON_ACC_STAFF P "
-						+ "WHERE P.person_id = ? AND p.application_request_no = ?";
-
-				preparedStatement = dbConnection.prepareStatement(selectQuery1);
+				preparedStatement = dbConnection.prepareStatement(selectQuery);
 				preparedStatement.setInt(1, personId);
 				preparedStatement.setInt(2, requestNumber);
 
 				rs = preparedStatement.executeQuery();
 
+				/*
+				 * Check if the entry is in the Termination_requests table or
+				 * the StudentParkingSpot_Relation table.
+				 */
+				if (rs.next()) {
+					String updateQuery = "UPDATE Termination_Requests "
+							+ "SET status = ? "
+							+ "WHERE person_id = ? AND termination_request_number = ?";
+
+					// System.out.println(rs.getInt("termination_request_number"));
+					rs.close();
+					preparedStatement.close();
+
+					preparedStatement = dbConnection
+							.prepareStatement(updateQuery);
+					preparedStatement.setString(1, Constants.STATUS_CANCELED);
+					preparedStatement.setInt(2, personId);
+					preparedStatement.setInt(3, requestNumber);
+
+					int update = preparedStatement.executeUpdate();
+					// System.out.println("Update returned " + update);
+
+					System.out.println("The request # " + requestNumber
+							+ " is cancelled!");
+
+					isCancelSuccessful = true;
+					preparedStatement.close();
+					rs.close();
+
+				}
+			} else if (requestType.equalsIgnoreCase(Constants.L)) {
+
+				/*
+				 * Since the entry is not in the termination table, it must be
+				 * in the PERSON_ACC_STAFF table
+				 */
+				ResultSet rs1 = null;
+				Connection dbConnection1 = ConnectionUtils.getConnection();
+				PreparedStatement preparedStatement1 = null;
+
+				String selectQuery1 = "SELECT * "
+						+ "FROM PERSON_ACC_STAFF P "
+						+ "WHERE P.person_id = ? AND p.application_request_no = ?";
+
+				preparedStatement1 = dbConnection1.prepareStatement(selectQuery1);
+				preparedStatement1.setInt(1, personId);
+				preparedStatement1.setInt(2, requestNumber);
+
+				rs1 = preparedStatement1.executeQuery();
+
 				// System.out.println("Executed with values: " + personId +
 				// " and " + requestNumber);
 
-				if (rs.next()) {
+				if (rs1.next()) {
 
 					/*
 					 * 
@@ -632,9 +645,8 @@ public class Lease {
 					 */
 					// System.out.println("Executed with values: " + personId +
 					// " and " + requestNumber);
-					preparedStatement.close();
-					rs.close();
-
+					// preparedStatement.close();
+					// rs.close();
 					/*
 					 * Update the status with CANCELED
 					 */
@@ -642,16 +654,16 @@ public class Lease {
 							+ "SET request_status = ? "
 							+ "WHERE person_id = ? AND application_request_no = ?";
 
-					preparedStatement.close();
-					preparedStatement = dbConnection
+					preparedStatement1.close();
+					preparedStatement1 = dbConnection1
 							.prepareStatement(updateQuery1);
-					preparedStatement.setString(1, Constants.STATUS_CANCELED);
-					preparedStatement.setInt(2, personId);
-					preparedStatement.setInt(3, requestNumber);
-					int update = preparedStatement.executeUpdate();
+					preparedStatement1.setString(1, Constants.STATUS_CANCELED);
+					preparedStatement1.setInt(2, personId);
+					preparedStatement1.setInt(3, requestNumber);
+					int update = preparedStatement1.executeUpdate();
 					isCancelSuccessful = true;
 				} else {
-
+						isCancelSuccessful = false;
 					/*
 					 * The value is not present in the parking table either
 					 * Print an error message saying that the user needs to
@@ -660,7 +672,7 @@ public class Lease {
 					System.out.println("Please enter a valid request number");
 				}
 			}
-
+			return isCancelSuccessful;
 		} catch (SQLException e1) {
 			System.out.println("SQLException: " + e1.getMessage());
 			System.out.println("Vendor Error: " + e1.getErrorCode());
@@ -668,16 +680,7 @@ public class Lease {
 			System.out.println("Geneal Error. Please see stack trace: ");
 			e.printStackTrace();
 		} finally {
-			try {
-				rs.close();
-				preparedStatement.close();
-				dbConnection.close();
-				return isCancelSuccessful;
-
-			} catch (SQLException e) {
-				e.printStackTrace();
-				return isCancelSuccessful;
-			}
+			return isCancelSuccessful;
 		}
 
 	}
@@ -771,5 +774,10 @@ public class Lease {
 			dbConnection.close();
 			preparedStatement.close();
 		}
+	}
+
+	public void cancelLeaseRequest(int personId) {
+		// TODO Auto-generated method stub
+
 	}
 }
