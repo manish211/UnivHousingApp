@@ -125,7 +125,7 @@ public class Student {
 		try {
 			dbConnection = ConnectionUtils.getConnection();
 
-			String selectQuery = "SELECT MAX(application_request_no) AS max_app_req_no FROM PERSON_ACC_STAFF WHERE person_id = ?";
+			String selectQuery = "SELECT count(*) AS total_count FROM PERSON_ACCOMODATION_LEASE WHERE person_id = ?";
 
 			preparedStatement = dbConnection.prepareStatement(selectQuery);
 
@@ -135,43 +135,10 @@ public class Student {
 			int reqNumber = 0;
 			if (rs.isBeforeFirst()) {
 				rs.next();
-				reqNumber = rs.getInt("max_app_req_no");
+				reqNumber = rs.getInt("total_count");
+				isStudentHavingAccomodation = true;
 			}
-
-			if (reqNumber != 0) {
-				PreparedStatement ps1 = null;
-				Connection conn1 = ConnectionUtils.getConnection();
-				String query = "SELECT request_status from person_acc_staff where application_request_no = ?";
-
-				ps1 = conn1.prepareStatement(query);
-				ps1.setInt(1, reqNumber);
-				ResultSet rs1 = ps1.executeQuery();
-				// If record exists , rs.next() will evaluate to true
-				if (rs1.isBeforeFirst()) 
-				{
-					System.out.println("After execute!! MARKER1");
-					rs1.next();
-					System.out.print(rs1.getString("request_status") + "\t\t");
-					requestStatus = rs1.getString("request_status");
-
-					System.out.println("requestStatus=" + requestStatus);
-
-					if (requestStatus.equalsIgnoreCase(Constants.PROCESSED_STATUS)) 
-					{
-						isStudentHavingAccomodation = true;
-						// System.out.println("IT IS TRUE: "+personId);
-					}
-					else 
-					{
-						isStudentHavingAccomodation = false;
-					}
-				} 
-				else 
-				{
-					isStudentHavingAccomodation = false;
-				}
-
-			}
+			
 
 		} catch (SQLException e1) {
 			e1.printStackTrace();
