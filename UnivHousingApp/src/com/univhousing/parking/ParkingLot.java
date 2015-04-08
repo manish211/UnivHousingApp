@@ -128,13 +128,14 @@ public class ParkingLot {
 //				Get the accomodation type 
 				
 				String accomodation_type="";
+				int accomodationId=0;
 				String tableName="";
 				
 				try{
 					dbConnection = ConnectionUtils.getConnection();
 					
-					String selectQuery = "select accomodation_type " ;
-					selectQuery = selectQuery + " from (select accomodation_type from person_accomodation_lease " ;
+					String selectQuery = "select accomodation_type,accomodation_id " ;
+					selectQuery = selectQuery + " from (select accomodation_type,accomodation_id from person_accomodation_lease " ;
 					selectQuery = selectQuery + " where person_id = ?  order by lease_move_in_date desc) where rownum <2" ;
 					
 					preparedStatement = dbConnection.prepareStatement(selectQuery);
@@ -154,6 +155,7 @@ public class ParkingLot {
 					{
 						rs.next();
 						accomodation_type = rs.getString("accomodation_type");
+						accomodationId = rs.getInt("accomodation_id");
 					}	
 					
 				}catch(SQLException e1){
@@ -193,7 +195,7 @@ public class ParkingLot {
 					tableName="general_apartment";
 					
 					selectQuery = "select spot_no,lot_no "
-					+" from (select spot_no,lot_no,Decode(accomodation_id,2008,'true','false') bool "
+					+" from (select spot_no,lot_no,Decode(accomodation_id,"+accomodationId+",'true','false') bool "
 							 +" from(select p1.spot_no,p1.lot_no,b.accomodation_id as accomodation_id "
 									+" from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2, "
 									+" general_apartment t,bedroom b,parking_lot_apt p3 "
@@ -211,7 +213,7 @@ public class ParkingLot {
 					tableName="family_apartment";
 					
 					selectQuery = "select spot_no,lot_no "
-					+" from (select spot_no,lot_no,Decode(accomodation_id,2022,'true','false') bool "
+					+" from (select spot_no,lot_no,Decode(accomodation_id,"+accomodationId+",'true','false') bool "
 							 +" from(select p1.spot_no,p1.lot_no,t.accomodation_id as accomodation_id "
 									+" from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2, "
 									+" family_apartment t,parking_lot_apt p3 "
@@ -228,7 +230,7 @@ public class ParkingLot {
 					tableName="residence_hall";
 					
 					selectQuery = "select spot_no,lot_no "
-							+" from (select spot_no,lot_no,Decode(accomodation_id,2002,'true','false') bool "
+							+" from (select spot_no,lot_no,Decode(accomodation_id,"+accomodationId+",'true','false') bool "
 							 +" from(select p1.spot_no,p1.lot_no,rhpr.accomodation_id as accomodation_id "
 									+" from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2, "
 									+" residence_hall t,residence_hall_provides_room rhpr, parking_lot_residence_hall p3 "
@@ -246,7 +248,7 @@ public class ParkingLot {
 					tableName="bedroom";
 					
 					selectQuery = "select spot_no,lot_no "
-							+" from (select spot_no,lot_no,Decode(accomodation_id,2008,'true','false') bool "
+							+" from (select spot_no,lot_no,Decode(accomodation_id,"+accomodationId+",'true','false') bool "
 							+" from(select p1.spot_no,p1.lot_no,b.accomodation_id as accomodation_id "
 									+" from parkingSpot_belongs_parkingLot p1, parking_spot_has_class p2, "
 									+" general_apartment t,bedroom b,parking_lot_apt p3 "
