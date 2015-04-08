@@ -454,7 +454,7 @@ public class ParkingLot {
 							if(numOfRowsInserted == 0)
 							{
 								System.out.println("\n\n ==================================================================================================================\n");
-								System.out.println("\n Insert Failed For Some Reason. Please Contact Administrator");
+								System.out.println("\n Insert Failed For Some Reason. ");
 								System.out.println("==================================================================================================================\n");
 							}
 							else
@@ -648,7 +648,7 @@ public class ParkingLot {
 			//If record exists , rs.next() will evaluate to true
 			if(!rs.isBeforeFirst())
 			{
-				System.out.println("No Parking Lot Information Found. Contact Administrator");
+				System.out.println("No Parking Lot Information Found.");
 			}
 			else
 			{
