@@ -53,6 +53,7 @@ public class EntryPoint {
 
 	public static void main(String[] args) {
 		Student studentObj = null; 
+		boolean isInputNotValid = true ;
 		
 		//Credentials credentialObj = null;
 		Person personObj = null;
@@ -82,12 +83,24 @@ public class EntryPoint {
 					System.out.println("\n1. Login");
 					System.out.println("2. Guest Login");
 					System.out.println("3. Exit\n");
+					
+					while(!inputObj.hasNextInt())
+					{
+						System.out.println("Please enter a valid input:");
+						inputObj.next();
+					}
+					
 					choice = inputObj.nextInt();
 
 					switch (choice) 
 					{
 						case 1:
 							System.out.print("\nEnter University Id++:");
+							while(!inputObj.hasNextInt())
+							{
+								System.out.println("Please enter a valid input:");
+								inputObj.next();
+							}
 							loginId = inputObj.nextInt();
 							
 							System.out.print("\nEnter Password:");
@@ -115,7 +128,14 @@ public class EntryPoint {
 										System.out.println("4. Profile");
 										System.out.println("5. Back\n");
 										
+										while(!inputObj.hasNextInt())
+										{
+											System.out.println("Please enter a valid input:");
+											inputObj.next();
+										}
+										
 										choice = inputObj.nextInt();
+										
 										switch (choice) 
 										{
 											case 1:
@@ -130,7 +150,16 @@ public class EntryPoint {
 													System.out.println("4. View/Cancel Requests");
 													System.out.println("5. View Vacancy");
 													System.out.println("6. Back\n");
+													
+													while(!inputObj.hasNextInt())
+													{
+														System.out.println("Please enter a valid input:");
+														inputObj.next();
+													}
+													
 													choice = inputObj.nextInt();
+													
+													
 													InvoicePersonLease_Relation invoicePersonObj = new InvoicePersonLease_Relation();
 													switch(choice)
 													{
@@ -143,6 +172,13 @@ public class EntryPoint {
 																System.out.println("2. View Former Invoices");
 																System.out.println("3. Pay All Invoices");
 																System.out.println("4. Back\n");
+																
+																while(!inputObj.hasNextInt())
+																{
+																	System.out.println("Please enter a valid input:");
+																	inputObj.next();
+																}
+																
 																choice = inputObj.nextInt();
 																
 																switch(choice)
@@ -173,6 +209,12 @@ public class EntryPoint {
 																System.out.println("\n1. View Current Lease");
 																System.out.println("2. View Former Leases");
 																System.out.println("3. Back\n");
+																while(!inputObj.hasNextInt())
+																{
+																	System.out.println("Please enter a valid input:");
+																	inputObj.next();
+																}
+																
 																choice = inputObj.nextInt();
 																Lease leaseObj = new Lease();
 																switch(choice)
@@ -204,6 +246,12 @@ public class EntryPoint {
 
 																LeaseRequest_Relation leaseRequestObj = new LeaseRequest_Relation();
 																TerminationRequest_Relation terminationRequestObj = new TerminationRequest_Relation();
+																while(!inputObj.hasNextInt())
+																{
+																	System.out.println("Please enter a valid input:");
+																	inputObj.next();
+																}
+																
 																choice = inputObj.nextInt();
 
 																switch(choice)
@@ -229,6 +277,12 @@ public class EntryPoint {
 																System.out.println("\n1. View Request");	
 																System.out.println("2. Cancel Request");
 																System.out.println("3. Back\n");
+																while(!inputObj.hasNextInt())
+																{
+																	System.out.println("Please enter a valid input:");
+																	inputObj.next();
+																}
+																
 																choice = inputObj.nextInt();
 																Lease leaseObj = new Lease();
 																
@@ -249,6 +303,12 @@ public class EntryPoint {
 																		{
 																			System.out.println("Enter the Request Number to cancel or press 0 for previous menu: \n");
 																			System.out.println("0. Back\n");
+																			while(!inputObj.hasNextInt())
+																			{
+																				System.out.println("Please enter a valid input:");
+																				inputObj.next();
+																			}
+																			
 																			requestNumber = inputObj.nextInt();
 																			if(requestNumber == 0)
 																				break;
@@ -291,7 +351,14 @@ public class EntryPoint {
 													System.out.println("6. View Request Status");
 													System.out.println("7. Back\n");
 													
+													while(!inputObj.hasNextInt())
+													{
+														System.out.println("Please enter a valid input:");
+														inputObj.next();
+													}
+													
 													choice = inputObj.nextInt();
+													
 													switch (choice) 
 													{
 														case 1:System.out.println("Showing new Parking spot\n");
@@ -337,6 +404,12 @@ public class EntryPoint {
 													System.out.println("\n1. New Ticket");
 													System.out.println("2. View Ticket Status");
 													System.out.println("3. Back\n");
+													while(!inputObj.hasNextInt())
+													{
+														System.out.println("Please enter a valid input:");
+														inputObj.next();
+													}
+													
 													choice = inputObj.nextInt();
 													
 													switch (choice) 
@@ -371,6 +444,12 @@ public class EntryPoint {
 													System.out.println("\n1. View Profile");
 													System.out.println("2. Update Profile");
 													System.out.println("3. Back\n");
+													while(!inputObj.hasNextInt())
+													{
+														System.out.println("Please enter a valid input:");
+														inputObj.next();
+													}
+													
 													choice = inputObj.nextInt();
 													
 													switch (choice) 
@@ -423,6 +502,12 @@ public class EntryPoint {
 										System.out.println("8. Approve Requests by Best Match EXTRA CREDIT");
 										System.out.println("9. Back\n");
 										
+										while(!inputObj.hasNextInt())
+										{
+											System.out.println("Please enter a valid input:");
+											inputObj.next();
+										}
+										
 										choice = inputObj.nextInt();
 										
 										switch (choice) 
@@ -449,6 +534,12 @@ public class EntryPoint {
 											case 5:
 												System.out
 														.println("Enter student ID of the student: ");
+												while(!inputObj.hasNextInt())
+												{
+													System.out.println("Please enter a valid input:");
+													inputObj.next();
+												}
+												
 												studentId = inputObj.nextInt();
 												inputObj.nextLine();
 												personId = studentObj.getPersonIdForStudentId(studentId);
@@ -460,6 +551,12 @@ public class EntryPoint {
 													System.out.println("\n1. View Profile");
 													System.out.println("2. Update Profile");
 													System.out.println("3. Back\n");
+													while(!inputObj.hasNextInt())
+													{
+														System.out.println("Please enter a valid input:");
+														inputObj.next();
+													}
+													
 													choice = inputObj.nextInt();
 													
 													switch (choice) 
@@ -529,6 +626,12 @@ public class EntryPoint {
 
 							// Do something
 							System.out.println("Enter Approval Id or Press 2 to go Back:");
+							while(!inputObj.hasNextInt())
+							{
+								System.out.println("Please enter a valid input:");
+								inputObj.next();
+							}
+							
 							int approvalId = inputObj.nextInt();
 							if(approvalId != 2)
 /*								//return;
@@ -549,6 +652,12 @@ public class EntryPoint {
 									System.out.println("4. Profile");
 									System.out.println("5. Back\n");
 									
+									while(!inputObj.hasNextInt())
+									{
+										System.out.println("Please enter a valid input:");
+										inputObj.next();
+									}
+									
 									choice = inputObj.nextInt();
 									switch (choice) 
 									{
@@ -564,6 +673,12 @@ public class EntryPoint {
 												System.out.println("4. View/Cancel Requests");
 												System.out.println("5. View Vacancy");
 												System.out.println("6. Back\n");
+												while(!inputObj.hasNextInt())
+												{
+													System.out.println("Please enter a valid input:");
+													inputObj.next();
+												}
+												
 												choice = inputObj.nextInt();
 												InvoicePersonLease_Relation invoicePersonObj = new InvoicePersonLease_Relation();
 												switch(choice)
@@ -576,6 +691,12 @@ public class EntryPoint {
 															System.out.println("\n1. View Current Invoice");
 															System.out.println("2. View Former Invoices");
 															System.out.println("3. Back\n");
+															while(!inputObj.hasNextInt())
+															{
+																System.out.println("Please enter a valid input:");
+																inputObj.next();
+															}
+															
 															choice = inputObj.nextInt();
 															
 															switch(choice)
@@ -600,6 +721,12 @@ public class EntryPoint {
 																			count = 0;
 																			System.out.println("0. Back");
 																			System.out.println("\n");
+																			while(!inputObj.hasNextInt())
+																			{
+																				System.out.println("Please enter a valid input:");
+																				inputObj.next();
+																			}
+																			
 																			choice = inputObj.nextInt();
 																			if(choice == 0)
 																			{
@@ -638,6 +765,12 @@ public class EntryPoint {
 															System.out.println("\n1. View Current Lease");
 															System.out.println("2. View Former Leases");
 															System.out.println("3. Back\n");
+															while(!inputObj.hasNextInt())
+															{
+																System.out.println("Please enter a valid input:");
+																inputObj.next();
+															}
+															
 															choice = inputObj.nextInt();
 															Lease leaseObj = new Lease();
 															switch(choice)
@@ -669,6 +802,12 @@ public class EntryPoint {
 
 															LeaseRequest_Relation leaseRequestObj = new LeaseRequest_Relation();
 															TerminationRequest_Relation terminationRequestObj = new TerminationRequest_Relation();
+															while(!inputObj.hasNextInt())
+															{
+																System.out.println("Please enter a valid input:");
+																inputObj.next();
+															}
+															
 															choice = inputObj.nextInt();
 
 															switch(choice)
@@ -694,6 +833,12 @@ public class EntryPoint {
 															System.out.println("\n1. View Request");	
 															System.out.println("2. Cancel Request");
 															System.out.println("3. Back\n");
+															while(!inputObj.hasNextInt())
+															{
+																System.out.println("Please enter a valid input:");
+																inputObj.next();
+															}
+															
 															choice = inputObj.nextInt();
 															Lease leaseObj = new Lease();
 															
@@ -704,6 +849,12 @@ public class EntryPoint {
 																	break;
 																case 2:
 																	System.out.println("Enter the Request Number to cancel: \n");
+																	while(!inputObj.hasNextInt())
+																	{
+																		System.out.println("Please enter a valid input:");
+																		inputObj.next();
+																	}
+																	
 																	int requestNumber = inputObj.nextInt();
 																	leaseObj.cancelRequest(personId, requestNumber,whichRequestToCancel);
 																	break;
@@ -742,6 +893,12 @@ public class EntryPoint {
 												System.out.println("5. Return Parking Spot");
 												System.out.println("6. View Request Status");
 												System.out.println("7. Back\n");
+												
+												while(!inputObj.hasNextInt())
+												{
+													System.out.println("Please enter a valid input:");
+													inputObj.next();
+												}
 												
 												choice = inputObj.nextInt();
 												switch (choice) 
@@ -789,6 +946,12 @@ public class EntryPoint {
 												System.out.println("\n1. New Ticket");
 												System.out.println("2. View Ticket Status");
 												System.out.println("3. Back\n");
+												while(!inputObj.hasNextInt())
+												{
+													System.out.println("Please enter a valid input:");
+													inputObj.next();
+												}
+												
 												choice = inputObj.nextInt();
 												
 												switch (choice) 
@@ -823,6 +986,12 @@ public class EntryPoint {
 												System.out.println("\n1. View Profile");
 												System.out.println("2. Update Profile");
 												System.out.println("3. Back\n");
+												while(!inputObj.hasNextInt())
+												{
+													System.out.println("Please enter a valid input:");
+													inputObj.next();
+												}
+												
 												choice = inputObj.nextInt();
 												
 												switch (choice) 
