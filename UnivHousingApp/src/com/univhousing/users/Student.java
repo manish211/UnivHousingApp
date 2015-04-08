@@ -132,10 +132,12 @@ public class Student {
 			preparedStatement.setInt(1, personId);
 
 			rs = preparedStatement.executeQuery();
-			int reqNumber = 0;
+			int totalCount = 0;
 			if (rs.isBeforeFirst()) {
 				rs.next();
-				reqNumber = rs.getInt("total_count");
+				totalCount = rs.getInt("total_count");
+				
+				if(totalCount != 0)
 				isStudentHavingAccomodation = true;
 			}
 			
