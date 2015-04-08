@@ -49,6 +49,7 @@ public class EntryPoint {
 	private static String password = "";
 	private static String designation = "";
 	private static int personId = 0;
+	private static String whichRequestToCancel = "";
 
 	public static void main(String[] args) {
 		Student studentObj = null; 
@@ -237,8 +238,13 @@ public class EntryPoint {
 																		leaseObj.viewAllRequests(personId);
 																		break;
 																	case 2:
+																		leaseObj.viewAllRequests(personId);
+																		inputObj.nextLine();
+																		System.out.println("Enter which request to cancel Lease or Termination: Press L or T ");
+																		whichRequestToCancel = inputObj.nextLine();
 																		boolean isCancelSuccessful = false;
 																		int requestNumber;
+																		
 																		while(!isCancelSuccessful)
 																		{
 																			System.out.println("Enter the Request Number to cancel or press 0 for previous menu: \n");
@@ -246,7 +252,7 @@ public class EntryPoint {
 																			requestNumber = inputObj.nextInt();
 																			if(requestNumber == 0)
 																				break;
-																			isCancelSuccessful = leaseObj.cancelRequest(personId, requestNumber);
+																			isCancelSuccessful = leaseObj.cancelRequest(personId, requestNumber,whichRequestToCancel);
 																		}
 																		break;
 																	case 3:
@@ -699,7 +705,7 @@ public class EntryPoint {
 																case 2:
 																	System.out.println("Enter the Request Number to cancel: \n");
 																	int requestNumber = inputObj.nextInt();
-																	leaseObj.cancelRequest(personId, requestNumber);
+																	leaseObj.cancelRequest(personId, requestNumber,whichRequestToCancel);
 																	break;
 																case 3:
 																	mLevelFour = false;

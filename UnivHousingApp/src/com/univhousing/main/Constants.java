@@ -62,5 +62,7 @@ public class Constants {
 	public static final String FAMILY_APARTMENT_DEPOSITE = "2000";
 	public static final String PAID_INVOICE = "Paid";
 	public static final String OUTSTANDING_INVOICE = "Outstanding";
+	public static final String L = "L";
+	public static final String T = "T";
 	
 }

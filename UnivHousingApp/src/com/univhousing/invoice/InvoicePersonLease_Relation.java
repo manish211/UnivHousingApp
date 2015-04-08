@@ -87,6 +87,9 @@ public class InvoicePersonLease_Relation {
 					System.out.println(count+". "+item.intValue());
 					count++;
 				}
+				
+				
+				//inputObj.nextLine();
 			}
 			else
 			{
@@ -100,8 +103,12 @@ public class InvoicePersonLease_Relation {
 				return;
 			else
 			{
-				displayInvoiceDetails(personId, invoiceNumbersList.get(choice-1));
+				if(invoiceNumbersList.size()>0)
+					displayInvoiceDetails(personId, invoiceNumbersList.get(choice-1));
+				else
+					return;
 			}
+			
 			System.out.println("==============================================================================================\n\n");
 			
 		}catch(SQLException e1){
