@@ -8,9 +8,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import com.sun.corba.se.impl.orbutil.closure.Constant;
 import com.univhousing.main.ConnectionUtils;
 import com.univhousing.main.Constants;
+import com.univhousing.users.Guest;
+
 
 public class Lease {
 
@@ -20,6 +21,7 @@ public class Lease {
 	public int duration;
 	public Date cutOffDate;
 	Scanner inputObj = new Scanner(System.in);
+	Guest guestObj = new Guest();
 
 	/**
 	 * @param personId
@@ -29,6 +31,7 @@ public class Lease {
 	 */
 	public void displayLeaseDetails(int personId, Integer leaseNumber) {
 
+		System.out.println("MARKER HERE 123");
 		ResultSet rs = null;
 		Connection dbConnection = null;
 		PreparedStatement preparedStatement = null;
@@ -37,13 +40,41 @@ public class Lease {
 
 			dbConnection = ConnectionUtils.getConnection();
 
-			String selectQuery = "SELECT T1_person.first_name, T2_lease_person.lease_no, T3_lease.duration, T4_Student.Student_Type, "
+			/*String selectQuery = "SELECT T1_person.first_name, T2_lease_person.lease_no, T3_lease.duration, T4_Student.Student_Type, "
 					+ " T2_lease_person.Lease_Move_In_Date, T2_lease_person.accomodation_type, T2_lease_person.accomodation_id "
 					+ "FROM PERSON T1_person, PERSON_ACCOMODATION_LEASE_HIST T2_lease_person,LEASE T3_lease, STUDENT T4_Student "
 					+ "WHERE T1_person.person_id = ? AND T2_lease_person.lease_no=? "
 					+ "AND T1_person.person_id = T2_lease_person.person_id "
 					+ "AND	T3_lease.lease_no = T2_lease_person.lease_no "
-					+ "AND T1_person.person_id = T4_Student.person_id";
+					+ "AND T1_person.person_id = T4_Student.person_id";*/
+			
+		String selectQuery = "";
+		
+		if(guestObj.checkPersonIsGuest(personId))
+		{
+			selectQuery = "select p.first_name,pal_outer.lease_no,l.duration,'Visitor' as category,pal_outer.lease_move_in_date," +
+					"pal_outer.accomodation_type,pal_outer.accomodation_id "
+			+" FROM PERSON p, PERSON_ACCOMODATION_LEASE_HIST pal_outer,LEASE l "
+			+" WHERE p.person_id = ? "
+			+" and pal_outer.lease_no = l.lease_no "
+			+" and p.person_id = pal_outer.person_id ";
+			
+		}
+		else
+		{
+			selectQuery = "select p.first_name,pal_outer.lease_no,l.duration,s.student_type as category,pal_outer.lease_move_in_date," +
+					" pal_outer.accomodation_type,pal_outer.accomodation_id "
+					+" FROM PERSON p, PERSON_ACCOMODATION_LEASE_HIST pal_outer,LEASE l,student s "
+					+" WHERE p.person_id = ? "
+				+" and pal_outer.lease_no = l.lease_no "
+				+" and p.person_id = pal_outer.person_id "
+				+" and pal_outer.person_id = s.person_id ";
+				
+		}
+		
+		
+			 
+		System.out.println("selectQuery executing:"+selectQuery);
 
 			preparedStatement = dbConnection.prepareStatement(selectQuery);
 			preparedStatement.setInt(1, personId);
@@ -52,7 +83,7 @@ public class Lease {
 
 			System.out.println(String.format(
 					"%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s",
-					"NAME", "LEASE NO", "Duration", "Student Type",
+					"NAME", "LEASE NO", "Duration", "Category",
 					"Housing Type", "Move in Date", "Place No", "Room No",
 					"Street Name", "City", "Postcode"));
 
@@ -73,7 +104,7 @@ public class Lease {
 				System.out.print(String.format("%-15s", rs
 						.getString("duration")));
 				System.out.print(String.format("%-15s", rs
-						.getString("student_type")));
+						.getString("category")));
 				System.out.print(String.format("%-15s", accomodationType));
 
 				System.out.print(String.format("%-15s", rs
@@ -247,6 +278,12 @@ public class Lease {
 				count++;
 
 			}
+			if(leaseNumbers.size()==0)
+			{
+				System.out.println("No former leases");
+				return;
+			}
+				
 //			int count = 1;
 			/*for (Integer item : leaseNumbers) {
 				System.out.println(count + ". " + item.intValue());
@@ -303,14 +340,42 @@ public class Lease {
 		try {
 			dbConnection = ConnectionUtils.getConnection();
 
-			String selectQuery = "SELECT T1_person.first_name, T2_lease_person.lease_no, T3_lease.duration, T4_Student.Student_Type, "
+			String selectQuery = "";
+			
+			if(guestObj.checkPersonIsGuest(personId))
+			{
+				selectQuery = "select p.first_name,pal_outer.lease_no,l.duration,'Visitor' as category,pal_outer.lease_move_in_date," +
+						"pal_outer.accomodation_type,pal_outer.accomodation_id "
+				+" FROM PERSON p, PERSON_ACCOMODATION_LEASE pal_outer,LEASE l "
+				+" WHERE p.person_id = ? "
+				+" and pal_outer.lease_no = l.lease_no "
+				+" and p.person_id = pal_outer.person_id "
+				+" and pal_outer.lease_move_in_date=(select max(lease_move_in_date) from person_accomodation_lease pal_inner "
+				+" where pal_inner.person_id = pal_outer.person_id) ";
+			}
+			else
+			{
+				selectQuery = "select p.first_name,pal_outer.lease_no,l.duration,s.student_type as category,pal_outer.lease_move_in_date," +
+						" pal_outer.accomodation_type,pal_outer.accomodation_id "
+						+" FROM PERSON p, PERSON_ACCOMODATION_LEASE pal_outer,LEASE l,student s "
+						+" WHERE p.person_id = ? "
+					+" and pal_outer.lease_no = l.lease_no "
+					+" and p.person_id = pal_outer.person_id "
+					+" and pal_outer.person_id = s.person_id "
+					+" and pal_outer.lease_move_in_date=(select max(lease_move_in_date) from person_accomodation_lease pal_inner "
+					+" where pal_inner.person_id = pal_outer.person_id) ";
+			}
+				 
+			
+			//-----------
+			/*String selectQuery = "SELECT T1_person.first_name, T2_lease_person.lease_no, T3_lease.duration, T4_Student.Student_Type, "
 					+ " T2_lease_person.Lease_Move_In_Date, T2_lease_person.accomodation_type, T2_lease_person.accomodation_id "
 					+ "FROM PERSON T1_person, PERSON_ACCOMODATION_LEASE T2_lease_person,LEASE T3_lease, STUDENT T4_Student "
 					+ "WHERE T1_person.person_id = ? AND LEASE_MOVE_IN_DATE=(SELECT MAX(LEASE_MOVE_IN_DATE) "
 					+ "FROM PERSON_ACCOMODATION_LEASE inner_P WHERE T2_lease_person.person_id = inner_P.person_id) "
 					+ "AND T1_person.person_id = T2_lease_person.person_id "
 					+ "AND	T3_lease.lease_no = T2_lease_person.lease_no "
-					+ "AND T1_person.person_id = T4_Student.person_id";
+					+ "AND T1_person.person_id = T4_Student.person_id";*/
 
 			preparedStatement = dbConnection.prepareStatement(selectQuery);
 			preparedStatement.setInt(1, personId);
@@ -319,7 +384,7 @@ public class Lease {
 
 			System.out.println(String.format(
 					"%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s%-15s",
-					"NAME", "LEASE NO", "Duration", "Student Type",
+					"NAME", "LEASE NO", "Duration", "Category",
 					"Housing Type", "Move in Date", "Place No", "Room No",
 					"Street Name", "City", "Postcode"));
 
@@ -339,7 +404,7 @@ public class Lease {
 				System.out.print(String.format("%-15s", rs
 						.getString("duration")));
 				System.out.print(String.format("%-15s", rs
-						.getString("student_type")));
+						.getString("category")));
 				System.out.print(String.format("%-15s", accomodationType));
 				System.out.print(String.format("%-15s", rs
 						.getDate("Lease_Move_In_Date")));

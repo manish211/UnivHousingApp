@@ -1488,8 +1488,8 @@ public class HousingStaffManagesLease_Relation {
 						PreparedStatement preHist = null;
 						System.out.println("Creating backup for personID "+ personID);
 						/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-						String historyQuery = "Insert into person_accomodation_lease_hist values " +
-								"(select * from person_accomodation_lease where person_id = ?)";
+						String historyQuery = "Insert into person_accomodation_lease_hist " +
+								" select * from person_accomodation_lease where person_id = ?";
 						preHist = histconn.prepareStatement(historyQuery);
 						preHist.setInt(1, personID);
 						preHist.executeUpdate();
