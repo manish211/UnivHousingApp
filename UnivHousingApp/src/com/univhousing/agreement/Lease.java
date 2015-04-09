@@ -251,7 +251,7 @@ public class Lease {
 			
 			String selectQuery = "select pal.lease_no,pal.lease_move_in_date,"
 			+" add_months(pal.lease_move_in_date,l.duration) end_date "
-			+" from person_accomodation_lease_hist pal,lease l "
+			+" from person_accomodation_lease_hist pal,lease_hist l "
 			+" where pal.person_id = ? "
 			+" and pal.lease_no = l.lease_no ";
 

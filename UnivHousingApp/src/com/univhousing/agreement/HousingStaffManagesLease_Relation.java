@@ -1342,7 +1342,7 @@ public class HousingStaffManagesLease_Relation {
 				System.out.println("Marker8");
 
 				if (totalPenaltyDamageFees > 0) {
-
+					
 					/*
 					 * Query for getting invoice number from
 					 * invoice_person_lease
@@ -1420,7 +1420,7 @@ public class HousingStaffManagesLease_Relation {
 								.println("There is no lease entry for this person");
 					}
 				} else {
-
+					
 					/*
 					 * There are no damage fees. Write a query to remove the
 					 * entry from person_accommodation_lease
@@ -1448,16 +1448,29 @@ public class HousingStaffManagesLease_Relation {
 						 */
 						Connection histconn = ConnectionUtils.getConnection();
 						PreparedStatement preHist = null;
+						//asdas
+						Connection histconn1 = ConnectionUtils.getConnection();
+						PreparedStatement preHist1 = null;
 						System.out.println("Creating backup for personID "
 								+ personID);
 						// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 						String historyQuery = "Insert into person_accomodation_lease_hist "
 								+ "select * from person_accomodation_lease where person_id = ?";
+						
 						preHist = histconn.prepareStatement(historyQuery);
 						preHist.setInt(1, personID);
 						preHist.executeUpdate();
 						preHist.close();
 						ConnectionUtils.closeConnection(histconn);
+						
+						
+						String historyLease = "Insert into lease_hist "
+							+ "select * from lease where lease_no = ?";
+						preHist1 = histconn1.prepareStatement(historyLease);
+						preHist1.setInt(1, leaseNumber);
+						preHist1.executeUpdate();
+						preHist1.close();
+						ConnectionUtils.closeConnection(histconn1);
 					} else {
 						System.out.println("Already backed up for this person");
 					}
@@ -1467,6 +1480,7 @@ public class HousingStaffManagesLease_Relation {
 					Connection connDeleteEntry = null;
 					PreparedStatement pDeleteEntry = null;
 
+					System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 					connDeleteEntry = ConnectionUtils.getConnection();
 					String deleteQuery = "DELETE FROM person_accomodation_lease "
 							+ "WHERE person_id = ?";
@@ -1763,6 +1777,13 @@ public class HousingStaffManagesLease_Relation {
 									Connection histconn = ConnectionUtils
 											.getConnection();
 									PreparedStatement preHist = null;
+									
+									Connection histconn1 = ConnectionUtils.getConnection();
+									PreparedStatement preHist1 = null;
+								//sadsad
+								String historyLease = "Insert into lease_hist "
+									+ "select * from lease where lease_no = ?";
+									
 									System.out
 											.println("Creating backup for personID "
 													+ personID);
@@ -1775,6 +1796,15 @@ public class HousingStaffManagesLease_Relation {
 									preHist.executeUpdate();
 									preHist.close();
 									ConnectionUtils.closeConnection(histconn);
+									
+									
+									preHist1 = histconn1.prepareStatement(historyLease);
+									preHist1.setInt(1, leaseNumber);
+									preHist1.executeUpdate();
+									preHist1.close();
+									ConnectionUtils.closeConnection(histconn);
+									
+									
 								} else {
 									System.out
 											.println("Already backed up for this person");

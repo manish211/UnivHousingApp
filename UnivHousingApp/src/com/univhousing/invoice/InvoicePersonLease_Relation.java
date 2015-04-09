@@ -367,7 +367,7 @@ public class InvoicePersonLease_Relation {
 					long iPart;
 					double fPart;
 					finalResult = 0;
-					numberOFInvoices = (double)(remainingDays/Constants.DAYS_IN_MONTH);
+					numberOFInvoices = (double)remainingDays/Constants.DAYS_IN_MONTH;
 					iPart = (long) numberOFInvoices;
 					fPart = numberOFInvoices - iPart;
 					if(fPart>=0.5)
