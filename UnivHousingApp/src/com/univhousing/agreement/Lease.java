@@ -562,18 +562,16 @@ public class Lease {
 			preparedStatement.setInt(1, personId);
 
 			viewRequestsSet = preparedStatement.executeQuery();
-
-			if (viewRequestsSet.isBeforeFirst()) {
-				System.out
-						.println("==================================================================");
-				System.out.println(String.format("%-15s%-20s%-15s",
-						"Request type", "Request number", "Status"));
-				System.out
-						.println("==================================================================");
-			} else {
-				System.out.println("No Request Found");
-				return false;
-			}
+			
+			if (!viewRequestsSet.isBeforeFirst()) {
+				System.out.println("No Termination requests Found");
+			} 
+			System.out
+			.println("==================================================================");
+			System.out.println(String.format("%-15s%-20s%-15s",
+					"Request type", "Request number", "Status"));
+			System.out
+					.println("==================================================================");
 
 			while (viewRequestsSet.next()) {
 				flag = true;
@@ -589,21 +587,26 @@ public class Lease {
 				 */
 			}
 			preparedStatement.close();
-			viewRequestsSet.close();
+			//viewRequestsSet.close();
 
 			preparedStatement = dbConnection.prepareStatement(selectQuery1);
 			preparedStatement.setInt(1, personId);
-
-			viewRequestsSet = preparedStatement.executeQuery();
+			ResultSet viewAppReq = null;
+			viewAppReq = preparedStatement.executeQuery();
 			// System.out.println("Request Number" + "\t Status");
-			while (viewRequestsSet.next()) {
+			if (!viewAppReq.isBeforeFirst()) {
+				System.out.println("No Lease requests Found");
+			} 
+			while (viewAppReq.next()) {
 				flag = true;
 				System.out.print(String.format("%-15s%-20s%-15s", "Lease",
-						viewRequestsSet.getInt("application_request_no"),
-						viewRequestsSet.getString("request_status")));
+						viewAppReq.getInt("application_request_no"),
+						viewAppReq.getString("request_status")));
 
 				System.out.println("");
 			}
+			
+			
 			
 		} catch (SQLException e1) {
 			System.out.println("SQLException: " + e1.getMessage());
