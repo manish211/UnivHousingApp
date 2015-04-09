@@ -539,10 +539,12 @@ public class Lease {
 	 * @action Displays all the requests made by the student along with their
 	 *         status and request number
 	 */
-	public void viewAllRequests(int personId) throws SQLException {
+	public boolean viewAllRequests(int personId) throws SQLException {
 		ResultSet viewRequestsSet = null;
 		Connection dbConnection = null;
 		PreparedStatement preparedStatement = null;
+		boolean flag = false;
+		
 
 		try {
 
@@ -570,10 +572,11 @@ public class Lease {
 						.println("==================================================================");
 			} else {
 				System.out.println("No Request Found");
-				return;
+				return false;
 			}
 
 			while (viewRequestsSet.next()) {
+				flag = true;
 				System.out.print(String.format("%-15s%-20s%-15s",
 						"Termination", viewRequestsSet
 								.getInt("termination_request_number"),
@@ -594,13 +597,14 @@ public class Lease {
 			viewRequestsSet = preparedStatement.executeQuery();
 			// System.out.println("Request Number" + "\t Status");
 			while (viewRequestsSet.next()) {
+				flag = true;
 				System.out.print(String.format("%-15s%-20s%-15s", "Lease",
 						viewRequestsSet.getInt("application_request_no"),
 						viewRequestsSet.getString("request_status")));
 
 				System.out.println("");
 			}
-
+			
 		} catch (SQLException e1) {
 			System.out.println("SQLException: " + e1.getMessage());
 			System.out.println("Vendor Error: " + e1.getErrorCode());
@@ -616,6 +620,7 @@ public class Lease {
 				e1.printStackTrace();
 			}
 		}
+		return flag;
 	}
 
 	/**

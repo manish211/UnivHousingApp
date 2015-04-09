@@ -287,17 +287,20 @@ public class EntryPoint {
 																
 																choice = inputObj.nextInt();
 																Lease leaseObj = new Lease();
-																
+																boolean flag = false;
 																switch(choice)
 																{
 																	case 1:
-																		leaseObj.viewAllRequests(personId);
+																		flag = leaseObj.viewAllRequests(personId);
 																		break;
 																	case 2:
-																		leaseObj.viewAllRequests(personId);
+																		flag = leaseObj.viewAllRequests(personId);
 																		inputObj.nextLine();
-																		System.out.println("Enter which request to cancel Lease or Termination: Press L or T ");
-																		whichRequestToCancel = inputObj.nextLine();
+																		if(flag)
+																		{
+																			System.out.println("Enter which request to cancel Lease or Termination: Press L or T ");
+																			whichRequestToCancel = inputObj.nextLine();
+																		}
 																		boolean isCancelSuccessful = false;
 																		int requestNumber;
 																		
